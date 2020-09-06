@@ -1,0 +1,38 @@
+version: '3.4'
+services:
+    web:
+        build:
+            context: .
+            dockerfile: ./build/Dockerfile.web
+        ports:
+            - "3000:3000"
+        volumes:
+            - ./web:/app
+            - /app/node_modules
+        stdin_open: true
+        command: bash -c "npm start"
+    app:
+        build:
+            context: .
+            dockerfile: ./build/Dockerfile.app
+        depends_on:
+            - db
+        env_file:
+            - ./server/.env
+        ports:
+            - "8888:8888"
+        volumes:
+            - ./server:/app
+            - /app/node_modules
+    db:
+        image: postgres:12
+        ports:
+            - "5432:5432"
+        environment:
+            - POSTGRES_USER=root
+            - POSTGRES_PASSWORD=root
+            - POSTGRES_DB=furryfantasy
+        volumes:
+            - "dbdata:/var/lib/postgresql/data"
+volumes:
+    dbdata:

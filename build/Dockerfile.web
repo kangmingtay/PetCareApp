@@ -1,0 +1,13 @@
+FROM node:14.4.0
+
+EXPOSE 3000
+
+WORKDIR /app
+
+COPY ./web/package.json /app
+
+RUN ["npm", "install"]
+
+COPY ./web/.  /app
+
+CMD ["npm", "start"]
