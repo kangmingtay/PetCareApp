@@ -1,0 +1,15 @@
+Write-up
+
+1. The Users relation can be either pet owners or care takers or both (overlapping & covering)
+2. The Accounts relation can be either users or pcs administrators (non- overlapping & covering)
+3. The PCS_Administrator has the power to alter the Rules relation and can set the price_rate attribute of each animal type in the Pet_Categories relation.
+4. The Reviews relation can only appear when a task from the Tasks relation has reached been completed from its end_date attribute.
+5. When 2 or more caretakers happen to select the same bids from the Bids relation, we will implement a SQL TRANSACTION to handle conflicts and assign the bid to the caretaker that selected the bids first. (conflict resolution)
+6. Upon registration as a care taker in the Care_Takers relation, the user has to select if he/she is a Full timer or part-timer and must specify their availability for the duration of the entire year in the Schedule relation meeting the min-day rule constraint that is reflected in the Min_Day_Rule relation.
+7. For each part-time care taker in the Care_Takers relation, they will be able to specify their availability in the Schedule relation
+8. The task_id attribute of the Bids relation is a foreign key in the bids relation that can be NULL initially if the caretaker has not chosen the bid.
+9. We differentiated every distinct set of rules by creating an entity for each rule and grouping them under a ISA relationship with a parent entity called Rules.
+10. A Caretaker can take care of more than 1 pet at a time is implicitly implemented in (bids and task) and the maximum number of pets that a caretaker can care for is constrained by max_pet_rule.
+11. Reviews will be available to all users through query statements
+12. Care Taker can be either a full-time or a part-time employee (non-overlapping & covering)
+13. When a caretaker successfully selects a task from the Bids relation, it will set the is_selected attribute of the Bids relationfor the corresponding tuple to True. Then, a SQL TRIGGER will run to insert a new tuple in the Tasks relation.
