@@ -37,12 +37,16 @@ CREATE TABLE IF NOT EXISTS Full_Timer (
     PRIMARY KEY (username)
 );
 
+CREATE TABLE IF NOT EXISTS Prefers (
+    username VARCHAR(256) REFERENCES Care_Takers(username) ON DELETE CASCADE,
+    category VARCHAR(256) REFERENCES Pet_Categories(category) ON DELETE CASCADE,
+    PRIMARY KEY (username, category)
+);
+
 CREATE TABLE IF NOT EXISTS Pet_Categories (
     category VARCHAR(256),
-    username VARCHAR(256),
     price_rate NUMERIC,
-    FOREIGN KEY (username) REFERENCES Care_Takers(username) ON DELETE CASCADE,
-    PRIMARY KEY (category, username)
+    PRIMARY KEY (category)
 );
 
 CREATE TABLE IF NOT EXISTS Schedule (
