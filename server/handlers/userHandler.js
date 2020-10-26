@@ -41,6 +41,7 @@ async function handleCreateUser(req, res) {
         let resp = {};
         if (createUser.rowCount === 1) {
             resp['message'] = "User created!"
+            resp['success'] = true
         }
         return res.status(200).json(resp);
     } catch (err) {
