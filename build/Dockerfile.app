@@ -4,10 +4,7 @@ EXPOSE 8888
 
 WORKDIR /app
 
-COPY ./server/package.json ./
-
-RUN ["npm", "install"]
-
 COPY ./server/. .
+RUN ["npm", "install"]
 
 CMD ["npm", "start"]
