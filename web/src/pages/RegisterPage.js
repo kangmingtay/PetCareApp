@@ -10,6 +10,8 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
+import Checkbox from '@material-ui/core/Checkbox';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Copyright from '../components/Copyright';
 import { createUserAccount } from '../calls/loginCalls';
 
@@ -40,6 +42,7 @@ const RegisterPage = (props) => {
         username: '',
         password: '',
         email: '',
+        isAdmin: false,
     });
 
     const handleSubmit = async (event) => {
@@ -47,7 +50,7 @@ const RegisterPage = (props) => {
         console.log(state)
 
         try {
-            let resp = await createUserAccount(state.username, state.password, state.email);
+            let resp = await createUserAccount(state);
             console.log(resp)
             if (resp.data.success === true) {
                 console.log("ACCOUNT CREATION SUCCESS");
@@ -112,6 +115,14 @@ const RegisterPage = (props) => {
                                 />
                             </Grid>
                         </Grid>
+                        <FormControlLabel
+                            control = {<Checkbox
+                                checked={state.isAdmin}
+                                onChange={() => setState({...state, isAdmin: !state.isAdmin})}
+                                inputProps={{ 'aria-label': 'primary checkbox' }}
+                            />}
+                            label="I am a PCS Administrator"
+                        />
                         <Button
                             type="submit"
                             fullWidth
