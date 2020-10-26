@@ -21,7 +21,7 @@ async function handleGetUser(req, res) {
         const query = `SELECT username, email FROM accounts where username = '${username}'`;
         const singleUser = await pool.query(query);
         let resp = { results: singleUser.rows};
-        if (singleUser.rowCount == 0) {
+        if (singleUser.rowCount === 0) {
             resp['message'] = "User does not exist!"
         }
         return res.status(200).json(resp);
@@ -39,7 +39,7 @@ async function handleCreateUser(req, res) {
         const query = `INSERT INTO accounts VALUES ('${username}', '${password}', '${email}')`;
         const createUser = await pool.query(query);
         let resp = {};
-        if (createUser.rowCount == 1) {
+        if (createUser.rowCount === 1) {
             resp['message'] = "User created!"
         }
         return res.status(200).json(resp);
@@ -57,7 +57,7 @@ async function handleDeleteUser(req, res) {
         const query = `DELETE FROM accounts WHERE username = '${username}'`;
         const deleteUser = await pool.query(query);
         let resp = {};
-        if (deleteUser.rowCount == 1) {
+        if (deleteUser.rowCount === 1) {
             resp['message'] = "User deleted!"
         } else {
             resp['message'] = "User does not exist!"
