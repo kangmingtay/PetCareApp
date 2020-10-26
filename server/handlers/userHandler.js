@@ -4,7 +4,6 @@ async function handleGetAllUsers(req, res) {
     try {
         const query = `SELECT username, email FROM accounts`;
         const allUser = await pool.query(query);
-        console.log(allUser);
 
         const resp = { results: allUser.rows };
         return res.status(200).json(resp);
@@ -36,7 +35,6 @@ async function handleGetUser(req, res) {
 
 async function handleCreateUser(req, res) {
     try {
-        console.log(req.body)
         const { username, password, email } = req.body;
         const query = `INSERT INTO accounts VALUES ('${username}', '${password}', '${email}')`;
         const createUser = await pool.query(query);
@@ -53,8 +51,29 @@ async function handleCreateUser(req, res) {
     }
 }
 
+async function handleDeleteUser(req, res) {
+    try {
+        const { username } = req.params;
+        const query = `DELETE FROM accounts WHERE username = '${username}'`;
+        const deleteUser = await pool.query(query);
+        let resp = {};
+        if (deleteUser.rowCount == 1) {
+            resp['message'] = "User deleted!"
+        } else {
+            resp['message'] = "User does not exist!"
+        }
+        return res.status(200).json(resp);
+    } catch (err) {
+        return res.status(400).send({
+            success: false,
+            message: err.message,
+        })
+    }
+}
+
 module.exports = {
     handleGetAllUsers,
     handleGetUser,
     handleCreateUser,
+    handleDeleteUser,
 }
