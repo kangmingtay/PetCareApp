@@ -13,7 +13,7 @@ Furry Fantasy is a pet caring service (PCS) which allows pet owners to search fo
 
 #### To bash into postgres container:
 1. `docker ps` and identify container name (should be `furry_fantasy_db_1`)
-2. Run `docker exec -it furry_fantasy_db_1 psql -U root -d furryfantasy`
+2. Run `docker exec -it cs2102_2021_s1_team13_db_1 psql -U root -d furryfantasy`
 
 
 ### Running the app locally
