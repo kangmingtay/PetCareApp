@@ -42,25 +42,36 @@ const RegisterPage = (props) => {
         username: '',
         password: '',
         email: '',
+        address: '',
         isAdmin: false,
     });
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        console.log(state)
-
         try {
+            let invalidFields = []
+            Object.keys(state).forEach((key) => {
+                if (state[key] === "") {
+                    invalidFields.push(key);
+                }
+            })
+            if (invalidFields.length !== 0) {
+                throw invalidFields;
+            }
             let resp = await createUserAccount(state);
-            console.log(resp)
             if (resp.data.success === true) {
-                console.log("ACCOUNT CREATION SUCCESS");
                 props.history.push("/login");
                 alert("Account created successfully!")
             }
         }
         catch(err) {
-            // err.response.data.message -> to see actual error msg
-            alert("Username already exists! Please use another username.")
+            if (Array.isArray(err)) {
+                let message = `${err.join(", ")} field(s) are required!`;
+                alert(message);
+            } else {
+                // err.response.data.message -> to see actual error msg
+                alert("Username already exists! Please use another username.")
+            }
         }
     }
 
@@ -81,7 +92,7 @@ const RegisterPage = (props) => {
                                     autoComplete="fname"
                                     name="username"
                                     variant="outlined"
-                                    required
+                                    required                                    
                                     fullWidth
                                     id="username"
                                     label="Username"
@@ -97,7 +108,6 @@ const RegisterPage = (props) => {
                                     id="email"
                                     label="Email Address"
                                     name="email"
-                                    autoComplete="email"
                                     onChange={(e) => setState({...state, email: e.target.value})}
                                 />
                             </Grid>
@@ -112,6 +122,18 @@ const RegisterPage = (props) => {
                                     id="password"
                                     autoComplete="current-password"
                                     onChange={(e) => setState({...state, password: e.target.value})}
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField
+                                    variant="outlined"
+                                    required
+                                    fullWidth
+                                    name="address"
+                                    label="Address"
+                                    type="address"
+                                    id="address"
+                                    onChange={(e) => setState({...state, address: e.target.value})}
                                 />
                             </Grid>
                         </Grid>
