@@ -10,8 +10,6 @@ import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import Typography from '@material-ui/core/Typography';
 import { makeStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
-import Checkbox from '@material-ui/core/Checkbox';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Copyright from '../components/Copyright';
 import { fetchLoginInfo } from '../calls/loginCalls';
 import { UserContext } from '../UserContext';
@@ -51,7 +49,13 @@ const LoginPage = (props) => {
         // console.log(state)
         let resp = await fetchLoginInfo(state);
         if (resp.data.success === true) {
-            setContext({ ...context, username: state.username, isLoggedIn: true, isAdmin: state.isAdmin });
+            console.log(resp.data);
+            setContext({ 
+                ...context, 
+                username: state.username, 
+                isLoggedIn: true, 
+                isAdmin: resp.data.isAdmin
+            });
             props.history.push("/");
         } else {
             alert("Account does not exist! Please sign up for an account.")
@@ -93,14 +97,6 @@ const LoginPage = (props) => {
                         id="password"
                         autoComplete="current-password"
                         onChange={(e) => setState({...state, password: e.target.value})}
-                    />
-                    <FormControlLabel
-                        control = {<Checkbox
-                            checked={state.isAdmin}
-                            onChange={() => setState({...state, isAdmin: !state.isAdmin})}
-                            inputProps={{ 'aria-label': 'primary checkbox' }}
-                        />}
-                        label="I am a PCS Administrator"
                     />
                     <Button
                         type="submit"
