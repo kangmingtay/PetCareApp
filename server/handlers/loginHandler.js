@@ -3,9 +3,9 @@ const pool = require("../db");
 async function handleLogin(req, res) {
     try {
         const { username, password } = req.body;
-        const query = `SELECT * FROM accounts where username = '${username}'`;
+        const query = `SELECT password, is_admin FROM accounts where username = '${username}'`;
         const singleUser = await pool.query(query);
-        console.log(req.body)
+        console.log(singleUser.rows)
         let resp = {success: false}
         if (singleUser.rowCount === 0) {
             resp["message"] = "User does not exist!";
@@ -14,6 +14,7 @@ async function handleLogin(req, res) {
         } else {
             resp["success"] = true;
             resp["message"] = "Login Successful";
+            resp['isAdmin'] = singleUser.rows[0].is_admin;
         }
         
         return res.status(200).json(resp);
