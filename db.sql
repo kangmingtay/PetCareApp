@@ -2,27 +2,24 @@ CREATE TABLE IF NOT EXISTS Accounts (
     username VARCHAR(256),
     password VARCHAR(256) NOT NULL,
     email VARCHAR(256) NOT NULL ,
+    address VARCHAR(256) NOT NULL,
+    date_created DATE NOT NULL,
+    is_admin BOOLEAN DEFAULT false,
     PRIMARY KEY (username),
     CONSTRAINT proper_email CHECK (email ~* '^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+[.][A-Za-z]+$') 
 );
 
 -- Implement covering & overlapping constraint 
 
-CREATE TABLE IF NOT EXISTS Users (
+CREATE TABLE IF NOT EXISTS Pet_Owners (
     username VARCHAR(256),
     FOREIGN KEY (username) REFERENCES Accounts(username) ON DELETE CASCADE,
     PRIMARY KEY (username)
 );
 
-CREATE TABLE IF NOT EXISTS Pet_Owners (
-    username VARCHAR(256),
-    FOREIGN KEY (username) REFERENCES Users(username) ON DELETE CASCADE,
-    PRIMARY KEY (username)
-);
-
 CREATE TABLE IF NOT EXISTS Care_Takers (
     username VARCHAR(256),
-    FOREIGN KEY (username) REFERENCES Users(username) ON DELETE CASCADE,
+    FOREIGN KEY (username) REFERENCES Accounts(username) ON DELETE CASCADE,
     PRIMARY KEY (username)
 );
 
