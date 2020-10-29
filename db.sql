@@ -2,55 +2,65 @@ CREATE TABLE IF NOT EXISTS Accounts (
     username VARCHAR(256),
     password VARCHAR(256) NOT NULL,
     email VARCHAR(256) NOT NULL ,
+    address VARCHAR(256) NOT NULL,
+    date_created DATE NOT NULL,
+    is_admin BOOLEAN DEFAULT false,
     PRIMARY KEY (username),
     CONSTRAINT proper_email CHECK (email ~* '^[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+[.][A-Za-z]+$') 
 );
 
 -- Implement covering & overlapping constraint 
 
-CREATE TABLE IF NOT EXISTS Users (
+CREATE TABLE IF NOT EXISTS Pet_Owners (
     username VARCHAR(256),
     FOREIGN KEY (username) REFERENCES Accounts(username) ON DELETE CASCADE,
     PRIMARY KEY (username)
 );
 
-CREATE TABLE IF NOT EXISTS Pet_Owners (
-    username VARCHAR(256),
-    FOREIGN KEY (username) REFERENCES Users(username) ON DELETE CASCADE,
-    PRIMARY KEY (username)
-);
-
 CREATE TABLE IF NOT EXISTS Care_Takers (
-    username VARCHAR(256),
-    FOREIGN KEY (username) REFERENCES Users(username) ON DELETE CASCADE,
-    PRIMARY KEY (username)
+    cname VARCHAR(256),
+    rating NUMERIC CHECK (rating <= 5 AND rating > 0),
+    FOREIGN KEY (cname) REFERENCES Users(username) ON DELETE CASCADE,
+    PRIMARY KEY (cname)
 );
 
 CREATE TABLE IF NOT EXISTS Part_Timer (
-    username VARCHAR(256) REFERENCES Care_Takers(username) ON DELETE CASCADE, 
-    PRIMARY KEY (username) 
+    cname VARCHAR(256) REFERENCES Care_Takers(cname) ON DELETE CASCADE, 
+    PRIMARY KEY (cname)
+);
+
+CREATE TABLE IF NOT EXISTS Availability (
+    cname VARCHAR(256) REFERENCES Part_Timer(cname) ON DELETE CASCADE,
+    date DATE,
+    PRIMARY KEY(cname, date)
 );
 
 CREATE TABLE IF NOT EXISTS Full_Timer (
-    username VARCHAR(256) REFERENCES Care_Takers(username) ON DELETE CASCADE, 
-    base_pay NUMERIC CHECK (base_pay >= 0),
-    PRIMARY KEY (username)
+    cname VARCHAR(256) REFERENCES Care_Takers(cname) ON DELETE CASCADE, 
+    PRIMARY KEY (cname)
+);
+
+
+CREATE TABLE IF NOT EXISTS Leaves (
+    cname VARCHAR(256) REFERENCES Full_Timer(cname) ON DELETE CASCADE,
+    date DATE,
+    PRIMARY KEY(cname, date)
 );
 
 CREATE TABLE IF NOT EXISTS Pet_Categories (
     category VARCHAR(256),
-    price_rate NUMERIC,
+    base_price NUMERIC,
     PRIMARY KEY (category)
 );
 
 CREATE TABLE IF NOT EXISTS Prefers (
-    cname VARCHAR(256) REFERENCES Care_Takers(username) ON DELETE CASCADE,
+    cname VARCHAR(256) REFERENCES Care_Takers(cname) ON DELETE CASCADE,
     category VARCHAR(256) REFERENCES Pet_Categories(category) ON DELETE CASCADE,
     PRIMARY KEY (cname, category)
 );
 
 CREATE TABLE IF NOT EXISTS Schedule (
-    cname VARCHAR(256) REFERENCES Care_Takers (username) ON DELETE CASCADE,
+    cname VARCHAR(256) REFERENCES Care_Takers (cname) ON DELETE CASCADE,
     date DATE,
     pet_count int,
     PRIMARY KEY (cname, date)
@@ -85,7 +95,7 @@ CREATE TABLE IF NOT EXISTS Bids (
     review VARCHAR(256), 
     PRIMARY KEY(pname, pet_name, cname, start_date, end_date),
     FOREIGN KEY (pname, pet_name) REFERENCES Pets(pname, pet_name) ON DELETE CASCADE,
-    FOREIGN KEY (cname) REFERENCES Care_Takers(username) ON DELETE CASCADE
+    FOREIGN KEY (cname) REFERENCES Care_Takers(cname) ON DELETE CASCADE
 );
 
 -- CREATE VIEW as Catalogue (
