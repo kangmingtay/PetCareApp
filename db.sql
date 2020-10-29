@@ -11,15 +11,9 @@ CREATE TABLE IF NOT EXISTS Accounts (
 
 -- Implement covering & overlapping constraint 
 
-CREATE TABLE IF NOT EXISTS Users (
-    username VARCHAR(256),
-    FOREIGN KEY (username) REFERENCES Accounts(username) ON DELETE CASCADE,
-    PRIMARY KEY (username)
-);
-
 CREATE TABLE IF NOT EXISTS Pet_Owners (
     username VARCHAR(256),
-    FOREIGN KEY (username) REFERENCES Users(username) ON DELETE CASCADE,
+    FOREIGN KEY (username) REFERENCES Accounts(username) ON DELETE CASCADE,
     PRIMARY KEY (username)
 );
 
