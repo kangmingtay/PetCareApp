@@ -5,8 +5,7 @@ import {
   makeStyles
 } from '@material-ui/core';
 import Page from 'src/components/Page';
-import Profile from '../components/Profile';
-import ProfileDetails from '../components/ProfileDetails';
+import Budget from '../components/DashboardCard';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -17,39 +16,32 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const ProfilePage = () => {
+const DashboardPage = () => {
   const classes = useStyles();
 
   return (
     <Page
       className={classes.root}
-      title="Account"
+      title="Dashboard"
     >
-      <Container maxWidth="lg">
+      <Container maxWidth={false}>
         <Grid
           container
           spacing={3}
         >
           <Grid
             item
-            lg={4}
-            md={6}
+            lg={3}
+            sm={6}
+            xl={3}
             xs={12}
           >
-            <Profile />
-          </Grid>
-          <Grid
-            item
-            lg={8}
-            md={6}
-            xs={12}
-          >
-            <ProfileDetails />
-          </Grid>
+            <Budget />
+          </Grid>          
         </Grid>
       </Container>
     </Page>
   );
 };
 
-export default ProfilePage;
+export default DashboardPage;

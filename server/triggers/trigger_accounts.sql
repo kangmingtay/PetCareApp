@@ -7,7 +7,6 @@ BEGIN
         RETURN NEW;
     ELSE
         INSERT INTO Pet_Owners VALUES (NEW.username);
-        INSERT INTO Care_Takers VALUES (NEW.username);
         RETURN NEW;
     END IF;
 END;
