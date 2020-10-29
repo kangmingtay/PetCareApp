@@ -1,173 +1,210 @@
-import React, { useState } from 'react';
-import Avatar from '@material-ui/core/Avatar';
-import Button from '@material-ui/core/Button';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import TextField from '@material-ui/core/TextField';
-import Link from '@material-ui/core/Link';
-import Grid from '@material-ui/core/Grid';
-import Box from '@material-ui/core/Box';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import Typography from '@material-ui/core/Typography';
-import { makeStyles } from '@material-ui/core/styles';
-import Container from '@material-ui/core/Container';
-import Checkbox from '@material-ui/core/Checkbox';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Copyright from '../components/Copyright';
-import { createUserAccount } from '../calls/loginCalls';
+import React from 'react';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import * as Yup from 'yup';
+import { Formik } from 'formik';
+import {
+  Box,
+  Button,
+  Checkbox,
+  Container,
+  FormHelperText,
+  Link,
+  TextField,
+  Typography,
+  makeStyles
+} from '@material-ui/core';
+import Page from 'src/components/Page';
+import { createUserAccount } from 'src/calls/loginCalls'
 
 const useStyles = makeStyles((theme) => ({
-  paper: {
-    marginTop: theme.spacing(8),
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-  },
-  avatar: {
-    margin: theme.spacing(1),
-    backgroundColor: theme.palette.secondary.main,
-  },
-  form: {
-    width: '100%', // Fix IE 11 issue.
-    marginTop: theme.spacing(3),
-  },
-  submit: {
-    margin: theme.spacing(3, 0, 2),
-  },
+  root: {
+    backgroundColor: theme.palette.background.dark,
+    height: '100%',
+    paddingBottom: theme.spacing(3),
+    paddingTop: theme.spacing(3)
+  }
 }));
 
-const RegisterPage = (props) => {
-    const classes = useStyles();
+const RegisterPage = () => {
+  const classes = useStyles();
+  const navigate = useNavigate();
 
-    const [state, setState] = useState({
-        username: '',
-        password: '',
-        email: '',
-        address: '',
-        isAdmin: false,
-    });
-
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-        try {
-            let invalidFields = []
-            Object.keys(state).forEach((key) => {
-                if (state[key] === "") {
-                    invalidFields.push(key);
-                }
-            })
-            if (invalidFields.length !== 0) {
-                throw invalidFields;
-            }
-            let resp = await createUserAccount(state);
-            if (resp.data.success === true) {
-                props.history.push("/login");
-                alert("Account created successfully!")
-            }
-        }
-        catch(err) {
-            if (Array.isArray(err)) {
-                let message = `${err.join(", ")} field(s) are required!`;
-                alert(message);
-            } else {
-                // err.response.data.message -> to see actual error msg
-                alert("Username already exists! Please use another username.")
-            }
-        }
+  const handleRegisterSubmit = async (values) => {
+    try {
+      let resp = await createUserAccount(values);
+      if (resp.data.success === true) {
+          navigate('/login', { replace: true });
+          alert("Account created successfully! Please login with your credentials!")
+      }
     }
+    catch(err) {
+      // err.response.data.message -> to see actual error msg
+      alert("Username already exists! Please use another username.")
+    }
+  }
 
-    return (
-        <Container component="main" maxWidth="xs">
-            <CssBaseline />
-                <div className={classes.paper}>
-                    <Avatar className={classes.avatar}>
-                        <LockOutlinedIcon />
-                    </Avatar>
-                    <Typography component="h1" variant="h5">
-                        Sign up
-                    </Typography>
-                    <form className={classes.form} noValidate onSubmit={handleSubmit}>
-                        <Grid container spacing={2}>
-                            <Grid item xs={12}>
-                                <TextField
-                                    autoComplete="fname"
-                                    name="username"
-                                    variant="outlined"
-                                    required                                    
-                                    fullWidth
-                                    id="username"
-                                    label="Username"
-                                    autoFocus
-                                    onChange={(e) => setState({...state, username: e.target.value})}
-                                />
-                            </Grid>
-                            <Grid item xs={12}>
-                                <TextField
-                                    variant="outlined"
-                                    required
-                                    fullWidth
-                                    id="email"
-                                    label="Email Address"
-                                    name="email"
-                                    onChange={(e) => setState({...state, email: e.target.value})}
-                                />
-                            </Grid>
-                            <Grid item xs={12}>
-                                <TextField
-                                    variant="outlined"
-                                    required
-                                    fullWidth
-                                    name="password"
-                                    label="Password"
-                                    type="password"
-                                    id="password"
-                                    autoComplete="current-password"
-                                    onChange={(e) => setState({...state, password: e.target.value})}
-                                />
-                            </Grid>
-                            <Grid item xs={12}>
-                                <TextField
-                                    variant="outlined"
-                                    required
-                                    fullWidth
-                                    name="address"
-                                    label="Address"
-                                    type="address"
-                                    id="address"
-                                    onChange={(e) => setState({...state, address: e.target.value})}
-                                />
-                            </Grid>
-                        </Grid>
-                        <FormControlLabel
-                            control = {<Checkbox
-                                checked={state.isAdmin}
-                                onChange={() => setState({...state, isAdmin: !state.isAdmin})}
-                                inputProps={{ 'aria-label': 'primary checkbox' }}
-                            />}
-                            label="I am a PCS Administrator"
-                        />
-                        <Button
-                            type="submit"
-                            fullWidth
-                            variant="contained"
-                            color="primary"
-                            className={classes.submit}
-                        >
-                            Sign Up
-                        </Button> 
-                        <Grid container>
-                            <Grid item xs={12}>
-                                <Link href="/login" variant="body2">
-                                    Already have an account? Sign in
-                                </Link>
-                            </Grid>
-                        </Grid>  
-                    </form>
-                </div>
-            <Box mt={5}>
-                <Copyright />
-            </Box>
+  return (
+    <Page
+      className={classes.root}
+      title="Register"
+    >
+      <Box
+        display="flex"
+        flexDirection="column"
+        height="100%"
+        justifyContent="center"
+      >
+        <Container maxWidth="sm">
+          <Formik
+            initialValues={{
+              email: '',
+              username: '',
+              password: '',
+              isAdmin: false
+            }}
+            validationSchema={
+              Yup.object().shape({
+                email: Yup.string().email('Must be a valid email').max(255).required('Email is required'),
+                username: Yup.string().max(255).required('Username is required'),
+                address: Yup.string().max(255).required('Address is required'),
+                password: Yup.string().max(255).required('Password is required'),
+                isAdmin: Yup.boolean(),
+              })
+            }
+            onSubmit={(values) => {
+              console.log(values)
+              handleRegisterSubmit(values)
+            }}
+          >
+            {({
+              errors,
+              handleBlur,
+              handleChange,
+              handleSubmit,
+              touched,
+              values
+            }) => (
+              <form onSubmit={handleSubmit}>
+                <Box mb={3}>
+                  <Typography
+                    color="textPrimary"
+                    variant="h2"
+                  >
+                    Create new account
+                  </Typography>
+                  <Typography
+                    color="textSecondary"
+                    gutterBottom
+                    variant="body2"
+                  >
+                    Use your email to create new account
+                  </Typography>
+                </Box>
+                <TextField
+                  error={Boolean(touched.username && errors.username)}
+                  fullWidth
+                  helperText={touched.username && errors.username}
+                  label="Username"
+                  margin="normal"
+                  name="username"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  value={values.lastName}
+                  variant="outlined"
+                />
+                <TextField
+                  error={Boolean(touched.email && errors.email)}
+                  fullWidth
+                  helperText={touched.email && errors.email}
+                  label="Email Address"
+                  margin="normal"
+                  name="email"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  type="email"
+                  value={values.email}
+                  variant="outlined"
+                />
+                <TextField
+                  error={Boolean(touched.password && errors.password)}
+                  fullWidth
+                  helperText={touched.password && errors.password}
+                  label="Password"
+                  margin="normal"
+                  name="password"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  type="password"
+                  value={values.password}
+                  variant="outlined"
+                />
+                <TextField
+                  error={Boolean(touched.address && errors.address)}
+                  fullWidth
+                  helperText={touched.address && errors.address}
+                  label="Address"
+                  margin="normal"
+                  name="address"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  type="address"
+                  value={values.address}
+                  variant="outlined"
+                />
+                <Box
+                  alignItems="center"
+                  display="flex"
+                  ml={-1}
+                >
+                  <Checkbox
+                    checked={values.isAdmin}
+                    name="isAdmin"
+                    onChange={handleChange}
+                  />
+                  <Typography
+                    color="textSecondary"
+                    variant="body1"
+                  >
+                    I am a PCS Administrator.
+                  </Typography>
+                </Box>
+                {Boolean(touched.isAdmin && errors.isAdmin) && (
+                  <FormHelperText error>
+                    {errors.isAdmin}
+                  </FormHelperText>
+                )}
+                <Box my={2}>
+                  <Button
+                    color="primary"
+                    fullWidth
+                    size="large"
+                    type="submit"
+                    variant="contained"
+                  >
+                    Sign up now
+                  </Button>
+                </Box>
+                <Typography
+                  color="textSecondary"
+                  variant="body1"
+                >
+                  Have an account?
+                  {' '}
+                  <Link
+                    component={RouterLink}
+                    to="/login"
+                    variant="h6"
+                  >
+                    Sign in
+                  </Link>
+                </Typography>
+              </form>
+            )}
+          </Formik>
         </Container>
-    );
-}
+      </Box>
+    </Page>
+  );
+};
 
 export default RegisterPage;
