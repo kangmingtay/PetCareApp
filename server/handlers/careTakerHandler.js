@@ -137,7 +137,7 @@ async function handlerUpsertLeavesAvailability(req, res) {
     }
 }
 
-async function handleGetCategories(req, res) {
+async function handleGetPreferences(req, res) {
     try {
         const { username } = req.params;
         const query = `SELECT category FROM prefers WHERE cname = '${username}';`;
@@ -155,7 +155,7 @@ async function handleGetCategories(req, res) {
     }
 }
 
-async function handleDeleteCategory(req, res) {
+async function handleDeletePreferences(req, res) {
     try {
         const { username } = req.params;
         const { category} = req.body;
@@ -175,7 +175,7 @@ async function handleDeleteCategory(req, res) {
     }
 }
 
-async function handleUpdateCategory(req, res) {
+async function handleUpdatePreferences(req, res) {
     try {
         const { username } = req.params;
         const { category_from, category_to} = req.body;
@@ -195,7 +195,7 @@ async function handleUpdateCategory(req, res) {
     }
 }
 
-async function handleAddCategory(req, res) {
+async function handleCreatePreferences(req, res) {
     try {
         const { username } = req.params;
         const { category} = req.body;
@@ -221,10 +221,10 @@ module.exports = {
     handleGetExpectedSalary,
     handleGetCareTakerCalendar,
     handlerUpsertLeavesAvailability,
-    handleUpdateCategory,
-    handleAddCategory,
-    handleDeleteCategory,
-    handleGetCategories,
+    handleUpdatePreferences,
+    handleCreatePreferences,
+    handleDeletePreferences,
+    handleGetPreferences,
     handleGetLeaves,
     handleGetAvailability
 }

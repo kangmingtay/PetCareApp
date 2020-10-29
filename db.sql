@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS Pet_Owners (
 CREATE TABLE IF NOT EXISTS Care_Takers (
     cname VARCHAR(256),
     rating NUMERIC CHECK (rating <= 5 AND rating > 0),
-    FOREIGN KEY (cname) REFERENCES Users(username) ON DELETE CASCADE,
+    FOREIGN KEY (cname) REFERENCES Accounts(username) ON DELETE CASCADE,
     PRIMARY KEY (cname)
 );
 
