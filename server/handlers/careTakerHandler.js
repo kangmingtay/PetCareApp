@@ -88,7 +88,7 @@ async function handleGetAvailability(req, res) {
         const { username } = req.params;
         const { year } = req.body;
         const query = `
-        SELECT to_char(date, 'DD-MM-YYYY') FROM availability where to_char(date, 'YYYY') = '${year}' AND cname = '${username}'
+        SELECT to_char(date, 'DD-MM-YYYY') FROM availability where cname = '${username}'
         `;
         const availability = await pool.query(query);
         const resp = { 
