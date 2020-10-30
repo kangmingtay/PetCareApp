@@ -42,14 +42,14 @@ async function handleGetExpectedSalary(req, res) {
 /**
  * GET: http://localhost:8888/api/caretakers/calendar/shannon?date=02-10-2021
  * @param {*} req.query.date = 'DD-MM-YYYY' 
- * @Returns list of {pname: , pet_name: }
+ * @Returns list of {pname: , pet_name: , care_req:}
  */
 async function handleGetCareTakerCalendar(req, res) {
     try {
         const { username } = req.params;
         const date = req.query.date;
-        const query = `SELECT pname, pet_name
-        FROM Schedule NATURAL JOIN Bids
+        const query = `SELECT pname, pet_name, category, care_req
+        FROM pets NATURAL JOIN Schedule NATURAL JOIN Bids
         WHERE cname = '${username}' AND date <= end_date AND date >= start_date AND date = TO_DATE('${date}','DD-MM-YYYY') AND is_selected
         `;
         const CareTakerCalendar = await pool.query(query);
@@ -293,6 +293,101 @@ async function handleCreatePreferences(req, res) {
     }
 }
 
+/**
+ * GET: http://localhost:8888/api/caretakers/rating/zw
+ * @Returns {rating: }
+ */
+async function handleGetRating(req, res) {
+    try {
+        const { username } = req.params;
+        const query = `
+        SELECT rating FROM care_takers where cname = '${username}';
+        `;
+        const rating = await pool.query(query);
+        const resp = { 
+            success: true,
+            results: rating.rows 
+        };
+        return res.status(200).json(resp);
+    } catch (err) {
+        return res.status(400).send({
+            success: false,
+            message: err.message,
+        })
+    }
+}
+
+
+/**
+ * POST: http://localhost:8888/api/caretakers/selectbid/shannon?pname=km&pet_name=km_dog&start_date=03-12-2021&end_date=30-12-2021
+ * 
+ * @param req.query.pname = pet owner name
+ * @param req.query.pet_name = pet name
+ * @param req.query.start_date = start date 'DD-MM-YYYY'
+ * @param req.query.end_date = end date 'DD-MM-YYYY'
+ */
+async function handleSelectBid(req, res) {
+    try {
+        const { username } = req.params;
+        const { pname, pet_name, start_date, end_date} = req.query;
+        const query = `
+        UPDATE bids SET is_selected=true WHERE pname='${pname}'
+            AND pet_name = '${pet_name}' AND start_date = TO_DATE('${start_date}', 'DD-MM-YYYY') AND end_date = TO_DATE('${end_date}', 'DD-MM-YYYY')
+            AND cname = '${username}' AND pname = '${pname}'
+            
+            -- check if caretaker is overbooked on those days
+            AND (
+                ('${username}' IN (SELECT cname FROM full_timer) AND 5 > ALL(
+                    SELECT pet_count FROM Schedule WHERE cname = '${username}' AND date <= end_date AND date >= start_date
+                    )
+                )
+                OR
+                ('${username}' IN (SELECT cname FROM part_timer) AND (SELECT rating FROM care_takers WHERE cname = '${username}') <= 2 AND 2 > ALL(
+                    SELECT pet_count FROM Schedule WHERE cname = '${username}' AND date <= end_date AND date >= start_date
+                    )
+                )
+                OR
+                ('${username}' IN (SELECT cname FROM part_timer) AND CEILING((SELECT rating FROM care_takers WHERE cname = '${username}')) > ALL(
+                    SELECT pet_count FROM Schedule WHERE cname = '${username}' AND date <= end_date AND date >= start_date
+                    )
+                )
+            )
+            
+            -- check if caretaker is free on those days
+            AND (
+                ('${username}' IN (SELECT cname FROM full_timer) AND 0 = (
+                    SELECT COUNT(*) FROM leaves WHERE date <= end_date AND date >= start_date AND '${username}'= cname
+                    )
+                )
+                OR
+                ('${username}' IN (SELECT cname FROM part_timer) AND (end_date - start_date) = (
+                    SELECT COUNT(*) FROM availability WHERE date <= end_date AND date >= start_date AND '${username}'= cname
+                    )
+                )
+            )
+
+            --check if caretaker can take care of the pet
+            AND (
+                (SELECT category FROM pets WHERE pname = '${pname}' AND pet_name = '${pet_name}') 
+                IN 
+                (SELECT category FROM prefers WHERE cname = '${username}')
+            )
+        `;
+        await pool.query(query);
+        const resp = {
+            success: true,
+            message: `Selected bid successfully`,
+        };
+        return res.status(200).json(resp);
+    } catch (err) {
+        return res.status(400).send({
+            success: false,
+            message: err.message,
+        })
+    }
+}
+
+
 
 module.exports = {
     handleGetExpectedSalary,
@@ -304,5 +399,7 @@ module.exports = {
     handleGetPreferences,
     handleGetLeaves,
     handleGetAvailability,
-    handlerDeleteLeavesAvailability
+    handlerDeleteLeavesAvailability,
+    handleGetRating,
+    handleSelectBid
 }
