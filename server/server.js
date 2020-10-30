@@ -8,6 +8,7 @@ const port = process.env.PORT || 8888;
 var loginRouter = require('./routes/login.js');
 var userRouter = require('./routes/user.js');
 var careTakerRouter = require('./routes/careTaker.js');
+var catalogueRouter = require('./routes/catalogueViewer.js');
 
 // configure middleware
 app.use(express.static('./public'));
@@ -19,6 +20,7 @@ app.use(cors());
 app.use('/api/login', loginRouter);
 app.use('/api/users', userRouter);
 app.use('/api/careTaker', careTakerRouter);
+app.use('/api/catalogueViewer', catalogueRouter);
 
 // console.log("hello world");
 
