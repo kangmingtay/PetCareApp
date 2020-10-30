@@ -7,7 +7,8 @@ const updatePreferences = require('../handlers/careTakerHandler').handleUpdatePr
 const createPreferences = require('../handlers/careTakerHandler').handleCreatePreferences;
 const deletePreferences = require('../handlers/careTakerHandler').handleDeletePreferences;
 const getPreferences = require('../handlers/careTakerHandler').handleGetPreferences;
-const UpsertLeavesAvailability = require('../handlers/careTakerHandler').handlerUpsertLeavesAvailability;
+const insertLeavesAvailability = require('../handlers/careTakerHandler').handlerInsertLeavesAvailability;
+const deleteLeavesAvailability = require('../handlers/careTakerHandler').handlerDeleteLeavesAvailability;
 const getLeaves = require('../handlers/careTakerHandler').handleGetLeaves;
 const getAvailability = require('../handlers/careTakerHandler').handleGetAvailability
 
@@ -17,8 +18,9 @@ router.get('/prefers/:username', (req, res) => getPreferences(req,res));
 router.delete('/prefers/:username', (req, res) => deletePreferences(req,res));
 router.post('/prefers/:username', (req, res) => createPreferences(req,res));
 router.put('/prefers/:username', (req, res) => updatePreferences(req,res));
-router.post('/requestDays/:username', (req, res) => UpsertLeavesAvailability(req,res));
+router.post('/requestDays/:username', (req, res) => insertLeavesAvailability(req,res));
 router.get('/leaves/:username', (req, res) => getLeaves(req,res));
 router.get('/availability/:username', (req, res) => getAvailability(req,res));
+router.delete('/requestDays/:username', (req, res) => deleteLeavesAvailability(req,res));
 
 module.exports = router;
