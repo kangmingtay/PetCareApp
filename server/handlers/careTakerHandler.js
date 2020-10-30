@@ -120,7 +120,7 @@ async function handleGetAvailability(req, res) {
 
 
 /**
- * Either update leaves or availability of a caretaker depending on full_timer or part_timer status
+ * Either inserts leaves or availability of a caretaker depending on full_timer or part_timer status
  *
  * POST: http://localhost:8888/api/caretakers/requestDays/zw?dates={01-01-2023, 06-06-2023, 12-31-2023}
  * @param {*} req.query.dates = '{DD-MM-YYYY, DD-MM-YYY, DD-MM-YYYY....}' 
@@ -154,6 +154,46 @@ async function handlerInsertLeavesAvailability(req, res) {
     }
 }
 
+/**
+ * Either deletes leaves or availability of a caretaker depending on full_timer or part_timer status
+ *
+ * DELETE: http://localhost:8888/api/caretakers/requestDays/zw?dates={01-01-2023, 06-06-2023, 12-31-2023}
+ * @param {*} req.query.dates = '{DD-MM-YYYY, DD-MM-YYY, DD-MM-YYYY....}' 
+ */
+async function handlerDeleteLeavesAvailability(req, res) {
+    //disabling selection of dates before current year should be done in frontend.
+    try {
+        const { username } = req.params;
+        // const { dates } = req.body;
+        const dates = req.query.dates;
+        const query = `
+        DELETE FROM leaves
+            WHERE cname = '${username}' 
+            AND date = ANY('${dates}'::date[])
+            AND '${username}' IN (SELECT cname FROM full_timer)
+            AND date > CURRENT_DATE;
+        
+        DELETE FROM availability
+            WHERE cname = '${username}' 
+            AND date = ANY('${dates}'::date[])
+            AND date NOT IN (SELECT date FROM schedule WHERE cname = '${username}')
+            AND '${username}' IN (SELECT cname FROM part_timer)
+            AND date > CURRENT_DATE;
+        `;
+        await pool.query(query);
+        const resp = { 
+            success: true,
+            message: "successfuly deleted dates",
+        };
+        return res.status(200).json(resp);
+    } catch (err) {
+        return res.status(400).send({
+            success: false,
+            message: err.message,
+        })
+    }
+}
+
 
 /**
  * GET: http://localhost:8888/api/caretakers/prefers/zw
@@ -177,7 +217,6 @@ async function handleGetPreferences(req, res) {
     }
 }
 
-//>_________________________________
 /**
  * DELETE: http://localhost:8888/api/caretakers/prefers/zw?category=dog
  * @param {*} req.query.category = 'pet_category' 
@@ -265,5 +304,6 @@ module.exports = {
     handleDeletePreferences,
     handleGetPreferences,
     handleGetLeaves,
-    handleGetAvailability
+    handleGetAvailability,
+    handlerDeleteLeavesAvailability
 }
