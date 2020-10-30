@@ -6,15 +6,6 @@ INSERT INTO Accounts VALUES ('shannon', '123', 'z@w.com','xxx',TO_DATE('01-01-20
 INSERT INTO Accounts VALUES ('rusdi', '123', 'z@w.com','xxx',TO_DATE('01-01-2020', 'DD-MM-YYYY'),'false');
 INSERT INTO Accounts VALUES ('zayne', '123', 'z@w.com','xxx',TO_DATE('01-01-2020', 'DD-MM-YYYY'),'false');
 
-
---Users:
-
-INSERT INTO users VALUES ('zw');
-INSERT INTO users VALUES ('km');
-INSERT INTO users VALUES ('rusdi');
-INSERT INTO users VALUES ('zayne');
-INSERT INTO users VALUES ('shannon');
-
 --Petowners:
 
 INSERT INTO Pet_Owners VALUES ('zw');
