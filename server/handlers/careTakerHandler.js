@@ -294,8 +294,6 @@ async function handleCreatePreferences(req, res) {
 }
 
 
-
-
 module.exports = {
     handleGetExpectedSalary,
     handleGetCareTakerCalendar,
