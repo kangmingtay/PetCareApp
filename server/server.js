@@ -19,13 +19,15 @@ app.use(cors());
 // initialise routes
 app.use('/api/login', loginRouter);
 app.use('/api/users', userRouter);
-app.use('/api/careTaker', careTakerRouter);
+app.use('/api/caretakers', careTakerRouter);
 app.use('/api/catalogueViewer', catalogueRouter);
 
-// console.log("hello world");
+app.get('/api', (req, res) => {
+  res.send('Hello World! Welcome to Furry Fantasy API Server!');
+})
 
 app.get('/', (req, res) => {
-  res.send('Hello World! Welcome to Furry Fantasy API Server!');
+  res.send('Connected!');
 })
 
 
