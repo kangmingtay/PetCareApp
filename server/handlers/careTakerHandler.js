@@ -42,7 +42,7 @@ async function handleGetExpectedSalary(req, res) {
 /**
  * GET: http://localhost:8888/api/caretakers/calendar/shannon?date=02-10-2021
  * @param {*} req.query.date = 'DD-MM-YYYY' 
- * @Returns list of {pname: , pet_name: , care_req:}
+ * @Returns list of {pname: , pet_name: , category:, care_req:}
  */
 async function handleGetCareTakerCalendar(req, res) {
     try {
