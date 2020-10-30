@@ -293,32 +293,7 @@ async function handleCreatePreferences(req, res) {
     }
 }
 
-/**
- * 
- */
-async function handleSelectBid(req, res) {
-    try {
-        const { username } = req.params;
-        const { pname, pet_name, start_date, end_date} = req.query;
-        /**
-         * check every day in between start_date and end_date is
-         * full_timer: not in leaves
-         * part_timer: not in 
-         */
-        const query = `INSERT INTO prefers(cname,category) VALUES ('${username}', '${category}');`;
-        await pool.query(query);
-        const resp = {
-            success: true,
-            message: `Selected bid successfully`,
-        };
-        return res.status(200).json(resp);
-    } catch (err) {
-        return res.status(400).send({
-            success: false,
-            message: err.message,
-        })
-    }
-}
+
 
 
 module.exports = {

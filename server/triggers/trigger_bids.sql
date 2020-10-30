@@ -14,6 +14,6 @@ $$;
 
 DROP TRIGGER IF EXISTS trigger_update_care_taker_rating ON bids;
 CREATE TRIGGER trigger_update_care_taker_rating
-AFTER UPDATE OF is_selected ON bids
+AFTER UPDATE OF is_selected,rating ON bids
 FOR EACH ROW
 EXECUTE PROCEDURE update_care_taker_rating();
