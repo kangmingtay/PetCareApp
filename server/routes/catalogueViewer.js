@@ -9,6 +9,6 @@ var router = express.Router();
 
 const getListOfValidCareTakers = require('../handlers/catalogueHandler').handleGetListOfCTs;
 
-router.post('/', (req, res) => getListOfValidCareTakers(req, res));
+router.get('/', (req, res) => getListOfValidCareTakers(req, res));
 
 module.exports = router;

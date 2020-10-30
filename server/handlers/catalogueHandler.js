@@ -1,14 +1,16 @@
 const pool = require("../db");
 
 /**
- * @Returns (Expected salary for that month, Revenue generated for that month) 
+ * @Query startDate, endDate (YYYY/MM/DD) and petCategory
+ * @Returns List of caretakers whose schedule/availability fits that range
  */
 async function handleGetListOfCTs(req, res) {
   try {
-    console.log(req.params, req.body);
+    console.log(req.query);
 
-    const { startDate, endDate, petCategory} = req.body;
-    const queryFT = `
+    const { startDate, endDate, petCategory} = req.query;
+
+    const queryOverall = `
     SELECT cname
     FROM (
       SELECT DISTINCT F.cname, L.date
@@ -24,8 +26,24 @@ async function handleGetListOfCTs(req, res) {
       WHERE S.pet_count = 5
     ) AS FT
     GROUP BY FT.cname
-    HAVING DATE_PART('day', '${endDate}'::timestamp - '${startDate}'::timestamp)+1 = COUNT(*);`;
-    const allCareTakers = await pool.query(queryFT);
+    HAVING DATE_PART('day', '${endDate}'::timestamp - '${startDate}'::timestamp)+1 = COUNT(*)
+    UNION
+    SELECT cname
+    FROM (
+      SELECT DISTINCT A.cname, A.date
+      FROM availability A, prefers P
+      WHERE A.date >= '${startDate}' AND A.date <= '${endDate}'
+      AND P.cname = A.cname AND P.category = '${petCategory}'
+      EXCEPT
+      SELECT DISTINCT S.cname, S.date
+      FROM schedule S
+      WHERE S.pet_count = 2
+    ) AS PT
+    GROUP BY PT.cname
+    HAVING DATE_PART('day', '${endDate}'::timestamp - '${startDate}'::timestamp)+1 = COUNT(*);
+    `;
+
+    const allCareTakers = await pool.query(queryOverall);
 
     const resp = { 
       success: true,
