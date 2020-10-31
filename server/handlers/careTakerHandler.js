@@ -360,7 +360,7 @@ async function handleSelectBid(req, res) {
                     )
                 )
                 OR
-                ('${username}' IN (SELECT cname FROM part_timer) AND (end_date - start_date) = (
+                ('${username}' IN (SELECT cname FROM part_timer) AND (end_date - start_date + 1) = (
                     SELECT COUNT(*) FROM availability WHERE date <= end_date AND date >= start_date AND '${username}'= cname
                     )
                 )
