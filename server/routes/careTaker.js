@@ -10,7 +10,9 @@ const getPreferences = require('../handlers/careTakerHandler').handleGetPreferen
 const insertLeavesAvailability = require('../handlers/careTakerHandler').handlerInsertLeavesAvailability;
 const deleteLeavesAvailability = require('../handlers/careTakerHandler').handlerDeleteLeavesAvailability;
 const getLeaves = require('../handlers/careTakerHandler').handleGetLeaves;
-const getAvailability = require('../handlers/careTakerHandler').handleGetAvailability
+const getAvailability = require('../handlers/careTakerHandler').handleGetAvailability;
+const getRating = require('../handlers/careTakerHandler').handleGetRating;
+const selectBid = require('../handlers/careTakerHandler').handleSelectBid;
 
 router.get('/expectedSalary/:username', (req, res) => getExpectedSalary(req, res));
 router.get('/calendar/:username', (req, res) => getCareTakerCalender(req, res));
@@ -22,5 +24,7 @@ router.post('/requestDays/:username', (req, res) => insertLeavesAvailability(req
 router.get('/leaves/:username', (req, res) => getLeaves(req,res));
 router.get('/availability/:username', (req, res) => getAvailability(req,res));
 router.delete('/requestDays/:username', (req, res) => deleteLeavesAvailability(req,res));
+router.get('/rating/:username', (req, res) => getRating(req,res));
+router.post('/selectbid/:username', (req, res) => selectBid(req,res));
 
 module.exports = router;

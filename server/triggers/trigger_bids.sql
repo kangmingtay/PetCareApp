@@ -1,6 +1,3 @@
---trigger removes all entries from schedule before the current year. 
---Because schedule for that month is required for salary calculations
---Schedule for the year is required to get leaves
 CREATE OR REPLACE FUNCTION update_care_taker_rating() RETURNS trigger
     LANGUAGE plpgsql
     AS $$

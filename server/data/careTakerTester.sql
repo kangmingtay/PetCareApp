@@ -48,6 +48,9 @@ INSERT INTO prefers VALUES ('zw','cockroach');
 INSERT INTO prefers VALUES ('zw','dog');
 INSERT INTO prefers VALUES ('rusdi','cat');
 INSERT INTO prefers VALUES ('km','dog');
+INSERT INTO prefers VALUES ('shannon','dog');
+INSERT INTO prefers VALUES ('shannon','cockroach');
+INSERT INTO prefers VALUES ('shannon','cat');
 
 --pets
 INSERT INTO pets VALUES ('km_dog','dog','km','feed chocoloate');
@@ -85,14 +88,4 @@ insert into Schedule select 'zw', generate_series(TO_DATE('4/10/2021', 'DD/MM/YY
 insert into Schedule select 'zw', generate_series(TO_DATE('29/10/2021', 'DD/MM/YYYY'), TO_DATE('4/11/2021', 'DD/MM/YYYY'),'1 day'::interval), 1;
 
 insert into Schedule select 'shannon', generate_series(TO_DATE('1/10/2021', 'DD/MM/YYYY'), TO_DATE('30/10/2021', 'DD/MM/YYYY'),'1 day'::interval), 3;
-
-
-
-
-
-
-
-
-
-
 
