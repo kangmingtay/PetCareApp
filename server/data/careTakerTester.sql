@@ -6,15 +6,6 @@ INSERT INTO Accounts VALUES ('shannon', '123', 'z@w.com','xxx',TO_DATE('01-01-20
 INSERT INTO Accounts VALUES ('rusdi', '123', 'z@w.com','xxx',TO_DATE('01-01-2020', 'DD-MM-YYYY'),'false');
 INSERT INTO Accounts VALUES ('zayne', '123', 'z@w.com','xxx',TO_DATE('01-01-2020', 'DD-MM-YYYY'),'false');
 
-
---Users:
-
-INSERT INTO users VALUES ('zw');
-INSERT INTO users VALUES ('km');
-INSERT INTO users VALUES ('rusdi');
-INSERT INTO users VALUES ('zayne');
-INSERT INTO users VALUES ('shannon');
-
 --Petowners:
 
 INSERT INTO Pet_Owners VALUES ('zw');
@@ -53,6 +44,9 @@ INSERT INTO prefers VALUES ('zw','cockroach');
 INSERT INTO prefers VALUES ('zw','dog');
 INSERT INTO prefers VALUES ('rusdi','cat');
 INSERT INTO prefers VALUES ('km','dog');
+INSERT INTO prefers VALUES ('shannon','dog');
+INSERT INTO prefers VALUES ('shannon','cockroach');
+INSERT INTO prefers VALUES ('shannon','cat');
 
 --pets
 INSERT INTO pets VALUES ('km_dog','dog','km','feed chocoloate');
@@ -90,14 +84,4 @@ insert into Schedule select 'zw', generate_series(TO_DATE('4/10/2021', 'DD/MM/YY
 insert into Schedule select 'zw', generate_series(TO_DATE('29/10/2021', 'DD/MM/YYYY'), TO_DATE('4/11/2021', 'DD/MM/YYYY'),'1 day'::interval), 1;
 
 insert into Schedule select 'shannon', generate_series(TO_DATE('1/10/2021', 'DD/MM/YYYY'), TO_DATE('30/10/2021', 'DD/MM/YYYY'),'1 day'::interval), 3;
-
-
-
-
-
-
-
-
-
-
 

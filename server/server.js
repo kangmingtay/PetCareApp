@@ -9,6 +9,7 @@ var loginRouter = require('./routes/login.js');
 var userRouter = require('./routes/user.js');
 var careTakerRouter = require('./routes/careTaker.js');
 var bidsRouter = require('./routes/bids.js');
+var catalogueRouter = require('./routes/catalogueViewer.js');
 
 // configure middleware
 app.use(express.static('./public'));
@@ -19,13 +20,16 @@ app.use(cors());
 // initialise routes
 app.use('/api/login', loginRouter);
 app.use('/api/users', userRouter);
-app.use('/api/careTaker', careTakerRouter);
 app.use('/api/bids', bidsRouter);
+app.use('/api/caretakers', careTakerRouter);
+app.use('/api/catalogue', catalogueRouter);
 
-// console.log("hello world");
+app.get('/api', (req, res) => {
+  res.send('Hello World! Welcome to Furry Fantasy API Server!');
+})
 
 app.get('/', (req, res) => {
-  res.send('Hello World! Welcome to Furry Fantasy API Server!');
+  res.send('Connected!');
 })
 
 
