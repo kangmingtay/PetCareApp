@@ -33,7 +33,6 @@ const handleGetAllReviews = async (req, res) => {
 const handleGetOneReview = async (req, res) => {
     try{
         const { username } = req.params;
-        console.log(req.body);
         const q = `SELECT end_date, review FROM bids WHERE is_selected IS TRUE AND cname = '${username}' ORDER BY end_date DESC`;
         const oneReview = await pool.query(q);
         const resp = { results: oneReview.rows };
@@ -47,7 +46,7 @@ const handleGetOneReview = async (req, res) => {
     }
 }
 
-const handleGetPastOrders = async (req, res) => {
+const handleGetPetOwnerBids = async (req, res) => {
     try{
         const { username } = req.params;
         const q = `SELECT * FROM bids WHERE pname = '${username}' ORDER BY end_date DESC`; 
@@ -63,7 +62,7 @@ const handleGetPastOrders = async (req, res) => {
     }
 }
 
-const handleGetPastJobs = async (req, res) => {
+const handleGetCaretakerBids = async (req, res) => {
     try{
         const { username } = req.params;
         const q = `SELECT * FROM bids WHERE is_selected IS TRUE AND cname = '${username}' ORDER BY end_date DESC`; 
@@ -82,6 +81,6 @@ module.exports = {
     handleGetAllBids,
     handleGetAllReviews,
     handleGetOneReview,
-    handleGetPastOrders,
-    handleGetPastJobs
+    handleGetPetOwnerBids,
+    handleGetCaretakerBids
 }
