@@ -10,6 +10,11 @@ INSERT INTO Accounts VALUES ('cft3', '123', 'a@b.com', 'xxx', TO_DATE('01-01-202
 INSERT INTO Accounts VALUES ('cpt1', '123', 'a@b.com', 'xxx', TO_DATE('01-01-2020', 'DD-MM-YYYY'), 'false');
 INSERT INTO Accounts VALUES ('cpt2', '123', 'a@b.com', 'xxx', TO_DATE('01-01-2020', 'DD-MM-YYYY'), 'false');
 INSERT INTO Accounts VALUES ('cpt3', '123', 'a@b.com', 'xxx', TO_DATE('01-01-2020', 'DD-MM-YYYY'), 'false');
+INSERT INTO Accounts VALUES ('cpt11', '123', 'a@b.com', 'xxx', TO_DATE('01-01-2020', 'DD-MM-YYYY'), 'false');
+INSERT INTO Accounts VALUES ('cpt12', '123', 'a@b.com', 'xxx', TO_DATE('01-01-2020', 'DD-MM-YYYY'), 'false');
+INSERT INTO Accounts VALUES ('cpt13', '123', 'a@b.com', 'xxx', TO_DATE('01-01-2020', 'DD-MM-YYYY'), 'false');
+INSERT INTO Accounts VALUES ('cpt14', '123', 'a@b.com', 'xxx', TO_DATE('01-01-2020', 'DD-MM-YYYY'), 'false');
+INSERT INTO Accounts VALUES ('cpt15', '123', 'a@b.com', 'xxx', TO_DATE('01-01-2020', 'DD-MM-YYYY'), 'false');
 
 --Petowners:
 INSERT INTO Pet_Owners VALUES ('p1');
@@ -21,6 +26,11 @@ INSERT INTO Care_Takers VALUES ('cft3', NULL);
 INSERT INTO Care_Takers VALUES ('cpt1', NULL);
 INSERT INTO Care_Takers VALUES ('cpt2', NULL);
 INSERT INTO Care_Takers VALUES ('cpt3', NULL);
+INSERT INTO Care_Takers VALUES ('cpt11', 1);
+INSERT INTO Care_Takers VALUES ('cpt12', 2);
+INSERT INTO Care_Takers VALUES ('cpt13', 2.5);
+INSERT INTO Care_Takers VALUES ('cpt14', 4);
+INSERT INTO Care_Takers VALUES ('cpt15', 5);
 
 --Full_timer:
 INSERT INTO Full_timer VALUES ('cft1');
@@ -31,6 +41,11 @@ INSERT INTO Full_timer VALUES ('cft3');
 INSERT INTO Part_timer VALUES ('cpt1');
 INSERT INTO Part_timer VALUES ('cpt2');
 INSERT INTO Part_timer VALUES ('cpt3');
+INSERT INTO Part_timer VALUES ('cpt11');
+INSERT INTO Part_timer VALUES ('cpt12');
+INSERT INTO Part_timer VALUES ('cpt13');
+INSERT INTO Part_timer VALUES ('cpt14');
+INSERT INTO Part_timer VALUES ('cpt15');
 
 --pet_categories
 INSERT INTO pet_categories VALUES ('cat', 50);
@@ -44,16 +59,15 @@ INSERT INTO prefers VALUES ('cpt1','cat');
 INSERT INTO prefers VALUES ('cpt2','cat');
 INSERT INTO prefers VALUES ('cpt3','dog');
 
+INSERT INTO prefers VALUES ('cpt11','cat');
+INSERT INTO prefers VALUES ('cpt12','cat');
+INSERT INTO prefers VALUES ('cpt13','cat');
+INSERT INTO prefers VALUES ('cpt14','cat');
+INSERT INTO prefers VALUES ('cpt15','cat');
+
 --pets
 INSERT INTO pets VALUES ('nyaako','cat','p1','daily cuddles');
 INSERT INTO pets VALUES ('inu','dog','p1','play catch');
-
---bids
-INSERT INTO bids (pname, pet_name, cname, start_date, end_date, rating, is_selected, payment_amt, transaction_type, ranking, review) 
-VALUES ('p1', 'nyaako', 'cft1', TO_DATE('1/10/2021', 'DD/MM/YYYY'), TO_DATE('2/10/2021', 'DD/MM/YYYY'), NULL, false, 50, 'card', 1, NULL);
-
-INSERT INTO bids (pname, pet_name, cname, start_date, end_date, rating, is_selected, payment_amt, transaction_type, ranking, review) 
-VALUES ('p1', 'nyaako', 'cpt1', TO_DATE('1/10/2021', 'DD/MM/YYYY'), TO_DATE('2/10/2021', 'DD/MM/YYYY'), NULL, false, 50, 'card', 2, NULL);
 
 --schedule
 --Full timers' schedule
@@ -99,6 +113,17 @@ SELECT 'cpt2', generate_series(TO_DATE('1/10/2021', 'DD/MM/YYYY'), TO_DATE('6/10
 INSERT INTO availability
 SELECT 'cpt3', generate_series(TO_DATE('1/10/2021', 'DD/MM/YYYY'), TO_DATE('5/10/2021', 'DD/MM/YYYY'),'1 day'::interval);
 
+INSERT INTO availability
+SELECT 'cpt11', generate_series(TO_DATE('1/11/2021', 'DD/MM/YYYY'), TO_DATE('5/11/2021', 'DD/MM/YYYY'),'1 day'::interval);
+INSERT INTO availability
+SELECT 'cpt12', generate_series(TO_DATE('1/11/2021', 'DD/MM/YYYY'), TO_DATE('5/11/2021', 'DD/MM/YYYY'),'1 day'::interval);
+INSERT INTO availability
+SELECT 'cpt13', generate_series(TO_DATE('1/11/2021', 'DD/MM/YYYY'), TO_DATE('5/11/2021', 'DD/MM/YYYY'),'1 day'::interval);
+INSERT INTO availability
+SELECT 'cpt14', generate_series(TO_DATE('1/11/2021', 'DD/MM/YYYY'), TO_DATE('5/11/2021', 'DD/MM/YYYY'),'1 day'::interval);
+INSERT INTO availability
+SELECT 'cpt15', generate_series(TO_DATE('1/11/2021', 'DD/MM/YYYY'), TO_DATE('5/11/2021', 'DD/MM/YYYY'),'1 day'::interval);
+
 --Part timers' schedule
 INSERT INTO Schedule
 SELECT 'cpt1', generate_series(TO_DATE('1/10/2021', 'DD/MM/YYYY'), TO_DATE('3/10/2021', 'DD/MM/YYYY'),'1 day'::interval), 1;
@@ -109,11 +134,58 @@ INSERT INTO Schedule
 SELECT 'cpt2', generate_series(TO_DATE('1/10/2021', 'DD/MM/YYYY'), TO_DATE('6/10/2021', 'DD/MM/YYYY'),'2 day'::interval), 1;
 
 INSERT INTO Schedule
-SELECT 'cpt3', generate_series(TO_DATE('1/10/2021', 'DD/MM/YYYY'), TO_DATE('3/10/2021', 'DD/MM/YYYY'),'1 day'::interval), 2;
+SELECT 'cpt3', generate_series(TO_DATE('1/10/2021', 'DD/MM/YYYY'), TO_DATE('3/10/2021', 'DD/MM/YYYY'),'1 day'::interval), 1;
 INSERT INTO Schedule
-SELECT 'cpt3', generate_series(TO_DATE('4/10/2021', 'DD/MM/YYYY'), TO_DATE('5/10/2021', 'DD/MM/YYYY'),'1 day'::interval), 1;
+SELECT 'cpt3', generate_series(TO_DATE('4/10/2021', 'DD/MM/YYYY'), TO_DATE('5/10/2021', 'DD/MM/YYYY'),'1 day'::interval), 2;
 
---For FT caretakers into catalogue
+--testing rating for part timers
+INSERT INTO Schedule
+SELECT 'cpt11', generate_series(TO_DATE('1/11/2021', 'DD/MM/YYYY'), TO_DATE('1/11/2021', 'DD/MM/YYYY'),'1 day'::interval), 1;
+INSERT INTO Schedule
+SELECT 'cpt11', generate_series(TO_DATE('2/11/2021', 'DD/MM/YYYY'), TO_DATE('5/11/2021', 'DD/MM/YYYY'),'1 day'::interval), 2;
+
+INSERT INTO Schedule
+SELECT 'cpt12', generate_series(TO_DATE('1/11/2021', 'DD/MM/YYYY'), TO_DATE('1/11/2021', 'DD/MM/YYYY'),'1 day'::interval), 1;
+INSERT INTO Schedule
+SELECT 'cpt12', generate_series(TO_DATE('2/11/2021', 'DD/MM/YYYY'), TO_DATE('5/11/2021', 'DD/MM/YYYY'),'1 day'::interval), 2;
+
+INSERT INTO Schedule
+SELECT 'cpt13', generate_series(TO_DATE('1/11/2021', 'DD/MM/YYYY'), TO_DATE('1/11/2021', 'DD/MM/YYYY'),'1 day'::interval), 1;
+INSERT INTO Schedule
+SELECT 'cpt13', generate_series(TO_DATE('2/11/2021', 'DD/MM/YYYY'), TO_DATE('2/11/2021', 'DD/MM/YYYY'),'1 day'::interval), 2;
+INSERT INTO Schedule
+SELECT 'cpt13', generate_series(TO_DATE('3/11/2021', 'DD/MM/YYYY'), TO_DATE('5/11/2021', 'DD/MM/YYYY'),'1 day'::interval), 3;
+
+INSERT INTO Schedule
+SELECT 'cpt14', generate_series(TO_DATE('1/11/2021', 'DD/MM/YYYY'), TO_DATE('1/11/2021', 'DD/MM/YYYY'),'1 day'::interval), 1;
+INSERT INTO Schedule
+SELECT 'cpt14', generate_series(TO_DATE('2/11/2021', 'DD/MM/YYYY'), TO_DATE('2/11/2021', 'DD/MM/YYYY'),'1 day'::interval), 2;
+INSERT INTO Schedule
+SELECT 'cpt14', generate_series(TO_DATE('3/11/2021', 'DD/MM/YYYY'), TO_DATE('3/11/2021', 'DD/MM/YYYY'),'1 day'::interval), 3;
+INSERT INTO Schedule
+SELECT 'cpt14', generate_series(TO_DATE('4/11/2021', 'DD/MM/YYYY'), TO_DATE('5/11/2021', 'DD/MM/YYYY'),'1 day'::interval), 4;
+
+INSERT INTO Schedule
+SELECT 'cpt15', generate_series(TO_DATE('1/11/2021', 'DD/MM/YYYY'), TO_DATE('1/11/2021', 'DD/MM/YYYY'),'1 day'::interval), 1;
+INSERT INTO Schedule
+SELECT 'cpt15', generate_series(TO_DATE('2/11/2021', 'DD/MM/YYYY'), TO_DATE('2/11/2021', 'DD/MM/YYYY'),'1 day'::interval), 2;
+INSERT INTO Schedule
+SELECT 'cpt15', generate_series(TO_DATE('3/11/2021', 'DD/MM/YYYY'), TO_DATE('3/11/2021', 'DD/MM/YYYY'),'1 day'::interval), 3;
+INSERT INTO Schedule
+SELECT 'cpt15', generate_series(TO_DATE('4/11/2021', 'DD/MM/YYYY'), TO_DATE('4/11/2021', 'DD/MM/YYYY'),'1 day'::interval), 4;
+INSERT INTO Schedule
+SELECT 'cpt15', generate_series(TO_DATE('5/11/2021', 'DD/MM/YYYY'), TO_DATE('5/11/2021', 'DD/MM/YYYY'),'1 day'::interval), 5;
+
+
+--bids
+INSERT INTO bids (pname, pet_name, cname, start_date, end_date, rating, is_selected, payment_amt, transaction_type, review) 
+VALUES ('p1', 'nyaako', 'cft1', TO_DATE('1/10/2021', 'DD/MM/YYYY'), TO_DATE('2/10/2021', 'DD/MM/YYYY'), NULL, false, 50, 'card', NULL);
+
+INSERT INTO bids (pname, pet_name, cname, start_date, end_date, rating, is_selected, payment_amt, transaction_type, review) 
+VALUES ('p1', 'nyaako', 'cpt1', TO_DATE('1/10/2021', 'DD/MM/YYYY'), TO_DATE('2/10/2021', 'DD/MM/YYYY'), NULL, false, 50, 'card', NULL);
+
+
+--For fetching caretakers from catalogue
 SELECT cname
     FROM (
       SELECT DISTINCT F.cname, L.date
