@@ -1,3 +1,7 @@
+--drop schema public cascade;
+--create public schema;
+
+
 --Accounts:
 INSERT INTO Accounts VALUES ('p1', '123', 'a@b.com', 'xxx', TO_DATE('01-01-2020', 'DD-MM-YYYY'), 'false');
 INSERT INTO Accounts VALUES ('cft1', '123', 'a@b.com', 'xxx', TO_DATE('01-01-2020', 'DD-MM-YYYY'), 'false');
@@ -113,30 +117,30 @@ SELECT 'cpt3', generate_series(TO_DATE('4/10/2021', 'DD/MM/YYYY'), TO_DATE('5/10
 SELECT cname
     FROM (
       SELECT DISTINCT F.cname, L.date
-      FROM full_timer F, prefers P, (SELECT generate_series(TO_DATE('${startDate}', 'YYYY/MM/DD'), TO_DATE('${endDate}', 'YYYY/MM/DD'),'1 day'::interval) AS date) AS L
-      WHERE F.cname = P.cname AND P.category = '${petCategory}'
+      FROM full_timer F, prefers P, (SELECT generate_series(TO_DATE('${startDate}', 'DD-MM-YYYY'), TO_DATE('${endDate}', 'DD-MM-YYYY'),'1 day'::interval) AS date) AS L
+      WHERE F.cname = P.cname AND P.category LIKE '${petCategory}' AND P.cname LIKE '${cName}'
       EXCEPT
       SELECT DISTINCT L1.cname, L1.date
       FROM leaves L1
-      WHERE L1.date >= '${startDate}' AND L1.date <= '${endDate}'
+      WHERE L1.date >= TO_DATE('${startDate}', 'DD-MM-YYYY') AND L1.date <= TO_DATE('${endDate}', 'DD-MM-YYYY')
       EXCEPT
       SELECT S.cname, S.date
       FROM schedule S
       WHERE S.pet_count = 5
     ) AS FT
     GROUP BY FT.cname
-    HAVING DATE_PART('day', '${endDate}'::timestamp - '${startDate}'::timestamp)+1 = COUNT(*)
-  
-SELECT cname
+    HAVING TO_DATE('${endDate}', 'DD-MM-YYYY') - TO_DATE('${startDate}', 'DD-MM-YYYY')+1 = COUNT(*)
+    UNION
+    SELECT cname
     FROM (
       SELECT DISTINCT A.cname, A.date
       FROM availability A, prefers P
-      WHERE A.date >= '${startDate}' AND A.date <= '${endDate}'
-      AND P.cname = A.cname AND P.category = '${petCategory}'
+      WHERE A.date >= TO_DATE('${startDate}', 'DD-MM-YYYY') AND A.date <= TO_DATE('${endDate}', 'DD-MM-YYYY')
+      AND P.cname = A.cname AND P.category LIKE '${petCategory}' AND P.cname LIKE '${cName}'
       EXCEPT
       SELECT DISTINCT S.cname, S.date
       FROM schedule S
       WHERE S.pet_count = 2
     ) AS PT
     GROUP BY PT.cname
-    HAVING DATE_PART('day', '${endDate}'::timestamp - '${startDate}'::timestamp)+1 = COUNT(*)
+    HAVING TO_DATE('${endDate}', 'DD-MM-YYYY') - TO_DATE('${startDate}', 'DD-MM-YYYY')+1 = COUNT(*);
