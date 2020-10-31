@@ -6,7 +6,10 @@ INSERT INTO Accounts VALUES ('shannon', '123', 'z@w.com','xxx',TO_DATE('01-01-20
 INSERT INTO Accounts VALUES ('rusdi', '123', 'z@w.com','xxx',TO_DATE('01-01-2020', 'DD-MM-YYYY'),'false');
 INSERT INTO Accounts VALUES ('zayne', '123', 'z@w.com','xxx',TO_DATE('01-01-2020', 'DD-MM-YYYY'),'false');
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> d3c57bb376e14e20ae9801c04d50e1f0a54515b9
 --Petowners:
 
 INSERT INTO Pet_Owners VALUES ('zw');
