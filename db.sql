@@ -91,9 +91,8 @@ CREATE TABLE IF NOT EXISTS Bids (
     is_selected BOOLEAN,
     payment_amt NUMERIC, 
     transaction_type VARCHAR(30),
-    ranking INTEGER CHECK (ranking > 0),
     review VARCHAR(256), 
-    PRIMARY KEY(pname, pet_name, cname, start_date, end_date),
+    PRIMARY KEY(pname, pet_name, start_date, end_date),
     FOREIGN KEY (pname, pet_name) REFERENCES Pets(pname, pet_name) ON DELETE CASCADE,
     FOREIGN KEY (cname) REFERENCES Care_Takers(cname) ON DELETE CASCADE
 );
