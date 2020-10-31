@@ -36,8 +36,8 @@ async function handleGetListOfCTs(req, res) {
       AND P.cname = A.cname AND P.category LIKE '${petCategory}' AND P.cname LIKE '${cName}'
       EXCEPT
       SELECT DISTINCT S.cname, S.date
-      FROM schedule S
-      WHERE S.pet_count = 2
+      FROM schedule S, care_takers C
+      WHERE S.cname = C.cname AND ((C.rating <= 2 AND S.pet_count = 2) OR (C.rating > 2 AND S.pet_count = CEILING(C.rating)))
     ) AS PT
     GROUP BY PT.cname
     HAVING TO_DATE('${endDate}', 'DD-MM-YYYY') - TO_DATE('${startDate}', 'DD-MM-YYYY')+1 = COUNT(*);
