@@ -114,7 +114,7 @@ async function handleGetPetsForDateRange(req, res) {
  * 
  * If success, insert the bid
  * Else, raise exception
- * POST: http://127.0.0.1:8888/api/catalogue/cpt11
+ * POST: http://127.0.0.1:8888/api/catalogue/cpt15
  * @param {cname} req.params
  * @param {startDate, endDate, pName, petName, paymentAmt, transactionType} req.body
  */
@@ -132,7 +132,7 @@ async function handleInsertBid(req, res) {
     const insertBid = await pool.query(query);
     let resp = {};
     if (insertBid.rowCount === 1) {
-      resp['message'] = "Bid inserted!"
+      resp['message'] = "Bid successfully inserted!"
       resp['success'] = true
     }
     return res.status(200).json(resp);

@@ -256,12 +256,13 @@ $$ LANGUAGE plpgsql;
 INSERT INTO bids(pname, pet_name, cname, start_date, end_date, payment_amt, transaction_type)
   VALUES ('${pName}', '${petName}', '${cName}', '${startDate}', '${endDate}', '${paymentAmt}', '${transactionType}');
 
-CREATE OR REPLACE FUNCTION check_valid_amount_before_insert(pnameA VARCHAR(256), pet_nameA VARCHAR(256), cnameA VARCHAR(256), start_dateA DATE, end_dateA DATE, payment_amtA NUMERIC, transaction_typeA VARCHAR(30))
+CREATE OR REPLACE FUNCTION check_valid_amount_before_insert(pnameA VARCHAR(256), pet_nameA VARCHAR(256), cnameA VARCHAR(256), start_dateA VARCHAR(256), end_dateA VARCHAR(256), payment_amtA NUMERIC, transaction_typeA VARCHAR(30))
 RETURNS void AS $$
     DECLARE
       pet_type VARCHAR(256);
       min_rate NUMERIC;
       rating NUMERIC;
+      numDays INT;
     BEGIN
       SELECT P.category INTO pet_type
       FROM pets P
@@ -275,12 +276,15 @@ RETURNS void AS $$
       FROM care_takers C
       WHERE C.cname = cnameA;
 
-      IF min_rate + min_rate * (CEILING(rating)-1)/4 > payment_amtA THEN
-        RAISE EXCEPTION'Payment is insufficient!';
+      SELECT TO_DATE(end_dateA, 'DD-MM-YYYY') - TO_DATE(start_dateA, 'DD-MM-YYYY') + 1
+      INTO numDays;
+
+      IF (min_rate + (min_rate * (CEILING(rating) - 1) / 4) ) * numDays > payment_amtA THEN
+        RAISE EXCEPTION 'Insufficient payment! Minimum expected: $% ', (min_rate + (min_rate * (CEILING(rating) - 1) / 4) ) * numDays;
       END IF;
 
       INSERT INTO bids(pname, pet_name, cname, start_date, end_date, payment_amt, transaction_type)
-      VALUES (pnameA, pet_nameA, cnameA, start_dateA, end_dateA, payment_amtA, transaction_typeA);
+      VALUES (pnameA, pet_nameA, cnameA, TO_DATE(start_dateA, 'DD-MM-YYYY'), TO_DATE(end_dateA, 'DD-MM-YYYY'), payment_amtA, transaction_typeA);
 
     END;
 $$ LANGUAGE plpgsql;
