@@ -8,7 +8,16 @@ var router = express.Router();
 //Lastly, they will select a subset of dates between the inputted start_date and end_date for the bids
 
 const getListOfValidCareTakers = require('../handlers/catalogueHandler').handleGetListOfCTs;
+const getPetsForDateRange = require('../handlers/catalogueHandler').handleGetPetsForDateRange;
+const insertBid = require('../handlers/catalogueHandler').handleInsertBid;
 
 router.get('/', (req, res) => getListOfValidCareTakers(req, res));
+
+//pass in extra 'query' of date range and (optional) petCategory
+router.get('/:pname', (req, res) => getPetsForDateRange(req, res)); 
+
+//pass in startDate, endDate, pname, pet_name
+//also pass in payment_amt, transaction_type
+router.post('/:cname', (req, res) => insertBid(req, res)); 
 
 module.exports = router;
