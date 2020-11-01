@@ -1,8 +1,23 @@
 const pool = require("../db");
 
+const UTC__START_DATE = "1970-01-01";
+
 async function handleGetAllUsers(req, res) {
     try {
-        const query = `SELECT username, email, address, date_created, is_admin FROM accounts`;
+        if (Object.keys(req.query).length !== 4) {
+            throw Error("Missing request params");
+        }
+
+        const start_date = (req.query.start_date === '') ? UTC__START_DATE : req.query.start_date;
+        const end_date = (req.query.end_date === '') ? new Date().toISOString().slice(0, 10) : req.query.end_date;
+        const sort_category = (req.query.sort_category === '') ? 'username' : req.query.sort_category;
+        const sort_direction = (req.query.sort_direction === "-") ? 'DESC' : 'ASC';
+
+        const query = `
+            SELECT username, email, address, date_created, is_admin 
+            FROM accounts
+            WHERE date_created BETWEEN '${start_date}' AND '${end_date}'
+            ORDER BY ${sort_category} ${sort_direction}`;
         const allUser = await pool.query(query);
 
         const resp = { results: allUser.rows };
@@ -17,8 +32,12 @@ async function handleGetAllUsers(req, res) {
 
 async function handleGetUser(req, res) {
     try {
-        const { username } = req.params;
-        const query = `SELECT username, email, address, date_created, is_admin FROM accounts where username = '${username}'`;
+        let { username, email, address, is_admin } = req.params;
+        
+        const query = `
+            SELECT username, email, address, date_created, is_admin 
+            FROM accounts 
+            WHERE username = '${username}' AND email = '${email}' AND address = '${address}' AND is_admin = '${isAdmin}`;
         const singleUser = await pool.query(query);
         let resp = { results: singleUser.rows};
         if (singleUser.rowCount === 0) {
