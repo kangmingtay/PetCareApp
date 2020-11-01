@@ -67,6 +67,8 @@ INSERT INTO prefers VALUES ('cpt15','cat');
 
 --pets
 INSERT INTO pets VALUES ('nyaako','cat','p1','daily cuddles');
+INSERT INTO pets VALUES ('nyaako1','cat','p1','ball');
+INSERT INTO pets VALUES ('nyaako2','cat','p1','laser');
 INSERT INTO pets VALUES ('inu','dog','p1','play catch');
 
 --schedule
@@ -179,10 +181,13 @@ SELECT 'cpt15', generate_series(TO_DATE('5/11/2021', 'DD/MM/YYYY'), TO_DATE('5/1
 
 --bids
 INSERT INTO bids (pname, pet_name, cname, start_date, end_date, rating, is_selected, payment_amt, transaction_type, review) 
-VALUES ('p1', 'nyaako', 'cft1', TO_DATE('1/10/2021', 'DD/MM/YYYY'), TO_DATE('2/10/2021', 'DD/MM/YYYY'), NULL, false, 50, 'card', NULL);
+VALUES ('p1', 'nyaako1', 'cft1', TO_DATE('1/11/2021', 'DD/MM/YYYY'), TO_DATE('2/11/2021', 'DD/MM/YYYY'), NULL, false, 50, 'card', NULL);
 
 INSERT INTO bids (pname, pet_name, cname, start_date, end_date, rating, is_selected, payment_amt, transaction_type, review) 
-VALUES ('p1', 'nyaako', 'cpt1', TO_DATE('1/10/2021', 'DD/MM/YYYY'), TO_DATE('2/10/2021', 'DD/MM/YYYY'), NULL, false, 50, 'card', NULL);
+VALUES ('p1', 'nyaako2', 'cpt1', TO_DATE('3/11/2021', 'DD/MM/YYYY'), TO_DATE('4/11/2021', 'DD/MM/YYYY'), NULL, false, 50, 'card', NULL);
+
+INSERT INTO bids (pname, pet_name, cname, start_date, end_date, rating, is_selected, payment_amt, transaction_type, review) 
+VALUES ('p1', 'nyaako1', 'cpt15', TO_DATE('1/11/2021', 'DD/MM/YYYY'), TO_DATE('1/11/2021', 'DD/MM/YYYY'), NULL, false, 40, 'card', NULL);
 
 
 --For fetching caretakers from catalogue
@@ -216,3 +221,66 @@ SELECT cname
     ) AS PT
     GROUP BY PT.cname
     HAVING TO_DATE('${endDate}', 'DD-MM-YYYY') - TO_DATE('${startDate}', 'DD-MM-YYYY')+1 = COUNT(*);
+
+--For fetching list of pets for particular pname during bid selection
+SELECT P.pet_name
+      FROM pets P
+      WHERE P.pname = '${pname}'
+      AND P.category LIKE '${petCategory}'
+      AND P.pet_name NOT IN (
+        SELECT B.pet_name
+        FROM bids B
+        WHERE P.pet_name = B.pet_name
+        AND (B.start_date <= TO_DATE('${endDate}', 'DD-MM-YYYY') AND B.end_date >= TO_DATE('${endDate}', 'DD-MM-YYYY')) 
+        OR (TO_DATE('${startDate}', 'DD-MM-YYYY') <= B.end_date AND TO_DATE('${startDate}', 'DD-MM-YYYY') >= B.start_date)
+        OR (TO_DATE('${startDate}', 'DD-MM-YYYY') <= B.start_date AND TO_DATE('${endDate}', 'DD-MM-YYYY') >= B.end_date)
+      )
+      ;
+
+--Does not allow part timers to delete their availability. Can only add more.
+--part timer can declare their availability at any time as long as the day has
+--test: SELECT specify_availability('zw','{2022-1-1, 2022-6-19, 2022-12-31}'::date[]);
+CREATE OR REPLACE FUNCTION specify_availability(username VARCHAR(256), work date[]) RETURNS void AS $$
+    DECLARE
+        x DATE;
+    BEGIN
+        FOREACH x in ARRAY work
+            LOOP
+                IF x > current_date THEN
+                    INSERT INTO Availability(cname, date) VALUES(username, x) ON CONFLICT (cname, date) DO NOTHING;
+                END IF;
+            END LOOP;
+    END;
+$$ LANGUAGE plpgsql;
+
+INSERT INTO bids(pname, pet_name, cname, start_date, end_date, payment_amt, transaction_type)
+  VALUES ('${pName}', '${petName}', '${cName}', '${startDate}', '${endDate}', '${paymentAmt}', '${transactionType}');
+
+CREATE OR REPLACE FUNCTION check_valid_amount_before_insert(pnameA VARCHAR(256), pet_nameA VARCHAR(256), cnameA VARCHAR(256), start_dateA DATE, end_dateA DATE, payment_amtA NUMERIC, transaction_typeA VARCHAR(30))
+RETURNS void AS $$
+    DECLARE
+      pet_type VARCHAR(256);
+      min_rate NUMERIC;
+      rating NUMERIC;
+    BEGIN
+      SELECT P.category INTO pet_type
+      FROM pets P
+      WHERE P.pname = pnameA AND P.pet_name = pet_nameA;
+
+      SELECT PC.base_price INTO min_rate
+      FROM pet_categories PC
+      WHERE pet_type = PC.category;
+
+      SELECT C.rating INTO rating
+      FROM care_takers C
+      WHERE C.cname = cnameA;
+
+      IF min_rate + min_rate * (CEILING(rating)-1)/4 > payment_amtA THEN
+        RAISE EXCEPTION'Payment is insufficient!';
+      END IF;
+
+      INSERT INTO bids(pname, pet_name, cname, start_date, end_date, payment_amt, transaction_type)
+      VALUES (pnameA, pet_nameA, cnameA, start_dateA, end_dateA, payment_amtA, transaction_typeA);
+
+    END;
+$$ LANGUAGE plpgsql;
