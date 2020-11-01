@@ -32,12 +32,12 @@ async function handleGetAllUsers(req, res) {
 
 async function handleGetUser(req, res) {
     try {
-        let { username, email, address, is_admin } = req.params;
+        const { username } = req.params;
         
         const query = `
             SELECT username, email, address, date_created, is_admin 
             FROM accounts 
-            WHERE username = '${username}' AND email = '${email}' AND address = '${address}' AND is_admin = '${isAdmin}`;
+            WHERE username = '${username}'`;
         const singleUser = await pool.query(query);
         let resp = { results: singleUser.rows};
         if (singleUser.rowCount === 0) {
