@@ -94,9 +94,31 @@ async function handleDeleteUser(req, res) {
     }
 }
 
+async function handleUpdateUser(req, res) {
+    try {
+        const { username } = req.params;
+        const { email, address } = req.body;
+        const query = `UPDATE accounts SET email = '${email}', address = '${address}' WHERE username = '${username}'`;
+        const updateUser = await pool.query(query);
+        let resp = {};
+        if (updateUser.rowCount === 1) {
+            resp['message'] = "User updated!"
+        } else {
+            resp['message'] = "User does not exist!"
+        }
+        return res.status(200).json(resp);
+    } catch (err) {
+        return res.status(400).send({
+            success: false,
+            message: err.message,
+        })
+    }
+}
+
 module.exports = {
     handleGetAllUsers,
     handleGetUser,
     handleCreateUser,
     handleDeleteUser,
+    handleUpdateUser
 }
