@@ -10,6 +10,7 @@ Furry Fantasy is a pet caring service (PCS) which allows pet owners to search fo
 2. `docker-compose up db` to start the postgres container
 3. `docker-compose up web` to start the web container
 4. `docker-compose up app` to start the api server container
+5. Alternatively, if new json packages are added, run `docker-compose up --build` to rebuild your containers to prevent errors
 
 #### To bash into postgres container:
 1. `docker ps` and identify container name (should be `furry_fantasy_db_1`)
