@@ -23,7 +23,8 @@ app.use("/api/careTaker", careTakerRouter);
 app.use("/api/admin", adminRouter);
 
 app.get("/", (req, res) => {
-  res.send("Hello World! Welcome to Furry Fantasy API Server!");
+  // res.send("Hello World! Welcome to Furry Fantasy API Server!");
+  res.json("Hello World! Welcome to Furry Fantasy API Server!");
 });
 
 app.listen(port, () => {

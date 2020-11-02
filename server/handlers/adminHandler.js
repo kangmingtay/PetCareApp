@@ -63,8 +63,8 @@ async function handleGetPayment(req, res) {
         "WHEN end_date <= $3 AND start_date > $2 THEN (end_date::date - start_date::date + 1) * payment_amt " +
         "WHEN end_date <= $3 AND end_date >= $2 AND start_date <= $2 THEN (end_date::date - $2::date + 1) * payment_amt " +
         "WHEN end_date >= $3 AND start_date <= $3 AND start_date >= $2 THEN ($3::date - start_date::date + 1) * payment_amt " +
-        "ELSE ('2015-12-25'::date - '2015-12-26'::date)" +
-        "END) " +
+        "ELSE 0" +
+        "END) AS salary " +
         "FROM bids " +
         "WHERE cname = $1 AND is_selected = true",
       [cname, start_date, end_date]
