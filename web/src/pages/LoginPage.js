@@ -1,130 +1,164 @@
 import React, { useState, useContext } from 'react';
-import Avatar from '@material-ui/core/Avatar';
-import Button from '@material-ui/core/Button';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import TextField from '@material-ui/core/TextField';
-import Link from '@material-ui/core/Link';
-import Grid from '@material-ui/core/Grid';
-import Box from '@material-ui/core/Box';
-import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
-import Typography from '@material-ui/core/Typography';
-import { makeStyles } from '@material-ui/core/styles';
-import Container from '@material-ui/core/Container';
-import Checkbox from '@material-ui/core/Checkbox';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import Copyright from '../components/Copyright';
-import { fetchLoginInfo } from '../calls/loginCalls';
-import { UserContext } from '../UserContext';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
+import * as Yup from 'yup';
+import { Formik } from 'formik';
+import {
+  Box,
+  Button,
+  Container,
+  Link,
+  TextField,
+  Typography,
+  makeStyles
+} from '@material-ui/core';
+import Page from 'src/components/Page';
+import { UserContext } from 'src/UserContext';
+import { fetchLoginInfo } from 'src/calls/loginCalls'
 
 const useStyles = makeStyles((theme) => ({
-  paper: {
-    marginTop: theme.spacing(8),
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-  },
-  avatar: {
-    margin: theme.spacing(1),
-    backgroundColor: theme.palette.secondary.main,
-  },
-  form: {
-    width: '100%', // Fix IE 11 issue.
-    marginTop: theme.spacing(1),
-  },
-  submit: {
-    margin: theme.spacing(3, 0, 2),
-  },
+  root: {
+    backgroundColor: theme.palette.background.dark,
+    height: '100%',
+    paddingBottom: theme.spacing(3),
+    paddingTop: theme.spacing(3)
+  }
 }));
 
-const LoginPage = (props) => {
-    const classes = useStyles();
-    const [state, setState] = useState({
-        username: '',
-        password: '',
-        isAdmin: false,
-    });
+const LoginPage = () => {
+  const classes = useStyles();
+  const navigate = useNavigate();
+  const { context, setContext } = useContext(UserContext)
 
-    const { context, setContext } = useContext(UserContext);
-
-    const handleSubmit = async (event) => {
-        event.preventDefault();
-        // console.log(state)
-        let resp = await fetchLoginInfo(state);
+  const handleFormSubmit = async (values) => {
+    console.log(values)
+    let resp = await fetchLoginInfo(values);
         if (resp.data.success === true) {
-            setContext({ ...context, username: state.username, isLoggedIn: true, isAdmin: state.isAdmin });
-            props.history.push("/");
+            console.log(resp.data);
+            setContext({ 
+                ...context, 
+                username: values.username, 
+                isLoggedIn: true, 
+                isAdmin: resp.data.isAdmin
+            });
+            if (resp.data.isAdmin) {
+              navigate('/app/admin', { replace: true });
+            } else {
+              navigate('/app/dashboard', { replace: true });
+            }
         } else {
             alert("Account does not exist! Please sign up for an account.")
         }
+  }
 
-    }
-
-    return (
-        <Container component="main" maxWidth="xs">
-            <CssBaseline />
-            <div className={classes.paper}>
-                <Avatar className={classes.avatar}>
-                    <LockOutlinedIcon />
-                </Avatar>
-                <Typography component="h1" variant="h5">
+  return (
+    <Page
+      className={classes.root}
+      title="Login"
+    >
+      <Box
+        display="flex"
+        flexDirection="column"
+        height="100%"
+        justifyContent="center"
+      >
+        <Container maxWidth="sm">
+          <Formik
+            initialValues={{
+              username: "",
+              password: "",
+            }}
+            validationSchema={Yup.object().shape({
+              username: Yup.string().max(255).required('Must be a valid username'),
+              password: Yup.string().max(255).required('Password is required')
+            })}
+            onSubmit={(values) => {
+              handleFormSubmit(values)
+            }}
+          >
+            {({
+              errors,
+              handleBlur,
+              handleChange,
+              handleSubmit,
+              isSubmitting,
+              touched,
+              values
+            }) => (
+              <form onSubmit={handleSubmit}>
+                <Box mb={3}>
+                  <Typography
+                    color="textPrimary"
+                    variant="h2"
+                  >
                     Sign in
+                  </Typography>
+                  <Typography
+                    color="textSecondary"
+                    gutterBottom
+                    variant="body2"
+                  >
+                    Sign in on the internal platform
+                  </Typography>
+                </Box>
+                <TextField
+                  error={Boolean(touched.username && errors.username)}
+                  fullWidth
+                  helperText={touched.username && errors.username}
+                  label="Username"
+                  margin="normal"
+                  name="username"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  type="Username"
+                  variant="outlined"
+                  value={values.username}
+                />
+                <TextField
+                  error={Boolean(touched.password && errors.password)}
+                  fullWidth
+                  helperText={touched.password && errors.password}
+                  label="Password"
+                  margin="normal"
+                  name="password"
+                  onBlur={handleBlur}
+                  onChange={handleChange}
+                  type="password"
+                  variant="outlined"
+                  value={values.password}
+                />
+                <Box my={2}>
+                  <Button
+                    color="primary"
+                    disabled={isSubmitting}
+                    fullWidth
+                    size="large"
+                    type="submit"
+                    variant="contained"
+                  >
+                    Sign in now
+                  </Button>
+                </Box>
+                <Typography
+                  color="textSecondary"
+                  variant="body1"
+                >
+                  Don&apos;t have an account?
+                  {' '}
+                  <Link
+                    component={RouterLink}
+                    to="/register"
+                    variant="h6"
+                  >
+                    Sign up
+                  </Link>
                 </Typography>
-                <form className={classes.form} noValidate onSubmit={handleSubmit}>
-                    <TextField
-                        variant="outlined"
-                        margin="normal"
-                        required
-                        fullWidth
-                        id="username"
-                        label="Username"
-                        name="username"
-                        autoComplete="username"
-                        autoFocus
-                        onChange={(e) => setState({...state, username: e.target.value})}
-                    />
-                    <TextField
-                        variant="outlined"
-                        margin="normal"
-                        required
-                        fullWidth
-                        name="password"
-                        label="Password"
-                        type="password"
-                        id="password"
-                        autoComplete="current-password"
-                        onChange={(e) => setState({...state, password: e.target.value})}
-                    />
-                    <FormControlLabel
-                        control = {<Checkbox
-                            checked={state.isAdmin}
-                            onChange={() => setState({...state, isAdmin: !state.isAdmin})}
-                            inputProps={{ 'aria-label': 'primary checkbox' }}
-                        />}
-                        label="I am a PCS Administrator"
-                    />
-                    <Button
-                        type="submit"
-                        fullWidth
-                        variant="contained"
-                        color="primary"
-                        className={classes.submit}
-                    >
-                        Sign In
-                    </Button>
-                    <Grid container>
-                        <Grid item xs={12}>
-                            <Link href="/register" variant="body2">
-                                {"Don't have an account? Sign Up"}
-                            </Link>
-                        </Grid>
-                    </Grid>
-                </form>
-            </div>
-            <Box mt={8}>
-                <Copyright />
-            </Box>
+              </form>
+            )}
+          </Formik>
         </Container>
+      </Box>
+    </Page>
   );
-}
+};
 
 export default LoginPage;

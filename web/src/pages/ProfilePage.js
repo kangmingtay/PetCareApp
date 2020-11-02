@@ -1,22 +1,55 @@
-import React, { useContext } from 'react';
-import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
-import Button from '@material-ui/core/Button';
-import Typography from '@material-ui/core/Typography';
-import { UserContext } from '../UserContext';
-import SideBar from '../components/SideBar';
+import React from 'react';
+import {
+  Container,
+  Grid,
+  makeStyles
+} from '@material-ui/core';
+import Page from 'src/components/Page';
+import Profile from '../components/Profile';
+import ProfileDetails from '../components/ProfileDetails';
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    backgroundColor: theme.palette.background.dark,
+    minHeight: '100%',
+    paddingBottom: theme.spacing(3),
+    paddingTop: theme.spacing(3)
+  }
+}));
 
 const ProfilePage = () => {
-    const { context, setContext } = useContext(UserContext);
-    return (
-        <div>
-            <SideBar/>
-            <h1> Welcome to the Profile Page! </h1>
-            <h3>Username: {context.username}</h3>
-            <h3>Login Status: {context.isLoggedIn.toString()}</h3>
-            <h3>Admin Status: {context.isAdmin.toString()}</h3>
-        </div>
-    );
-}
+  const classes = useStyles();
+
+  return (
+    <Page
+      className={classes.root}
+      title="Account"
+    >
+      <Container maxWidth="lg">
+        <Grid
+          container
+          spacing={3}
+        >
+          <Grid
+            item
+            lg={4}
+            md={6}
+            xs={12}
+          >
+            <Profile />
+          </Grid>
+          <Grid
+            item
+            lg={8}
+            md={6}
+            xs={12}
+          >
+            <ProfileDetails />
+          </Grid>
+        </Grid>
+      </Container>
+    </Page>
+  );
+};
 
 export default ProfilePage;

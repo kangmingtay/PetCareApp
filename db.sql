@@ -34,37 +34,60 @@ DELETE CASCADE,
 CREATE TABLE
 IF NOT EXISTS Care_Takers
 (
-    username VARCHAR
+    cname VARCHAR
 (256),
+    rating NUMERIC CHECK
+(rating <= 5 AND rating > 0),
     FOREIGN KEY
-(username) REFERENCES Accounts
+(cname) REFERENCES Accounts
 (username) ON
 DELETE CASCADE,
-    PRIMARY KEY (username)
+    PRIMARY KEY (cname)
 );
 
 CREATE TABLE
 IF NOT EXISTS Part_Timer
 (
-    username VARCHAR
+    cname VARCHAR
 (256) REFERENCES Care_Takers
-(username) ON
+(cname) ON
 DELETE CASCADE, 
-    PRIMARY KEY (username)
+    PRIMARY KEY (cname)
+);
+
+CREATE TABLE
+IF NOT EXISTS Availability
+(
+    cname VARCHAR
+(256) REFERENCES Part_Timer
+(cname) ON
+DELETE CASCADE,
+    date DATE,
+    PRIMARY KEY
+(cname, date)
 );
 
 CREATE TABLE
 IF NOT EXISTS Full_Timer
 (
-    username VARCHAR
+    cname VARCHAR
 (256) REFERENCES Care_Takers
-(username) ON
+(cname) ON
 DELETE CASCADE, 
-    base_pay NUMERIC
-CHECK
-(base_pay >= 0),
+    PRIMARY KEY (cname)
+);
+
+
+CREATE TABLE
+IF NOT EXISTS Leaves
+(
+    cname VARCHAR
+(256) REFERENCES Full_Timer
+(cname) ON
+DELETE CASCADE,
+    date DATE,
     PRIMARY KEY
-(username)
+(cname, date)
 );
 
 CREATE TABLE
@@ -72,7 +95,7 @@ IF NOT EXISTS Pet_Categories
 (
     category VARCHAR
 (256),
-    price_rate NUMERIC,
+    base_price NUMERIC,
     PRIMARY KEY
 (category)
 );
@@ -82,7 +105,7 @@ IF NOT EXISTS Prefers
 (
     cname VARCHAR
 (256) REFERENCES Care_Takers
-(username) ON
+(cname) ON
 DELETE CASCADE,
     category VARCHAR(256)
 REFERENCES Pet_Categories
@@ -96,7 +119,7 @@ IF NOT EXISTS Schedule
 (
     cname VARCHAR
 (256) REFERENCES Care_Takers
-(username) ON
+(cname) ON
 DELETE CASCADE,
     date DATE,
     pet_count int,
@@ -152,19 +175,17 @@ IF NOT EXISTS Bids
     payment_amt NUMERIC, 
     transaction_type VARCHAR
 (30),
-    ranking INTEGER CHECK
-(ranking > 0),
     review VARCHAR
 (256), 
     PRIMARY KEY
-(pname, pet_name, cname, start_date, end_date),
+(pname, pet_name, start_date, end_date),
     FOREIGN KEY
 (pname, pet_name) REFERENCES Pets
 (pname, pet_name) ON
 DELETE CASCADE,
     FOREIGN KEY (cname)
 REFERENCES Care_Takers
-(username) ON
+(cname) ON
 DELETE CASCADE
 );
 
