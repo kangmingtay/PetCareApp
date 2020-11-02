@@ -5,6 +5,7 @@ export default {
     getAllUsers: `${BASE_URL}/users`,
     getLoginInfo: `${BASE_URL}/login`,
     createUser: `${BASE_URL}/users`,
+    updateUser: (username) => `${BASE_URL}/users/${username}`,
     getUser: (username) => `${BASE_URL}/users/${username}`,
     deleteUser: (username) => `${BASE_URL}/users/${username}`,
     getExpectedSalary: (username) => `${BASE_URL}/caretakers/expectedSalary/${username}`,
@@ -16,4 +17,5 @@ export default {
     upsertLeavesAvailability: (username) => `${BASE_URL}/caretakers/requestDays/${username}`,
     getLeaves: (username) => `${BASE_URL}/caretakers/requestDays/${username}`,
     getAvailability: (username) => `${BASE_URL}/caretakers/requestDays/${username}`,
+
 }
