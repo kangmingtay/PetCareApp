@@ -186,7 +186,9 @@ DELETE CASCADE,
     FOREIGN KEY (cname)
 REFERENCES Care_Takers
 (cname) ON
-DELETE CASCADE
+DELETE CASCADE,
+    CONSTRAINT start_before_end CHECK
+(end_date >= start_date)
 );
 
 -- CREATE VIEW as Catalogue (

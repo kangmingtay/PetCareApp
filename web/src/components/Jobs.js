@@ -151,7 +151,7 @@ const Jobs = () => {
           <li>{row}</li>
         ))}
       </h3>
-      <Button variant="contained" value="caretaker" onClick={getData}>
+      {/* <Button variant="contained" value="caretaker" onClick={getData}>
         Get lazy caretakers
       </Button>
       <h3>
@@ -159,7 +159,7 @@ const Jobs = () => {
         {caretakers.map((row, i) => (
           <div key={i}>{row.cname}</div>
         ))}
-      </h3>
+      </h3> */}
     </Fragment>
   );
 };
