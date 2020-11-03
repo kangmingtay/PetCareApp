@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import clsx from 'clsx';
+import React, { useState, useContext, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import {
   Box,
@@ -9,39 +8,29 @@ import {
   CardHeader,
   Divider,
   Grid,
-  TextField,
-  makeStyles
 } from '@material-ui/core';
-
-const states = [
-  {
-    value: 'alabama',
-    label: 'Alabama'
-  },
-  {
-    value: 'new-york',
-    label: 'New York'
-  },
-  {
-    value: 'san-francisco',
-    label: 'San Francisco'
-  }
-];
-
-const useStyles = makeStyles(() => ({
-  root: {}
-}));
+import { UserContext } from 'src/UserContext';
+import { fetchSingleUserInfo, updateSingleUserInfo } from 'src/calls/userCalls'
+import ProfileTextField from './ProfileTextField';
 
 const ProfileDetails = ({ className, ...rest }) => {
-  const classes = useStyles();
+  const { context, setContext } = useContext(UserContext);
+
   const [values, setValues] = useState({
-    firstName: 'Katarina',
-    lastName: 'Smith',
-    email: 'demo@devias.io',
-    phone: '',
-    state: 'Alabama',
-    country: 'USA'
+    email: '',
+    address: '',
   });
+
+  useEffect(async() => {
+    // call getUserApi
+    const resp = await fetchSingleUserInfo(context.username);
+    setValues({
+      ...values, 
+      email: resp.data.results[0].email, 
+      address: resp.data.results[0].address 
+    })
+
+  }, [])
 
   const handleChange = (event) => {
     setValues({
@@ -50,11 +39,25 @@ const ProfileDetails = ({ className, ...rest }) => {
     });
   };
 
+  const handleSubmit = async (event) => {
+    try {
+      const data = {
+        ...values,
+        username: context.username
+      }
+      const resp = await updateSingleUserInfo(data);
+      // replace with modal popup    
+      alert(resp.data.message)
+    } catch (err) {
+      console.log(err.response)
+      alert("Invalid fields")
+    }
+  }
+
   return (
     <form
       autoComplete="off"
       noValidate
-      className={clsx(classes.root, className)}
       {...rest}
     >
       <Card>
@@ -68,108 +71,21 @@ const ProfileDetails = ({ className, ...rest }) => {
             container
             spacing={3}
           >
-            <Grid
-              item
-              md={6}
-              xs={12}
-            >
-              <TextField
-                fullWidth
-                helperText="Please specify the first name"
-                label="First name"
-                name="firstName"
-                onChange={handleChange}
-                required
-                value={values.firstName}
-                variant="outlined"
-              />
-            </Grid>
-            <Grid
-              item
-              md={6}
-              xs={12}
-            >
-              <TextField
-                fullWidth
-                label="Last name"
-                name="lastName"
-                onChange={handleChange}
-                required
-                value={values.lastName}
-                variant="outlined"
-              />
-            </Grid>
-            <Grid
-              item
-              md={6}
-              xs={12}
-            >
-              <TextField
-                fullWidth
-                label="Email Address"
-                name="email"
-                onChange={handleChange}
-                required
-                value={values.email}
-                variant="outlined"
-              />
-            </Grid>
-            <Grid
-              item
-              md={6}
-              xs={12}
-            >
-              <TextField
-                fullWidth
-                label="Phone Number"
-                name="phone"
-                onChange={handleChange}
-                type="number"
-                value={values.phone}
-                variant="outlined"
-              />
-            </Grid>
-            <Grid
-              item
-              md={6}
-              xs={12}
-            >
-              <TextField
-                fullWidth
-                label="Country"
-                name="country"
-                onChange={handleChange}
-                required
-                value={values.country}
-                variant="outlined"
-              />
-            </Grid>
-            <Grid
-              item
-              md={6}
-              xs={12}
-            >
-              <TextField
-                fullWidth
-                label="Select State"
-                name="state"
-                onChange={handleChange}
-                required
-                select
-                SelectProps={{ native: true }}
-                value={values.state}
-                variant="outlined"
-              >
-                {states.map((option) => (
-                  <option
-                    key={option.value}
-                    value={option.value}
-                  >
-                    {option.label}
-                  </option>
-                ))}
-              </TextField>
-            </Grid>
+            {Object.keys(values).map(key => {
+              return (
+                <Grid
+                  item
+                  md={6}
+                  xs={12}
+                >
+                  <ProfileTextField 
+                    name={key} 
+                    handleChange={handleChange} 
+                    value={values[key]} 
+                  />
+                </Grid>
+              )
+            })}
           </Grid>
         </CardContent>
         <Divider />
@@ -181,6 +97,7 @@ const ProfileDetails = ({ className, ...rest }) => {
           <Button
             color="primary"
             variant="contained"
+            onClick={handleSubmit}
           >
             Save details
           </Button>
