@@ -13,22 +13,24 @@ import { UserContext } from 'src/UserContext';
 import { fetchSingleUserInfo, updateSingleUserInfo } from 'src/calls/userCalls'
 import ProfileTextField from './ProfileTextField';
 
-const ProfileDetails = ({ className, ...rest }) => {
-  const { context, setContext } = useContext(UserContext);
+const ProfileDetails = () => {
+  const { context } = useContext(UserContext);
 
   const [values, setValues] = useState({
     email: '',
     address: '',
   });
 
-  useEffect(async() => {
-    // call getUserApi
-    const resp = await fetchSingleUserInfo(context.username);
-    setValues({
-      ...values, 
-      email: resp.data.results[0].email, 
-      address: resp.data.results[0].address 
-    })
+  useEffect(() => {
+    async function fetchData() {
+      const resp = await fetchSingleUserInfo(context.username);
+      setValues({
+        ...values, 
+        email: resp.data.results[0].email, 
+        address: resp.data.results[0].address 
+      })
+    }
+    fetchData();
   }, [])
 
   const handleChange = (event) => {
@@ -38,7 +40,7 @@ const ProfileDetails = ({ className, ...rest }) => {
     });
   };
 
-  const handleSubmit = async (event) => {
+  const handleSubmit = async () => {
     try {
       const data = {
         ...values,
@@ -57,8 +59,7 @@ const ProfileDetails = ({ className, ...rest }) => {
     <form
       autoComplete="off"
       noValidate
-      {...rest}
-    >
+    > 
       <Card>
         <CardHeader
           subheader="The information can be edited"
@@ -73,6 +74,7 @@ const ProfileDetails = ({ className, ...rest }) => {
             {Object.keys(values).map(key => {
               return (
                 <Grid
+                  key={key}
                   item
                   md={6}
                   xs={12}
