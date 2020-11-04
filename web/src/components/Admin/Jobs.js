@@ -23,23 +23,6 @@ const Jobs = () => {
   }));
   const classes = useStyles();
 
-  // useEffect(() => {
-  //   getSalary();
-  // }, []);
-
-  // const getSalary = async () => {
-  //   try {
-  //     const response = await fetch(
-  //       `http://localhost:8888/api/caretaker/expectedSalary/shannon?month=10-2021`
-  //     );
-  //     const jsonData = await response.json();
-  //     setSalary(jsonData);
-  //     console.log(jsonData);
-  //   } catch (error) {
-  //     console.error(error.message);
-  //   }
-  // };
-
   return (
     <Fragment>
       <h3>
@@ -68,7 +51,6 @@ const Jobs = () => {
       <PetJobs month={month} year={year} />
       <Months year={year} />
       <Salary name={name} month={month} year={year} />
-      <Underperform month={month} year={year} />
     </Fragment>
   );
 };
