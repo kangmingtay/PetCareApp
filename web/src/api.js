@@ -17,5 +17,5 @@ export default {
     upsertLeavesAvailability: (username) => `${BASE_URL}/caretakers/requestDays/${username}`,
     getLeaves: (username) => `${BASE_URL}/caretakers/requestDays/${username}`,
     getAvailability: (username) => `${BASE_URL}/caretakers/requestDays/${username}`,
-
+    getListOfValidCareTakers: `${BASE_URL}/catalogue/`,
 }

@@ -11,9 +11,9 @@ INSERT INTO Accounts VALUES ('cpt1', '123', 'a@b.com', 'xxx', TO_DATE('01-01-202
 INSERT INTO Accounts VALUES ('cpt2', '123', 'a@b.com', 'xxx', TO_DATE('01-01-2020', 'DD-MM-YYYY'), 'false');
 INSERT INTO Accounts VALUES ('cpt3', '123', 'a@b.com', 'xxx', TO_DATE('01-01-2020', 'DD-MM-YYYY'), 'false');
 INSERT INTO Accounts VALUES ('cpt11', '123', 'a@b.com', 'xxx', TO_DATE('01-01-2020', 'DD-MM-YYYY'), 'false');
-INSERT INTO Accounts VALUES ('cpt12', '123', 'a@b.com', 'xxx', TO_DATE('01-01-2020', 'DD-MM-YYYY'), 'false');
+INSERT INTO Accounts VALUES ('cpt12', '123', 'a@b.com', 'yyy', TO_DATE('01-01-2020', 'DD-MM-YYYY'), 'false');
 INSERT INTO Accounts VALUES ('cpt13', '123', 'a@b.com', 'xxx', TO_DATE('01-01-2020', 'DD-MM-YYYY'), 'false');
-INSERT INTO Accounts VALUES ('cpt14', '123', 'a@b.com', 'xxx', TO_DATE('01-01-2020', 'DD-MM-YYYY'), 'false');
+INSERT INTO Accounts VALUES ('cpt14', '123', 'a@b.com', 'yyy', TO_DATE('01-01-2020', 'DD-MM-YYYY'), 'false');
 INSERT INTO Accounts VALUES ('cpt15', '123', 'a@b.com', 'xxx', TO_DATE('01-01-2020', 'DD-MM-YYYY'), 'false');
 
 --Petowners:
@@ -197,37 +197,46 @@ SELECT 'cpt15', generate_series(TO_DATE('5/11/2021', 'DD/MM/YYYY'), TO_DATE('5/1
 
 --For fetching caretakers from catalogue
 -- SELECT cname
---   FROM (
---     SELECT DISTINCT F.cname, L.date
---     FROM full_timer F, prefers P, (SELECT generate_series(TO_DATE('${startDate}', 'DD-MM-YYYY'), TO_DATE('${endDate}', 'DD-MM-YYYY'),'1 day'::interval) AS date) AS L
---     WHERE F.cname = P.cname AND P.category LIKE '${petCategory}' AND P.cname LIKE '${cName}'
---     EXCEPT
---     SELECT DISTINCT L1.cname, L1.date
---     FROM leaves L1
---     WHERE L1.date >= TO_DATE('${startDate}', 'DD-MM-YYYY') AND L1.date <= TO_DATE('${endDate}', 'DD-MM-YYYY')
---     EXCEPT
---     SELECT S.cname, S.date
---     FROM schedule S
---     WHERE S.pet_count = 5
---   ) AS FT
---   GROUP BY FT.cname
---   HAVING TO_DATE('${endDate}', 'DD-MM-YYYY') - TO_DATE('${startDate}', 'DD-MM-YYYY')+1 = COUNT(*)
--- UNION
--- SELECT cname
---   FROM (
---     SELECT DISTINCT A.cname, A.date
---     FROM availability A, prefers P
---     WHERE A.date >= TO_DATE('${startDate}', 'DD-MM-YYYY') AND A.date <= TO_DATE('${endDate}', 'DD-MM-YYYY')
---     AND P.cname = A.cname AND P.category LIKE '${petCategory}' AND P.cname LIKE '${cName}'
---     EXCEPT
---     SELECT DISTINCT S.cname, S.date
---     FROM schedule S, care_takers C
---     WHERE S.cname = C.cname AND ((C.rating <= 2 AND S.pet_count = 2) OR (C.rating > 2 AND S.pet_count = CEILING(C.rating)))
---   ) AS PT
---   GROUP BY PT.cname
---   HAVING TO_DATE('${endDate}', 'DD-MM-YYYY') - TO_DATE('${startDate}', 'DD-MM-YYYY')+1 = COUNT(*)
--- EXCEPT
--- SELECT '${pName}';
+--       FROM (
+--         SELECT DISTINCT F.cname, L.date
+--         FROM full_timer F, prefers P, accounts A,
+--         (SELECT generate_series(TO_DATE('${startDate}', 'DD-MM-YYYY'), TO_DATE('${endDate}', 'DD-MM-YYYY'),'1 day'::interval) AS date) AS L
+--         WHERE F.cname = P.cname AND P.cname = A.username
+--         AND P.category LIKE '${petCategory}' AND P.cname LIKE '${cName}'
+--         AND A.address LIKE '${address}' AND F.cname != '${pName}'
+--         AND NOT EXISTS (
+--           SELECT DISTINCT L1.date
+--           FROM leaves L1
+--           WHERE L.date = L1.date AND F.cname = L1.cname
+--           AND L1.date >= TO_DATE('${startDate}', 'DD-MM-YYYY') AND L1.date <= TO_DATE('${endDate}', 'DD-MM-YYYY')
+--         )
+--         AND NOT EXISTS (
+--           SELECT S.date
+--           FROM schedule S
+--           WHERE L.date = S.date AND F.cname = S.cname
+--           AND S.pet_count = 5
+--         )
+--       ) AS FT
+--       GROUP BY FT.cname
+--       HAVING TO_DATE('${endDate}', 'DD-MM-YYYY') - TO_DATE('${startDate}', 'DD-MM-YYYY')+1 = COUNT(*)
+--     UNION
+--     SELECT cname
+--       FROM (
+--         SELECT DISTINCT A.cname, A.date
+--         FROM availability A, prefers P, accounts AC
+--         WHERE A.date >= TO_DATE('${startDate}', 'DD-MM-YYYY') AND A.date <= TO_DATE('${endDate}', 'DD-MM-YYYY')
+--         AND P.cname = A.cname AND A.cname = AC.username
+--         AND P.category LIKE '${petCategory}' AND P.cname LIKE '${cName}'
+--         AND AC.address LIKE '${address}' AND P.cname != '${pName}'
+--         AND NOT EXISTS (
+--           SELECT DISTINCT S.cname
+--           FROM schedule S, care_takers C
+--           WHERE A.cname = S.cname AND S.date = A.date
+--           AND S.cname = C.cname AND ((C.rating <= 2 AND S.pet_count = 2) OR (C.rating > 2 AND S.pet_count = CEILING(C.rating)))
+--         )
+--       ) AS PT
+--       GROUP BY PT.cname
+--       HAVING TO_DATE('${endDate}', 'DD-MM-YYYY') - TO_DATE('${startDate}', 'DD-MM-YYYY')+1 = COUNT(*)
 
 -- --For fetching list of pets for particular pname during bid selection
 -- SELECT P.pet_name
