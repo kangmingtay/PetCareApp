@@ -15,12 +15,13 @@ import {
   BarChart as BarChartIcon,
   Lock as LockIcon,
   ShoppingBag as ShoppingBagIcon,
-  User,
   User as UserIcon,
-  Users as UsersIcon
+  Users as UsersIcon,
+  Home as HomeIcon
 } from 'react-feather';
 import NavItem from './SideBarItem';
 import { UserContext } from 'src/UserContext';
+import LogoutButton from 'src/components/LogoutButton';
 
 const user = {
   avatar: '/static/images/avatars/avatar_6.png',
@@ -43,13 +44,13 @@ const userItems = [
     href: '/app/pets',
     icon: ShoppingBagIcon,
     title: 'Pets'
-  }
+  },
 ];
 
 const adminItems = [
   {
     href: '/app/admin',
-    icon: LockIcon,
+    icon: HomeIcon,
     title: 'Admin'
   },
 ]
@@ -59,11 +60,6 @@ const generalItems = [
     href: '/app/account',
     icon: UserIcon,
     title: 'Account'
-  },
-  {
-    href: '/login',
-    icon: LockIcon,
-    title: 'Logout'
   },
 ]
 
@@ -88,7 +84,7 @@ const SideBar = ({ onMobileClose, openMobile }) => {
   const location = useLocation();
   const { context, setContext } = useContext(UserContext)
 
-  const items = (context.isAdmin) ? [...adminItems, ...generalItems] : [...userItems, ...generalItems];
+  const items = (context.isAdmin === "true") ? [...adminItems, ...generalItems] : [...userItems, ...generalItems];
 
   useEffect(() => {
     if (openMobile && onMobileClose) {
@@ -119,13 +115,7 @@ const SideBar = ({ onMobileClose, openMobile }) => {
           color="textPrimary"
           variant="h5"
         >
-          {user.name}
-        </Typography>
-        <Typography
-          color="textSecondary"
-          variant="body2"
-        >
-          {user.jobTitle}
+          {context.username}
         </Typography>
       </Box>
       <Divider />
@@ -139,6 +129,11 @@ const SideBar = ({ onMobileClose, openMobile }) => {
               icon={item.icon}
             />
           ))}
+          <LogoutButton
+            href='/login'
+            title='Logout'
+            icon={LockIcon}
+          />
         </List>
       </Box>
       <Box flexGrow={1} />

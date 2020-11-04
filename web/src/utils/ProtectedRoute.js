@@ -4,14 +4,14 @@ import { UserContext } from '../UserContext';
 
 
 const Container = ({Component, redirectLink, isAuthenticated, ...props}) => {
-    if (!isAuthenticated) {
+    if (isAuthenticated !== "true") {
         return <Navigate to={redirectLink} />        
     } 
     return Component
 }
 
 const ProtectedRoute = ({component: Component, redirectLink, path, ...props}) => {
-    const { context, setContext } = useContext(UserContext)
+    const { context } = useContext(UserContext)
     return <Route 
         path={path} 
         element={
