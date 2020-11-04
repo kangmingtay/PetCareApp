@@ -94,7 +94,8 @@ CREATE TABLE IF NOT EXISTS Bids (
     review VARCHAR(256), 
     PRIMARY KEY(pname, pet_name, start_date, end_date),
     FOREIGN KEY (pname, pet_name) REFERENCES Pets(pname, pet_name) ON DELETE CASCADE,
-    FOREIGN KEY (cname) REFERENCES Care_Takers(cname) ON DELETE CASCADE
+    FOREIGN KEY (cname) REFERENCES Care_Takers(cname) ON DELETE CASCADE,
+    CONSTRAINT start_before_end CHECK (end_date >= start_date)
 );
 
 -- CREATE VIEW as Catalogue (

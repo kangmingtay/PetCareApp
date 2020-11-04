@@ -8,6 +8,7 @@ const port = process.env.PORT || 8888;
 var loginRouter = require('./routes/login.js');
 var userRouter = require('./routes/user.js');
 var careTakerRouter = require('./routes/careTaker.js');
+var bidsRouter = require('./routes/bids.js');
 var catalogueRouter = require('./routes/catalogueViewer.js');
 
 // configure middleware
@@ -19,6 +20,7 @@ app.use(cors());
 // initialise routes
 app.use('/api/login', loginRouter);
 app.use('/api/users', userRouter);
+app.use('/api/bids', bidsRouter);
 app.use('/api/caretakers', careTakerRouter);
 app.use('/api/catalogue', catalogueRouter);
 
