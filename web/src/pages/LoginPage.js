@@ -33,12 +33,15 @@ const LoginPage = () => {
     console.log(values)
     let resp = await fetchLoginInfo(values);
         if (resp.data.success === true) {
-            console.log(resp.data);
+            console.log(resp.data)
+            localStorage.setItem('username', values.username);
+            localStorage.setItem('isLoggedIn', true);
+            localStorage.setItem('isAdmin', resp.data.isAdmin);
             setContext({ 
                 ...context, 
-                username: values.username, 
-                isLoggedIn: true, 
-                isAdmin: resp.data.isAdmin
+                username: localStorage.getItem('username'),
+                isLoggedIn: localStorage.getItem('isLoggedIn'),
+                isAdmin: localStorage.getItem('isAdmin'),
             });
             if (resp.data.isAdmin) {
               navigate('/app/admin', { replace: true });
