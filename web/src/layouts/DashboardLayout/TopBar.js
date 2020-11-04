@@ -13,7 +13,6 @@ import {
 } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
 import NotificationsIcon from '@material-ui/icons/NotificationsOutlined';
-import InputIcon from '@material-ui/icons/Input';
 import Logo from 'src/components/Logo';
 
 const useStyles = makeStyles(() => ({
@@ -52,9 +51,6 @@ const TopBar = ({
             >
               <NotificationsIcon />
             </Badge>
-          </IconButton>
-          <IconButton color="inherit">
-            <InputIcon />
           </IconButton>
         </Hidden>
         <Hidden lgUp>

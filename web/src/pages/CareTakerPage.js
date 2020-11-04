@@ -1,13 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import {
   Box,
   Container,
   makeStyles
 } from '@material-ui/core';
 import Page from 'src/components/Page';
-import Results from '../components/Table';
+import CatalogTable from '../components/CatalogTable';
 import Toolbar from '../components/CareTakerToolbar';
-import data from '../utils/CareTakerData';
+import { fetchListOfCareTakers } from 'src/calls/catalogueCalls'
+import { UserContext } from 'src/UserContext';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -20,7 +21,38 @@ const useStyles = makeStyles((theme) => ({
 
 const CustomerListView = () => {
   const classes = useStyles();
-  const [customers] = useState(data);
+  const [caretakers, setCaretakers] = useState([]);
+  const { context, setContext } = useContext(UserContext)
+
+  useEffect(() => {
+    async function fetchData() {
+      const resp = await fetchListOfCareTakers({ 
+        startDate: '4-11-2020', 
+        endDate: '4-11-2020', 
+        petCategoryField: '%', 
+        careTakerField: '%',
+        addressField: '%',
+        pName: context.username,
+      });
+      console.log(resp)
+      setCaretakers([...caretakers, ...resp.data.results])
+    }
+    fetchData();
+  }, [])
+
+  const handleSelectCareTakers = async (values) => {
+    try {
+      let resp = await fetchListOfCareTakers(values);
+      if (resp.data.success === true) {
+          // navigate('/login', { replace: true });
+          // alert("Account created successfully! Please login with your credentials!")
+      }
+    }
+    catch(err) {
+      // err.response.data.message -> to see actual error msg
+      alert("Missing input fields")
+    }
+  }
 
   return (
     <Page
@@ -28,9 +60,11 @@ const CustomerListView = () => {
       title="Customers"
     >
       <Container maxWidth={false}>
-        <Toolbar />
+      </Container>
+      <Container maxWidth={false}>
+        <Toolbar setCaretakers={setCaretakers} />
         <Box mt={3}>
-          <Results customers={customers} />
+          <CatalogTable caretakers={caretakers} />
         </Box>
       </Container>
     </Page>

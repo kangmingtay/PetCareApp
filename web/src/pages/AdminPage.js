@@ -1,7 +1,16 @@
 import React, { useContext, useState } from 'react';
+<<<<<<< HEAD
 import { Container, makeStyles } from '@material-ui/core';
+=======
+import {
+  Container,
+  makeStyles,
+  Typography,
+} from '@material-ui/core';
+>>>>>>> upstream/master
 import Page from 'src/components/Page';
 import data from '../utils/CareTakerData';
+import AdminTable from '../components/AdminTable'
 import { UserContext } from 'src/UserContext';
 import Jobs from '../components/Admin/Jobs';
 
@@ -11,22 +20,26 @@ const useStyles = makeStyles(theme => ({
     minHeight: '100%',
     paddingBottom: theme.spacing(3),
     paddingTop: theme.spacing(3)
-  }
+  },
 }));
 
 const AdminView = () => {
   const classes = useStyles();
-  const { context, setContext } = useContext(UserContext);
+  const [users, setUsers] = useState(data);
+  const { context } = useContext(UserContext);
 
   return (
-    <Page className={classes.root} title="Customers">
+    <Page
+      className={classes.root}
+      title="Administrator"
+    >
       <Container maxWidth={false}>
-        This is the admin page.
-        <p>Admin status: {context.isAdmin.toString()}</p>
-        <p>Login status: {context.isLoggedIn.toString()}</p>
-        <br></br>
+        <Typography variant='h2' align='center'>
+          Hello Admin, {context.username}
+        </Typography>
         <Jobs />
       </Container>
+      <AdminTable />
     </Page>
   );
 };

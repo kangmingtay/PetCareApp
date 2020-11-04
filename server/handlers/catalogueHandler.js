@@ -9,41 +9,69 @@ async function handleGetListOfCTs(req, res) {
   try {
     console.log(req.query);
 
-    const { startDate, endDate, petCategory, cName, pName } = req.query;
+    const { startDate, endDate, petCategory, cName, pName, address } = req.query;
 
     const queryOverall = `
-    SELECT cname
+    WITH cte_valid_caretakers AS (
+      SELECT cname
       FROM (
         SELECT DISTINCT F.cname, L.date
-        FROM full_timer F, prefers P, (SELECT generate_series(TO_DATE('${startDate}', 'DD-MM-YYYY'), TO_DATE('${endDate}', 'DD-MM-YYYY'),'1 day'::interval) AS date) AS L
-        WHERE F.cname = P.cname AND P.category LIKE '${petCategory}' AND P.cname LIKE '${cName}'
-        EXCEPT
-        SELECT DISTINCT L1.cname, L1.date
-        FROM leaves L1
-        WHERE L1.date >= TO_DATE('${startDate}', 'DD-MM-YYYY') AND L1.date <= TO_DATE('${endDate}', 'DD-MM-YYYY')
-        EXCEPT
-        SELECT S.cname, S.date
-        FROM schedule S
-        WHERE S.pet_count = 5
+        FROM full_timer F, prefers P, accounts A,
+        (SELECT generate_series(TO_DATE('${startDate}', 'DD-MM-YYYY'), TO_DATE('${endDate}', 'DD-MM-YYYY'),'1 day'::interval) AS date) AS L
+        WHERE F.cname = P.cname AND P.cname = A.username
+        AND P.category LIKE '${petCategory}' AND P.cname LIKE '${cName}'
+        AND A.address LIKE '${address}' AND F.cname != '${pName}'
+        AND NOT EXISTS (
+          SELECT DISTINCT L1.date
+          FROM leaves L1
+          WHERE L.date = L1.date AND F.cname = L1.cname
+          AND L1.date >= TO_DATE('${startDate}', 'DD-MM-YYYY') AND L1.date <= TO_DATE('${endDate}', 'DD-MM-YYYY')
+        )
+        AND NOT EXISTS (
+          SELECT S.date
+          FROM schedule S
+          WHERE L.date = S.date AND F.cname = S.cname
+          AND S.pet_count = 5
+        )
       ) AS FT
       GROUP BY FT.cname
       HAVING TO_DATE('${endDate}', 'DD-MM-YYYY') - TO_DATE('${startDate}', 'DD-MM-YYYY')+1 = COUNT(*)
-    UNION
-    SELECT cname
+      UNION
+      SELECT cname
       FROM (
         SELECT DISTINCT A.cname, A.date
-        FROM availability A, prefers P
+        FROM availability A, prefers P, accounts AC
         WHERE A.date >= TO_DATE('${startDate}', 'DD-MM-YYYY') AND A.date <= TO_DATE('${endDate}', 'DD-MM-YYYY')
-        AND P.cname = A.cname AND P.category LIKE '${petCategory}' AND P.cname LIKE '${cName}'
-        EXCEPT
-        SELECT DISTINCT S.cname, S.date
-        FROM schedule S, care_takers C
-        WHERE S.cname = C.cname AND ((C.rating <= 2 AND S.pet_count = 2) OR (C.rating > 2 AND S.pet_count = CEILING(C.rating)))
+        AND P.cname = A.cname AND A.cname = AC.username
+        AND P.category LIKE '${petCategory}' AND P.cname LIKE '${cName}'
+        AND AC.address LIKE '${address}' AND P.cname != '${pName}'
+        AND NOT EXISTS (
+          SELECT DISTINCT S.cname
+          FROM schedule S, care_takers C
+          WHERE A.cname = S.cname AND S.date = A.date
+          AND S.cname = C.cname AND ((C.rating <= 2 AND S.pet_count = 2) OR (C.rating > 2 AND S.pet_count = CEILING(C.rating)))
+        )
       ) AS PT
       GROUP BY PT.cname
       HAVING TO_DATE('${endDate}', 'DD-MM-YYYY') - TO_DATE('${startDate}', 'DD-MM-YYYY')+1 = COUNT(*)
-    EXCEPT
-    SELECT '${pName}';
+    )
+    SELECT CVC.cname,
+      CASE
+        WHEN CT.rating IS NULL
+          THEN -1
+        ELSE
+          CT.rating
+      END AS rating
+    , P.category,
+      CASE
+        WHEN CT.rating IS NOT NULL
+          THEN ROUND(PC.base_price + (PC.base_price * (CEILING(CT.rating) - 1) / 4)::numeric, 2)
+        ELSE
+          ROUND(PC.base_price::numeric, 2)
+      END AS minPrice
+    FROM cte_valid_caretakers CVC, care_takers CT, prefers P, pet_categories PC
+    WHERE CVC.cname = CT.cname AND CT.cname = P.cname
+    AND P.category = PC.category
     `;
 
     
