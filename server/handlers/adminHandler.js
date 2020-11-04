@@ -1,11 +1,77 @@
 const pool = require("../db");
 
-// Count all bids
-async function handleGetBids(req, res) {
+// Count pet days in a month
+async function handleGetPetDays(req, res) {
   try {
-    const count = await pool.query("SELECT * FROM bids");
+    const { month } = req.params;
+    const { year } = req.params;
+    const count = await pool.query(`
+      SELECT SUM(pet_count) AS days FROM schedule 
+      WHERE EXTRACT(MONTH FROM date) = ${month} 
+        AND EXTRACT(YEAR FROM date) = ${year}`);
     res.json(count.rows);
     console.log(count.rowCount);
+  } catch (err) {
+    return res.status(400).send({
+      success: false,
+      message: err.message,
+    });
+  }
+}
+
+// Count pet days for each caretaker in a month
+async function handleGetCaretakerDays(req, res) {
+  try {
+    const { month } = req.params;
+    const { year } = req.params;
+    const count = await pool.query(`
+      SELECT cname, COALESCE(days, 0) AS pet_days
+      FROM care_takers NATURAL LEFT JOIN (SELECT cname, SUM(pet_count) AS days
+        FROM schedule
+        WHERE EXTRACT(MONTH FROM date) = ${month} 
+          AND EXTRACT(YEAR FROM date) = ${year}
+        GROUP BY cname) AS pet_days
+      `);
+    res.json(count.rows);
+    console.log(count.rowCount);
+  } catch (err) {
+    return res.status(400).send({
+      success: false,
+      message: err.message,
+    });
+  }
+}
+
+// Find distinct pets
+async function handleGetPets(req, res) {
+  try {
+    const { month } = req.params;
+    const { year } = req.params;
+    const count = await pool.query(`
+      SELECT DISTINCT pet_name FROM bids 
+        WHERE (EXTRACT(MONTH FROM start_date) = ${month} OR EXTRACT(MONTH FROM end_date) = ${month}) 
+        AND (EXTRACT(YEAR FROM start_date) = ${year} OR EXTRACT(YEAR FROM end_date) = ${year})`);
+    res.json(count.rows);
+    console.log(count.rowCount);
+  } catch (err) {
+    return res.status(400).send({
+      success: false,
+      message: err.message,
+    });
+  }
+}
+
+// Count pet days within one month
+async function handleGetBidsInMonth(req, res) {
+  try {
+    const { cname } = req.params;
+    const { start_date } = req.params;
+    const { end_date } = req.params;
+    const count = await pool.query(
+      `SELECT * FROM bids WHERE cname = ${cname} AND is_selected = true AND end_date > ${month} AND start_date <= DATE($3) + interval '1 day'`,
+      [cname, start_date, end_date]
+    );
+    res.json(count.rows);
   } catch (err) {
     return res.status(400).send({
       success: false,
@@ -79,8 +145,11 @@ async function handleGetPayment(req, res) {
 }
 
 module.exports = {
-  handleGetBids,
+  handleGetPetDays,
+  handleGetCaretakerDays,
+  handleGetPets,
   handleGetBidsInRange,
+  handleGetBidsInMonth,
   handleGetBidsForUser,
   handleGetPayment,
 };

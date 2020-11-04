@@ -3,7 +3,7 @@ import { Container, makeStyles } from '@material-ui/core';
 import Page from 'src/components/Page';
 import data from '../utils/CareTakerData';
 import { UserContext } from 'src/UserContext';
-import Jobs from '../components/Jobs';
+import Jobs from '../components/Admin/Jobs';
 
 const useStyles = makeStyles(theme => ({
   root: {
