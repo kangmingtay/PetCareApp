@@ -18,11 +18,10 @@ import NotFoundPage from './pages/NotFoundPage';
 
 const App = () => {
   const [context, setContext] = useState({
-    username: "",
-    isLoggedIn: false,
-    isAdmin: false,
+    username: localStorage.getItem('username'),
+    isLoggedIn: localStorage.getItem('isLoggedIn'),
+    isAdmin: localStorage.getItem('isAdmin'),
   })
-
   return (
     <ThemeProvider theme={theme}>
       <GlobalStyles />

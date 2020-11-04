@@ -29,7 +29,6 @@ const ProfileDetails = ({ className, ...rest }) => {
       email: resp.data.results[0].email, 
       address: resp.data.results[0].address 
     })
-
   }, [])
 
   const handleChange = (event) => {
