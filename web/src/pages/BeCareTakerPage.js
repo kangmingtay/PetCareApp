@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const CareTakerPage = () => {
+const BeCareTakerPage = () => {
   const classes = useStyles();
   const { context } = useContext(UserContext)
   const [isCareTaker, setCareTaker] = useState(false);
@@ -37,6 +37,7 @@ const CareTakerPage = () => {
         if (parseInt(resp.data.results.isCareTaker) === 1) {
             console.log("isCareTaker")
             setCareTaker(true)
+            setOpen(false)
         }
     }
     fetchData();
@@ -107,4 +108,4 @@ const CareTakerPage = () => {
   );
 };
 
-export default CareTakerPage;
+export default BeCareTakerPage;
