@@ -8,16 +8,19 @@ async function handleGetAllUsers(req, res) {
             throw Error("Missing request params");
         }
 
-        const start_date = (req.query.start_date === '') ? UTC__START_DATE : req.query.start_date;
-        const end_date = (req.query.end_date === '') ? new Date().toISOString().slice(0, 10) : req.query.end_date;
+        // const start_date = (req.query.start_date === '') ? UTC__START_DATE : req.query.start_date;
+        // const end_date = (req.query.end_date === '') ? new Date().toISOString().slice(0, 10) : req.query.end_date;
+        const offset = (req.query.offset === '') ? 20 : req.query.offset;
+        const limit = (req.query.offset === '') ? 0 : req.query.limit;
         const sort_category = (req.query.sort_category === '') ? 'username' : req.query.sort_category;
         const sort_direction = (req.query.sort_direction === "-") ? 'DESC' : 'ASC';
 
         const query = `
             SELECT username, email, address, date_created, is_admin 
             FROM accounts
-            WHERE date_created BETWEEN '${start_date}' AND '${end_date}'
-            ORDER BY ${sort_category} ${sort_direction}`;
+            ORDER BY ${sort_category} ${sort_direction}
+            LIMIT ${limit}
+            OFFSET ${offset}`;
         const allUser = await pool.query(query);
 
         const resp = { results: allUser.rows };

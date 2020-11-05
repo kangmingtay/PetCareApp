@@ -5,7 +5,7 @@ import { ThemeProvider } from '@material-ui/core';
 import GlobalStyles from 'src/components/GlobalStyles';
 import theme from 'src/theme';
 import ProfilePage from './pages/ProfilePage';
-import CareTakerPage from './pages/CareTakerPage';
+import FindCareTakerPage from './pages/FindCareTakerPage';
 import PetOwnerPage from './pages/PetOwnerPage';
 import DashboardLayout from './layouts/DashboardLayout';
 import DashboardPage from './pages/DashboardPage';
@@ -18,11 +18,10 @@ import NotFoundPage from './pages/NotFoundPage';
 
 const App = () => {
   const [context, setContext] = useState({
-    username: "",
-    isLoggedIn: false,
-    isAdmin: false,
+    username: localStorage.getItem('username'),
+    isLoggedIn: localStorage.getItem('isLoggedIn'),
+    isAdmin: localStorage.getItem('isAdmin'),
   })
-
   return (
     <ThemeProvider theme={theme}>
       <GlobalStyles />
@@ -35,10 +34,10 @@ const App = () => {
           >
             <Route 
               path="admin" 
-              element={context.isAdmin ? <AdminPage /> : <Navigate to="/404" />} 
+              element={context.isAdmin === "true" ? <AdminPage /> : <Navigate to="/app/dashboard" />} 
             />
             <Route path="dashboard" element={<DashboardPage />} />
-            <Route path="caretakers" element={<CareTakerPage />} />
+            <Route path="caretakers" element={<FindCareTakerPage />} />
             <Route path="pets" element={<PetOwnerPage />} />
             <Route path="account" element={<ProfilePage />} />
           </ProtectedRoute>

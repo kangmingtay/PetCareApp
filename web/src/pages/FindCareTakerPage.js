@@ -19,10 +19,10 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const CustomerListView = () => {
+const FindCareTakerPage = () => {
   const classes = useStyles();
   const [caretakers, setCaretakers] = useState([]);
-  const { context, setContext } = useContext(UserContext)
+  const { context } = useContext(UserContext)
 
   useEffect(() => {
     async function fetchData() {
@@ -71,4 +71,4 @@ const CustomerListView = () => {
   );
 };
 
-export default CustomerListView;
+export default FindCareTakerPage;
