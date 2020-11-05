@@ -10,6 +10,8 @@ import Page from 'src/components/Page';
 import { UserContext } from 'src/UserContext';
 import { fetchUserType } from 'src/calls/userCalls';
 import ModalUtil from 'src/components/ModalUtil';
+import { createFullTimer } from 'src/calls/fullTimerCalls';
+import { createPartTimer } from 'src/calls/partTimerCalls';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -27,20 +29,34 @@ const CareTakerPage = () => {
   const classes = useStyles();
   const { context } = useContext(UserContext)
   const [isCareTaker, setCareTaker] = useState(false);
+  const [open, setOpen] = useState(true);
 
   useEffect(() => {
     async function fetchData() {
         const resp = await fetchUserType(context.username) 
         if (parseInt(resp.data.results.isCareTaker) === 1) {
+            console.log("isCareTaker")
             setCareTaker(true)
         }
     }
     fetchData();
   }, [])
 
-  const handleClick = (type) => {
-      console.log(type)
-      // add api call here to create full-timer / part-timer account
+  const handleClick = async (type) => {
+    // add api call here to create full-timer / part-timer account
+      let resp = {data: {success: false}}
+      switch(type) {
+          case ("full-timer"):
+              resp = await createFullTimer(context.username);
+              break;
+          case ("part-timer"):
+              resp = await createPartTimer(context.username);
+              break;
+      }
+      if (resp.data.success === true) {
+        setCareTaker(true);
+      }
+      setOpen(false);
   }
 
   const modalInfo = (
@@ -84,7 +100,7 @@ const CareTakerPage = () => {
           Welcome to the CareTaker Page!
           Caretaker status: {isCareTaker.toString()}
       </Container>
-      <ModalUtil open={!isCareTaker}>
+      <ModalUtil open={open} handleClose={handleClick}>
         {modalInfo}
       </ModalUtil>
     </Page>
