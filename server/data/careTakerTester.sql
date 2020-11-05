@@ -56,14 +56,14 @@ insert into pets (pet_name, category, pname, care_req) values ('gregor', 'dog', 
 
 --bids
 
-insert into bids (pname, pet_name, cname, start_date, end_date, rating, is_selected, payment_amt, transaction_type, ranking, review) 
-	  values ('shannon', 'gregor', 'zw', TO_DATE('1/10/2021', 'DD/MM/YYYY'), TO_DATE('10/10/2021', 'DD/MM/YYYY'), 1, true, 500, 'card', 2, 'good');
+insert into bids (pname, pet_name, cname, start_date, end_date, rating, is_selected, payment_amt, transaction_type, review) 
+	  values ('shannon', 'gregor', 'zw', TO_DATE('1/10/2021', 'DD/MM/YYYY'), TO_DATE('10/10/2021', 'DD/MM/YYYY'), 1, true, 500, 'card', 'good');
 
-insert into bids (pname, pet_name, cname, start_date, end_date, rating, is_selected, payment_amt, transaction_type, ranking, review) 
-	  values ('shannon', 'gregor', 'zw', TO_DATE('27/9/2021', 'DD/MM/YYYY'), TO_DATE('3/10/2021', 'DD/MM/YYYY'), 1, true, 7000, 'card', 2, 'good');
+insert into bids (pname, pet_name, cname, start_date, end_date, rating, is_selected, payment_amt, transaction_type, review) 
+	  values ('shannon', 'gregor', 'zw', TO_DATE('27/9/2021', 'DD/MM/YYYY'), TO_DATE('3/10/2021', 'DD/MM/YYYY'), 1, true, 7000, 'card', 'good');
 
-insert into bids (pname, pet_name, cname, start_date, end_date, rating, is_selected, payment_amt, transaction_type, ranking, review) 
-	  values ('shannon', 'gregor', 'zw', TO_DATE('29/10/2021', 'DD/MM/YYYY'), TO_DATE('4/11/2021', 'DD/MM/YYYY'), 1, true, 70000, 'card', 2, 'good');
+insert into bids (pname, pet_name, cname, start_date, end_date, rating, is_selected, payment_amt, transaction_type, review) 
+	  values ('shannon', 'gregor', 'zw', TO_DATE('29/10/2021', 'DD/MM/YYYY'), TO_DATE('4/11/2021', 'DD/MM/YYYY'), 1, true, 70000, 'card', 'good');
 
 
 insert into bids (pname, pet_name, cname, start_date, end_date, rating, is_selected, payment_amt, transaction_type, ranking, review) 
