@@ -1,7 +1,6 @@
-import React, { useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
-import moment from 'moment';
 import {
   Avatar,
   Box,
@@ -14,6 +13,7 @@ import {
   makeStyles
 } from '@material-ui/core';
 import { UserContext } from 'src/UserContext';
+import { fetchUserType } from 'src/calls/userCalls';
 
 const user = {
   avatar: '/static/images/avatars/avatar_6.png',
@@ -34,8 +34,18 @@ const useStyles = makeStyles(() => ({
 
 const Profile = ({ className, ...rest }) => {
   const classes = useStyles();
-
+  const [values, setValues] = useState({})
   const { context } = useContext(UserContext);
+
+  useEffect(() => {
+    async function fetchData() {
+      const resp = await fetchUserType(context.username);
+      setValues({
+        ...resp.data.results
+      })
+    }
+    fetchData();
+  }, [])
 
   return (
     <Card
@@ -59,6 +69,31 @@ const Profile = ({ className, ...rest }) => {
           >
             Username: {context.username}
           </Typography>
+          {Object.keys(values).map(key => {
+            let name = ""
+            switch(key) {
+              case "isPetOwner":
+                name = "Pet Owner"
+                break;
+              case "isCareTaker":
+                name = "Care Taker"
+                break;
+              case "isFullTimer":
+                name = "Full-Timer"
+                break;
+              case "isPartTimer":
+                name = "Part-Timer"
+                break;
+            }
+            return (
+              <Typography
+              color="textPrimary"
+              variant="h6"
+              >
+                {name}: {parseInt(values[key]) === 1 ? "Yes" : "No"}
+              </Typography>
+            )
+          })}
         </Box>
       </CardContent>
       <Divider />

@@ -8,6 +8,7 @@ export default {
     updateUser: (username) => `${BASE_URL}/users/${username}`,
     getUser: (username) => `${BASE_URL}/users/${username}`,
     deleteUser: (username) => `${BASE_URL}/users/${username}`,
+    checkUserType: (username) => `${BASE_URL}/users/type/${username}`,
     getExpectedSalary: (username) => `${BASE_URL}/caretakers/expectedSalary/${username}`,
     getCareTakerCalendar: (username) => `${BASE_URL}/caretakers/calendar/${username}`,
     getCareTakerPreference: (username) => `${BASE_URL}/caretakers/prefers/${username}`,

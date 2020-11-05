@@ -25,3 +25,8 @@ export const updateSingleUserInfo = async(data) => {
     });
     return resp;
 }
+
+export const fetchUserType = async(username) => {
+    const resp = await axios.get(api.checkUserType(username));
+    return resp;
+}

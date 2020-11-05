@@ -118,10 +118,37 @@ async function handleUpdateUser(req, res) {
     }
 }
 
+async function handleCheckUserType(req, res) {
+    try {
+        const { username } = req.params;
+        const query = `
+            SELECT 
+                (SELECT 1 FROM pet_owners WHERE username = '${username}') AS "isPetOwner", 
+                (SELECT 1 FROM care_takers WHERE cname = '${username}') AS "isCareTaker", 
+                (SELECT 1 FROM full_timer WHERE cname = '${username}') AS "isFullTimer", 
+                (SELECT 1 FROM part_timer WHERE cname = '${username}') AS "isPartTimer"
+        `
+        const getUserTypes = await pool.query(query);
+        let resp = {}
+        if (getUserTypes.rowCount === 1) {
+            resp["results"] = {...getUserTypes.rows[0]};
+            resp["success"] = true;
+        }
+        return res.status(200).json(resp);
+    } catch (err) {
+        return res.status(400).send({
+            success: false,
+            message: err.message
+        })
+    }
+        
+}
+
 module.exports = {
     handleGetAllUsers,
     handleGetUser,
     handleCreateUser,
     handleDeleteUser,
-    handleUpdateUser
+    handleUpdateUser,
+    handleCheckUserType
 }
