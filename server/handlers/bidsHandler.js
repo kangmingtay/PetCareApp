@@ -93,6 +93,52 @@ const handleGetCaretakerBids = async (req, res) => {
     }
 }
 
+const handleGetCareTakerNearby = async (req, res) =>{
+    try{
+        const { area } = req.params;
+        const q = `SELECT cname, email, address FROM 
+            (SELECT * FROM  
+                (SELECT * FROM care_takers) AS t1 
+                LEFT JOIN 
+                (SELECT * FROM accounts) AS t2 
+                ON cname = username
+            ) AS t3
+            WHERE address = '${area}'`;
+        const nearby = await pool.query(q);
+        const resp = { results: nearby.rows };
+        return res.status(200).json(resp);
+    }
+    catch(err){
+        return res.status(400).send({
+            success: false,
+            message: err.message  
+        });
+    }
+}
+
+const handleGetPetOwnerNearby = async (req, res) =>{
+    try{
+        const { area } = req.params;
+        const q = `SELECT pname, email, address FROM 
+            (SELECT * FROM  
+                (SELECT username AS pname FROM pet_owners) AS t1 
+                LEFT JOIN 
+                (SELECT * FROM accounts) AS t2 
+                ON pname = username
+            ) AS t3
+            WHERE address = '${area}'`;
+        const nearby = await pool.query(q);
+        const resp = { results: nearby.rows };
+        return res.status(200).json(resp);
+    }
+    catch(err){
+        return res.status(400).send({
+            success: false,
+            message: err.message  
+        });
+    }
+}
+
 // Possible things care taker may want to see from bids
 
 // Sort
@@ -164,5 +210,7 @@ module.exports = {
     handleGetCaretakerBids,
     handleGetCareTakerBidsSortByAnything,
     handleGetCareTakerBidsFilterByAnything,
-    handleGetCareTakerBidsFilterSortByAnything
+    handleGetCareTakerBidsFilterSortByAnything,
+    handleGetCareTakerNearby,
+    handleGetPetOwnerNearby
 }

@@ -1,8 +1,8 @@
-INSERT INTO accounts VALUES('km', 'kmafa', 'alcj@gmail.com');
-INSERT INTO accounts VALUES('dood1', 'kmafa', 'alafas@gmail.com');
-INSERT INTO accounts VALUES('dsah', 'kmafa', 'alccaj@gmail.com');
-INSERT INTO accounts VALUES('kdafm', 'kmasfa', 'acawlcj@gmail.com');
-INSERT INTO accounts VALUES('buster', 'kmafa', 'buster@gmail.com');
+INSERT INTO accounts VALUES('km', 'kmafa', 'alcj@gmail.com', 'west', '12-12-12');
+INSERT INTO accounts VALUES('dood1', 'kmafa', 'alafas@gmail.com', 'west', '12-12-12');
+INSERT INTO accounts VALUES('dsah', 'kmafa', 'alccaj@gmail.com', 'west', '12-12-12');
+INSERT INTO accounts VALUES('kdafm', 'kmasfa', 'acawlcj@gmail.com', 'west', '12-12-12');
+INSERT INTO accounts VALUES('buster', 'kmafa', 'buster@gmail.com', 'west', '12-12-12');
 
 INSERT INTO users VALUES('dood1');
 INSERT INTO users VALUES('dsah');
