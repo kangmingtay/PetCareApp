@@ -65,7 +65,7 @@ const Underperform = ({ month, year }) => {
   return (
     <Fragment>
       <Button variant="contained" onClick={getCaretakers}>
-        Get lazy caretakers
+        Get underperforming caretakers
       </Button>
       <h3>
         Less than 30 pet days:
