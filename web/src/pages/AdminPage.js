@@ -22,13 +22,13 @@ const AdminView = () => {
 
   return (
     <Page className={classes.root} title="Administrator">
+      <Jobs />
       <Container maxWidth={false}>
         <Typography variant="h2" align="center">
           Hello Admin, {context.username}
         </Typography>
       </Container>
       <AdminTable />
-      <Jobs />
     </Page>
   );
 };

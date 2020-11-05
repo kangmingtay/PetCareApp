@@ -12,7 +12,6 @@ const PetJobs = ({ month, year }) => {
         `http://localhost:8888/api/admin/petdays/${month}/${year}`
       );
       const jsonData = await response.json();
-      console.log(jsonData);
       setPetdays(jsonData);
     } catch (err) {
       console.error(err.message);
@@ -26,7 +25,6 @@ const PetJobs = ({ month, year }) => {
         `http://localhost:8888/api/admin/pets/${month}/${year}`
       );
       const jsonData = await response.json();
-      console.log(jsonData);
       setPets(jsonData);
     } catch (err) {
       console.error(err.message);

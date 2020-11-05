@@ -7,7 +7,6 @@ import Salary from './Salary';
 import Underperform from './Underperform';
 
 const Jobs = () => {
-  const [name, setName] = useState('');
   const [month, setMonth] = useState('');
   const [year, setYear] = useState('');
 
@@ -34,11 +33,6 @@ const Jobs = () => {
       <form className={classes.root} noValidate autoComplete="off">
         <TextField
           id="standard-basic"
-          label="Employee name:"
-          onChange={e => setName(e.target.value)}
-        />
-        <TextField
-          id="standard-basic"
           label="Month:"
           onChange={e => setMonth(e.target.value)}
         />
@@ -50,7 +44,8 @@ const Jobs = () => {
       </form>
       <PetJobs month={month} year={year} />
       <Months year={year} />
-      <Salary name={name} month={month} year={year} />
+      <Salary month={month} year={year} />
+      <Underperform month={month} year={year} />
     </Fragment>
   );
 };

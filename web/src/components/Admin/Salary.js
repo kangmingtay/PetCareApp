@@ -1,18 +1,16 @@
 import React, { Fragment, useState } from 'react';
 import Button from '@material-ui/core/Button';
 
-const Salary = ({ name, month, year }) => {
-  const [salary, setSalary] = useState({"results" : [] });
+const Salary = ({ month, year }) => {
+  const [salary, setSalary] = useState([]);
 
   const getSalary = async e => {
     e.preventDefault();
     try {
-      const monthYear = "month=" + month + '-' + year;
       const response = await fetch(
-        `http://localhost:8888/api/caretaker/expectedSalary/${name}?${monthYear}`
+        `http://localhost:8888/api/admin/revenue/${month}/${year}`
       );
       const jsonData = await response.json();
-      console.log(jsonData.results);
       setSalary(jsonData);
     } catch (err) {
       console.error(err.message);
@@ -25,8 +23,8 @@ const Salary = ({ name, month, year }) => {
         Get salary for care taker
       </Button>
       <h3>
-        Salary for {name}: 
-        {salary.results.map((row, i) => (
+        Salary for each caretaker:
+        {salary.map((row, i) => (
           <div key={i}>{row.salary}</div>
         ))}
       </h3>
