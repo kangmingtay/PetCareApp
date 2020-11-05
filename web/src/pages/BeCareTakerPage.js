@@ -9,7 +9,8 @@ import {
 import Page from 'src/components/Page';
 import { UserContext } from 'src/UserContext';
 import { fetchUserType } from 'src/calls/userCalls';
-import ModalUtil from 'src/components/ModalUtil';
+import ModalUtil from 'src/components/UI/ModalUtil';
+import ViewBidsTable from 'src/components/CareTaker/ViewBidsTable';
 import { createFullTimer } from 'src/calls/fullTimerCalls';
 import { createPartTimer } from 'src/calls/partTimerCalls';
 
@@ -101,6 +102,7 @@ const BeCareTakerPage = () => {
           Welcome to the CareTaker Page!
           Caretaker status: {isCareTaker.toString()}
       </Container>
+      <ViewBidsTable/>
       <ModalUtil open={open} handleClose={handleClick}>
         {modalInfo}
       </ModalUtil>
