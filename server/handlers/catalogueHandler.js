@@ -68,9 +68,10 @@ async function handleGetListOfCTs(req, res) {
           THEN ROUND(PC.base_price + (PC.base_price * (CEILING(CT.rating) - 1) / 4)::numeric, 2)
         ELSE
           ROUND(PC.base_price::numeric, 2)
-      END AS minPrice
-    FROM cte_valid_caretakers CVC, care_takers CT, prefers P, pet_categories PC
-    WHERE CVC.cname = CT.cname AND CT.cname = P.cname
+      END AS minPrice,
+      A.address
+    FROM cte_valid_caretakers CVC, care_takers CT, prefers P, pet_categories PC, accounts A
+    WHERE CVC.cname = CT.cname AND CT.cname = P.cname AND P.cname = A.username
     AND P.category = PC.category
     `;
 

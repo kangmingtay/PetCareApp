@@ -16,19 +16,25 @@ const useStyles = makeStyles({
 });
 
 const columns = [
-  { id: 'cname', label: 'Caretaker Name', minWidth: 100 },
-  { id: 'rating', label: 'Rating', minWidth: 50, align: 'right', },
+  { id: 'cname', label: 'Caretaker Name', minWidth: 100, align: 'left' },
+  { id: 'rating', label: 'Rating', minWidth: 30, align: 'center', },
   {
     id: 'category',
     label: 'Pet Category',
-    minWidth: 100,
-    align: 'right',
+    minWidth: 80,
+    align: 'center',
   },
   {
     id: 'minprice',
     label: 'Base Price per day',
     minWidth: 50,
-    align: 'right',
+    align: 'center',
+  },
+  {
+    id: 'address',
+    label: 'Area',
+    minWidth: 100,
+    align: 'center',
   },
 ];
 
@@ -37,6 +43,7 @@ export default function CatalogTable(props) {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
   const [selected, setSelected] = React.useState('');
+  const [isOpened, setIsOpened] = React.useState(false);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -48,11 +55,15 @@ export default function CatalogTable(props) {
   };
 
   const handleRowClick = (cname) => {
+    function toggle() {
+      setIsOpened(wasOpened => !wasOpened);
+    }
     console.log(cname);
     if (selected === cname) {
       setSelected('');
     } else {
       setSelected(cname);
+      toggle();
     }
     
   }
