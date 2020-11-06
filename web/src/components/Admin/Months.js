@@ -1,5 +1,6 @@
 import React, { Fragment, useState } from 'react';
 import Button from '@material-ui/core/Button';
+import { fetchAllDays } from 'src/calls/adminCalls';
 
 const Months = ({ year }) => {
   const [busyMonth, setBusyMonth] = useState([]);
@@ -9,33 +10,26 @@ const Months = ({ year }) => {
     try {
       var monthList = [];
       for (var i = 1; i <= 12; i++) {
-        const response = await fetch(
-          `http://localhost:8888/api/admin/petdays/${i}/${year}`
-        );
-        const jsonData = await response.json();
-        monthList[i] = jsonData;
+        const response = await fetchAllDays({ month: i, year: year });
+        monthList[i] = response.data.results[0].days;
       }
-      getBusiestMonth(monthList);
+      var maxDays = 0;
+      var maxMonth = [];
+      for (var i = 1; i <= 12; i++) {
+        var days = parseInt(monthList[i]);
+        if (maxDays < days) {
+          maxDays = days;
+          maxMonth = [];
+          maxMonth.push(i);
+        } else if (maxDays === days) {
+          maxMonth.push(i);
+        }
+      }
+      setBusyMonth(maxMonth);
     } catch (err) {
       console.error(err.message);
     }
   };
-
-  async function getBusiestMonth(monthList) {
-    var maxDays = 0;
-    var maxMonth = [];
-    for (var i = 1; i <= 12; i++) {
-      var days = parseInt(monthList[i].map(row => row.days)[0]);
-      if (maxDays < days) {
-        maxDays = days;
-        maxMonth = [];
-        maxMonth.push(i);
-      } else if (maxDays === days) {
-        maxMonth.push(i);
-      }
-    }
-    setBusyMonth(maxMonth);
-  }
 
   return (
     <Fragment>

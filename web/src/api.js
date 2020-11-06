@@ -18,4 +18,9 @@ export default {
     getLeaves: (username) => `${BASE_URL}/caretakers/requestDays/${username}`,
     getAvailability: (username) => `${BASE_URL}/caretakers/requestDays/${username}`,
     getListOfValidCareTakers: `${BASE_URL}/catalogue/`,
+    getAllDays: `${BASE_URL}/admin/alldays/`,
+    getPetDays: `${BASE_URL}/admin/petdays/`,
+    getPets: `${BASE_URL}/admin/pets/`,
+    getRevenue: `${BASE_URL}/admin/revenue/`,
+    getRating: `${BASE_URL}/admin/rating/`,
 }

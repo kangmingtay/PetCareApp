@@ -1,18 +1,16 @@
 import React, { Fragment, useState } from 'react';
 import Button from '@material-ui/core/Button';
+import { fetchAllDays, fetchPets  } from 'src/calls/adminCalls'
 
-const PetJobs = ({ month, year }) => {
-  const [petdays, setPetdays] = useState([0]);
+const Pets = ({ month, year }) => {
+  const [allDays, setAllDays] = useState();
   const [pets, setPets] = useState([]);
 
-  const getPetdays = async e => {
+  const getAllDays = async e => {
     e.preventDefault();
     try {
-      const response = await fetch(
-        `http://localhost:8888/api/admin/petdays/${month}/${year}`
-      );
-      const jsonData = await response.json();
-      setPetdays(jsonData);
+      const response = await fetchAllDays({ month: month, year: year});
+      setAllDays([...response.data.results[0].days]);
     } catch (err) {
       console.error(err.message);
     }
@@ -21,11 +19,8 @@ const PetJobs = ({ month, year }) => {
   const getPets = async e => {
     e.preventDefault();
     try {
-      const response = await fetch(
-        `http://localhost:8888/api/admin/pets/${month}/${year}`
-      );
-      const jsonData = await response.json();
-      setPets(jsonData);
+      const response = await fetchPets({ month: month, year: year});
+      setPets([...response.data.results]);
     } catch (err) {
       console.error(err.message);
     }
@@ -33,14 +28,11 @@ const PetJobs = ({ month, year }) => {
 
   return (
     <Fragment>
-      <Button variant="contained" value="pets" onClick={getPetdays}>
+      <Button variant="contained" value="pets" onClick={getAllDays}>
         Number of pet days
       </Button>
       <h3>
-        Total pet days in month: {petdays[0].days}
-        {/* {petdays.map((row, i) => (
-          <div key={i}>{row.days}</div>
-        ))} */}
+        Total pet days in month: {allDays}
       </h3>
       <Button variant="contained" value="pets" onClick={getPets}>
         Pets cared for
@@ -55,4 +47,4 @@ const PetJobs = ({ month, year }) => {
   );
 };
 
-export default PetJobs;
+export default Pets;

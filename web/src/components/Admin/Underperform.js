@@ -1,5 +1,6 @@
 import React, { Fragment, useState } from 'react';
 import Button from '@material-ui/core/Button';
+import { fetchPetDays, fetchRevenue, fetchRating } from 'src/calls/adminCalls';
 
 const Underperform = ({ month, year }) => {
   const [lazy, setLazy] = useState([]);
@@ -22,43 +23,38 @@ const Underperform = ({ month, year }) => {
   };
 
   async function getLazyCaretakers() {
-    const response = await fetch(
-      `http://localhost:8888/api/admin/caretakerdays/${month}/${year}`
-    );
-    const jsonData = await response.json();
+    const response = await fetchPetDays({ month: month, year: year });
+    var results = [...response.data.results];
     var lazyList = [];
-    for (var i = 0; i < jsonData.length; i++) {
-      const days = jsonData[i].pet_days;
-      const name = jsonData[i].cname;
+    for (var i = 0; i < results.length; i++) {
+      const days = results[i].pet_days;
+      const name = results[i].cname;
       if (days < minPetdays) lazyList.push(name);
     }
     setLazy(lazyList);
   }
 
   async function getCheapCaretakers() {
-    const response = await fetch(
-      `http://localhost:8888/api/admin/revenue/${month}/${year}`
-    );
-    const jsonData = await response.json();
+    const response = await fetchRevenue({ month: month, year: year });
+    var results = [...response.data.results];
     var cheapList = [];
-    for (var i = 0; i < jsonData.length; i++) {
-      const revenue = jsonData[i].revenue;
-      const name = jsonData[i].cname;
+    for (var i = 0; i < results.length; i++) {
+      const revenue = results[i].revenue;
+      const name = results[i].cname;
       if (revenue < minRevenue) cheapList.push(name);
     }
     setCheap(cheapList);
   }
 
   async function getUselessCaretakers() {
-    const response = await fetch(`http://localhost:8888/api/admin/rating`);
-    const jsonData = await response.json();
+    const response = await fetchRating();
+    var results = [...response.data.results];
     var uselessList = [];
-    for (var i = 0; i < jsonData.length; i++) {
-      const rating = jsonData[i].rating;
-      const name = jsonData[i].cname;
+    for (var i = 0; i < results.length; i++) {
+      const rating = results[i].rating;
+      const name = results[i].cname;
       if (rating < minRating) uselessList.push(name);
     }
-    // console.log(uselessList);
     setUseless(uselessList);
   }
 
