@@ -2,7 +2,9 @@ import React, { useContext, useEffect, useState } from 'react';
 import {
   makeStyles, Typography
 } from '@material-ui/core';
+import { useToasts } from 'react-toast-notifications'
 import Container from '@material-ui/core/Container';
+import Button from '@material-ui/core/Button';
 import TableUtil from '../UI/TableUtil';
 import PendingBids from './PendingBids';
 import { fetchAllBids } from 'src/calls/bidsCalls'
@@ -22,6 +24,8 @@ const useStyles = makeStyles((theme) => ({
 
 const ViewBidsTable = () => {
   const classes = useStyles();
+
+  const { addToast } = useToasts()
 
   const [ pendingBids, setPendingBids ] = useState([])
   const [ selectedBids, setSelectedBids ] = useState([])
@@ -64,9 +68,21 @@ const ViewBidsTable = () => {
       end_date: bid.end_date,
     })
     const newPendingBids = pendingBids.filter(item => item !== bid);
-    setPendingBids([...newPendingBids]);
-    setSelectedBids([...selectedBids, bid]);
-    console.log(resp);
+    
+    console.log(resp.data.message);
+    if (resp.data.success === true) {
+      addToast(`You have accepted ${bid.pname}'s bid!`, {
+        appearance: 'success',
+        autoDismiss: true,
+      })
+      setPendingBids([...newPendingBids]);
+      setSelectedBids([...selectedBids, bid]);
+    } else {
+      addToast(`Something went wrong! ${resp.data.message}!`, {
+        appearance: 'error',
+        autoDismiss: true,
+      })
+    }
   }
 
   return (
@@ -102,10 +118,5 @@ const ViewBidsTable = () => {
     
   );
 };
-
-// ViewBidsTable.propTypes = {
-//   className: PropTypes.string,
-//   customers: PropTypes.array.isRequired
-// };
 
 export default ViewBidsTable;
