@@ -23,4 +23,6 @@ export default {
     getListOfValidCareTakers: `${BASE_URL}/catalogue/`,
     getCareTakerBids: (username) => `${BASE_URL}/bids/caretakers/${username}`,
     updateCareTakerBid: (username) => `${BASE_URL}/caretakers/selectbid/${username}`,
+    getPetsForDateRange: (username) => `${BASE_URL}/catalogue/${username}`,
+    insertBid: (username) => `${BASE_URL}/catalogue/${username}`,
 }
