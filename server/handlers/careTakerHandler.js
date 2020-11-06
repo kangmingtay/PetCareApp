@@ -323,17 +323,18 @@ async function handleGetRating(req, res) {
  * 
  * @param req.query.pname = pet owner name
  * @param req.query.pet_name = pet name
- * @param req.query.start_date = start date 'DD-MM-YYYY'
- * @param req.query.end_date = end date 'DD-MM-YYYY'
+ * @param req.query.start_date = start date 'YYYY-MM-DD'
+ * @param req.query.end_date = end date 'YYYY-MM-DD'
  */
 async function handleSelectBid(req, res) {
     try {
         const { username } = req.params;
         const { pname, pet_name, start_date, end_date} = req.query;
+        console.log(req.query)
         const query = `
         UPDATE bids SET is_selected=true WHERE pname='${pname}'
-            AND pet_name = '${pet_name}' AND start_date = TO_DATE('${start_date}', 'DD-MM-YYYY') AND end_date = TO_DATE('${end_date}', 'DD-MM-YYYY')
-            AND cname = '${username}' AND pname = '${pname}'
+            AND pet_name = '${pet_name}' AND start_date = TO_DATE('${start_date}', 'YYYY-MM-DD') AND end_date = TO_DATE('${end_date}', 'YYYY-MM-DD')
+            AND cname = '${username}'
             
             -- check if caretaker is overbooked on those days
             AND (
@@ -373,12 +374,21 @@ async function handleSelectBid(req, res) {
                 (SELECT category FROM prefers WHERE cname = '${username}')
             )
         `;
-        await pool.query(query);
-        const resp = {
-            success: true,
-            message: `Selected bid successfully`,
-        };
+        const updateResult = await pool.query(query);
+        let resp = {}
+        if (updateResult.rowCount === 1) {
+            resp = {
+                success: true,
+                message: `Selected bid successfully`,
+            };
+        } else {
+            resp = {
+                success: false,
+                message: `Update failed`,
+            }
+        }
         return res.status(200).json(resp);
+
     } catch (err) {
         return res.status(400).send({
             success: false,
