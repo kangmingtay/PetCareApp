@@ -21,6 +21,8 @@ export default {
     getLeaves: (username) => `${BASE_URL}/caretakers/requestDays/${username}`,
     getAvailability: (username) => `${BASE_URL}/caretakers/requestDays/${username}`,
     getListOfValidCareTakers: `${BASE_URL}/catalogue/`,
+    getCareTakerBids: (username) => `${BASE_URL}/bids/caretakers/${username}`,
+    updateCareTakerBid: (username) => `${BASE_URL}/caretakers/selectbid/${username}`,
     getPetsForDateRange: (username) => `${BASE_URL}/catalogue/${username}`,
     insertBid: (username) => `${BASE_URL}/catalogue/${username}`,
 }
