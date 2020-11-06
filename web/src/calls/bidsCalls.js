@@ -15,3 +15,15 @@ export const fetchAllBids = async(data) => {
     }});
     return resp;
 }
+
+export const updateSingleBid = async(data) => {
+    const { username, pname, pet_name, start_date, end_date } = data;
+    
+    const resp = await axios.post(api.updateCareTakerBid(username), null, {params: {
+        pname: pname,
+        pet_name: pet_name,
+        start_date: start_date.slice(0, 10),
+        end_date: end_date.slice(0, 10),
+    }});
+    return resp;
+}

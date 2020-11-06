@@ -22,4 +22,5 @@ export default {
     getAvailability: (username) => `${BASE_URL}/caretakers/requestDays/${username}`,
     getListOfValidCareTakers: `${BASE_URL}/catalogue/`,
     getCareTakerBids: (username) => `${BASE_URL}/bids/caretakers/${username}`,
+    updateCareTakerBid: (username) => `${BASE_URL}/caretakers/selectbid/${username}`,
 }
