@@ -128,7 +128,7 @@ const FindCareTakerPage = () => {
   const modalInfo = (
     <form className={classes.root} noValidate autoComplete="off">
       <Typography variant="h3" align="center" color="textPrimary">
-        Pokemon Day Care Payment Section
+        Payment Section
       </Typography>
       <Box justifyContent="space-evenly" display="flex">
         <TextField
