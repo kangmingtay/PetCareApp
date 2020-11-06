@@ -11,11 +11,12 @@ import Page from 'src/components/Page';
 import CatalogTable from '../components/CatalogTable';
 import ChooseDate from '../components/CatalogChooseDate';
 import ChoosePet from '../components/CatalogChoosePet';
-import { fetchListOfCareTakers } from 'src/calls/catalogueCalls'
+import { fetchListOfCareTakers, fetchListOfValidPets } from 'src/calls/catalogueCalls'
 import { UserContext } from 'src/UserContext';
 import Modal from '@material-ui/core/Modal';
 import Backdrop from '@material-ui/core/Backdrop';
 import Fade from '@material-ui/core/Fade';
+import ModalUtil from 'src/components/ModalUtil';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -46,7 +47,8 @@ const FindCareTakerPage = () => {
   const [selectedPet, setSelectedPet] = useState('');
   const [caretakers, setCaretakers] = useState([]);
   const [selectedCaretaker, setSelectedCaretaker] = useState('');
-  const [open, setOpen] = useState(false);
+  // const [open, setOpen] = useState(false);
+  const [open, isOpened] = useState(false);
 
   const [mainValues, setMainValues] = useState({
     startDate: new Date(),
@@ -57,30 +59,26 @@ const FindCareTakerPage = () => {
   });
   
   useEffect(() => {
-    async function fetchData() {
-      const resp = await fetchListOfCareTakers({ 
-        startDate: '4-11-2020', 
-        endDate: '4-11-2020', 
-        petCategoryField: 'x', 
-        careTakerField: 'x',
-        addressField: 'x',
+    async function fetchPets() {
+      const resp = await fetchListOfValidPets({ 
         pName: context.username,
+        startDate: new Date(),
+        endDate: new Date(),
       });
-      // console.log('resp:', resp)
-      setCaretakers([...caretakers, ...resp.data.results])
+      setListPets([...resp.data.results])
     }
-    fetchData();
-    // console.log('selected:', selectedCaretaker);
+    fetchPets();
   }, [])
 
-  const handleOpen = () => {
-    setOpen(true);
-    console.log('selected cname:', selectedCaretaker);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
+  const modalInfo = (
+    <Grid container xs={12}>
+      <Grid item xs={12}>
+        <Typography variant="h2" align="center">
+            Select one of the sign-up options:
+        </Typography>
+      </Grid>
+    </Grid>
+  );
 
   return (
     <Page
@@ -124,30 +122,12 @@ const FindCareTakerPage = () => {
       {/* (3) Select caretaker => (4) Will pop up model to confirm paymentAmt and transactionType*/}
       <Container>
         <Box mt={3}>
-          <CatalogTable caretakers={caretakers} setSelectedCaretaker={setSelectedCaretaker} handleOpen={handleOpen} />
+          <CatalogTable caretakers={caretakers} setSelectedCaretaker={setSelectedCaretaker} isOpened={isOpened} />
         </Box>
       </Container>
-      {/* <div>
-        <Modal
-          aria-labelledby="transition-modal-title"
-          aria-describedby="transition-modal-description"
-          className={classes.modal}
-          open={open}
-          onClose={handleClose}
-          closeAfterTransition
-          BackdropComponent={Backdrop}
-          BackdropProps={{
-            timeout: 500,
-          }}
-        >
-          <Fade in={open}>
-            <div className={classes.paper}>
-              <h2 id="transition-modal-title">Transition modal</h2>
-              <p id="transition-modal-description">react-transition-group animates me.</p>
-            </div>
-          </Fade>
-        </Modal>
-      </div> */}
+      <ModalUtil open={open}>
+        {modalInfo}
+      </ModalUtil>
     </Page>
   );
 };

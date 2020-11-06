@@ -58,15 +58,10 @@ export default function CatalogTable(props) {
     // function toggle() {
     //   setIsOpened(wasOpened => !wasOpened);
     // }
-    console.log(cname);
-    if (selected === cname) {
-      setSelected('');
-    } else {
-      setSelected(cname);
-      
-    }
+    setSelected(cname);
+    console.log('CTable:', cname);
     props.setSelectedCaretaker(cname);
-    props.handleOpen();
+    props.isOpened(true);
   }
 
   const isSelected = (cname) => selected.indexOf(cname) !== -1;
