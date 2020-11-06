@@ -4,15 +4,14 @@ import {
   Container,
   makeStyles,
   Button,
-  Grid,
   Typography,
   TextField,
   InputAdornment,
 } from '@material-ui/core';
 import Page from 'src/components/Page';
-import CatalogTable from '../components/CatalogTable';
-import ChooseDate from '../components/CatalogChooseDate';
-import ChoosePet from '../components/CatalogChoosePet';
+import CatalogTable from '../components/Catalog/CatalogTable';
+import ChooseDate from '../components/Catalog/CatalogChooseDate';
+import ChoosePet from '../components/Catalog/CatalogChoosePet';
 import { insertNewBid, fetchListOfValidPets } from 'src/calls/catalogueCalls'
 import { UserContext } from 'src/UserContext';
 import ModalUtil from 'src/components/UI/ModalUtil';
@@ -45,37 +44,22 @@ const FindCareTakerPage = () => {
   const { context } = useContext(UserContext)
 
   const [listPets, setListPets] = useState([]);
-
-  // const [selectedPet, setSelectedPet] = useState('');
   const [caretakers, setCaretakers] = useState([]);
-  
-  //Need to pass through bid insertion!
   const [selectedCaretaker, setSelectedCaretaker] = useState('');
   const [open, isOpened] = useState(false);
 
   const [mainValues, setMainValues] = useState({
     pName: context.username,
     petNameField: '',
-
     startDate: new Date(),
     endDate: new Date(),
-    
     careTakerField: '',
     addressField: '',
-    
     paymentAmt: 0,
     transactionType: 'Credit Card',
   });
   
   useEffect(() => {
-    async function fetchPets() {
-      const resp = await fetchListOfValidPets({ 
-        pName: context.username,
-        startDate: new Date(),
-        endDate: new Date(),
-      });
-      setListPets([...resp.data.results])
-    }
     fetchPets();
   }, [])
 
@@ -90,7 +74,6 @@ const FindCareTakerPage = () => {
 
   const handleBid = async () => {
     console.log('Bidding...');
-
     try {
       let resp = await insertNewBid({
         ...mainValues,
@@ -107,9 +90,7 @@ const FindCareTakerPage = () => {
       }
     } catch(err) {
       console.log(err);
-      alert("Insufficient Amount! Please Try Again")
-      // alert("Invalid bid: " + resp.data.message);
-      // console.log(err, resp.data.message);
+      alert("Insufficient Amount! Please Try Again");
     }
   }
 
@@ -182,46 +163,24 @@ const FindCareTakerPage = () => {
         </Typography>
       </Container>
       {/* (1) Selecting date range for pets to be taken care of  */}
-      <Container maxWidth={false}>
-        <Box mt={3}>
-          <Typography variant="h3" align="left" color="textPrimary">
-            Step 1: Select your Date Range
-          </Typography>
-          <ChooseDate 
-            // setCaretakers={setCaretakers}
-            setListPets={setListPets}
-            setMainValues={setMainValues}
-            mainValues={mainValues}
-          />
-        </Box>
-      </Container>
+      <ChooseDate 
+        setListPets={setListPets}
+        setMainValues={setMainValues}
+        mainValues={mainValues}
+      />
       {/* (2) Select pet_name, caretaker and area if needed */}
-      <Container maxWidth={false}>
-        <Box mt={3}>
-          <Typography variant="h3" align="left" color="textPrimary">
-            Step 2: Select your pet [Optional: Filter by caretaker, area]
-          </Typography>
-          <ChoosePet
-            listPets={listPets}
-            setMainValues={setMainValues}
-            mainValues={mainValues}
-            setCaretakers={setCaretakers}
-          />
-        </Box>
-      </Container>
+      <ChoosePet
+        listPets={listPets}
+        setMainValues={setMainValues}
+        mainValues={mainValues}
+        setCaretakers={setCaretakers}
+      />
       {/* (3) Select caretaker => (4) Will pop up model to confirm paymentAmt and transactionType*/}
-      <Container maxWidth={false}>
-        <Box mt={3}>
-          <Typography variant="h3" align="left" color="textPrimary">
-            Step 3: Select your caretaker
-          </Typography>
-          <CatalogTable 
-            caretakers={caretakers} 
-            setSelectedCaretaker={setSelectedCaretaker} 
-            isOpened={isOpened} 
-          />
-        </Box>
-      </Container>
+      <CatalogTable 
+        caretakers={caretakers} 
+        setSelectedCaretaker={setSelectedCaretaker} 
+        isOpened={isOpened} 
+      />
       <ModalUtil open={open} handleClose={handleCloseModal}>
         {modalInfo}
       </ModalUtil>
