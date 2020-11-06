@@ -62,7 +62,7 @@ CREATE TABLE IF NOT EXISTS Prefers (
 CREATE TABLE IF NOT EXISTS Schedule (
     cname VARCHAR(256) REFERENCES Care_Takers (cname) ON DELETE CASCADE,
     date DATE,
-    pet_count int,
+    pet_count int CHECK (pet_count <= 5),
     PRIMARY KEY (cname, date)
 );
 
@@ -91,7 +91,7 @@ CREATE TABLE IF NOT EXISTS Bids (
     rating NUMERIC CHECK (rating <= 5 AND rating > 0),
     is_selected BOOLEAN,
     payment_amt NUMERIC, 
-    transaction_type VARCHAR(30),
+    transaction_type VARCHAR(30) NOT NULL,
     review VARCHAR(256), 
     PRIMARY KEY(pname, pet_name, start_date, end_date),
     FOREIGN KEY (pname, pet_name) REFERENCES Pets(pname, pet_name) ON DELETE CASCADE,
