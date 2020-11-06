@@ -18,7 +18,7 @@ import {
 } from '@material-ui/pickers';
 import TextField from '@material-ui/core/TextField';
 import { format } from 'date-fns';
-import { fetchListOfCareTakers } from 'src/calls/catalogueCalls'
+import { fetchListOfCareTakers, fetchListOfValidPets } from 'src/calls/catalogueCalls'
 import { UserContext } from 'src/UserContext';
 
 const useStyles = makeStyles((theme) => ({
@@ -32,30 +32,36 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const Toolbar = (props) => {
+const ChooseDate = (props) => {
   const classes = useStyles();
   const { context, setContext } = useContext(UserContext);
 
-  const [values, setValues] = React.useState({
+  const [values, setValues] = useState({
     startDate: new Date(),
     endDate: new Date(),
-    petCategoryField: '',
-    careTakerField: '',
-    addressField: '',
+    // petCategoryField: '',
+    // careTakerField: '',
+    // addressField: '',
   });
 
   const handleSubmit = async () => {
     console.log('button pressed');
-
+    props.setMainValues({...props.mainValues, startDate: values.startDate, endDate: values.endDate});
     try {
-      let resp = await fetchListOfCareTakers({...values, pName: context.username});
+      let resp = await fetchListOfValidPets({...values, 
+        pName: context.username,
+        startDate: values.startDate,
+        endDate: values.endDate
+      });
       if (resp.data.success === true) {
-          console.log([...resp.data.results]);
-          props.setCaretakers([...resp.data.results]);
+          console.log('toolbar:', [...resp.data.results]);
+          props.setListPets([...resp.data.results]);
+          
+          console.log('CCD:', props.mainValues);
       }
     }
     catch(err) {
-      alert("Missing input fields")
+      alert("Missing input fields " + err)
       console.log(err);
     }
   }
@@ -83,7 +89,7 @@ const Toolbar = (props) => {
           <CardContent>
               <MuiPickersUtilsProvider utils={DateFnsUtils}>
               <form className={classes.root} noValidate autoComplete="off">
-                <Grid container className={classes.root} spacing={2}>
+                <Grid container className={classes.root} direction="row" justify="space-evenly" alignItems="center">
                     <Grid item>
                         <KeyboardDatePicker
                           disableToolbar
@@ -118,49 +124,6 @@ const Toolbar = (props) => {
                           }}
                         />
                     </Grid>
-                    <Grid item>
-                        <TextField 
-                          id="petCategoryField"
-                          value={values.petCategoryField}
-                          onChange={handleChange}
-                          // endAdornment={<InputAdornment position="end">Kg</InputAdornment>}
-                          aria-describedby="standard-weight-helper-text"
-                          inputProps={{
-                            'aria-label': 'weight',
-                          }}
-                          margin="normal"
-                        />
-                        
-                        <FormHelperText id="standard-weight-helper-text">Pet Category</FormHelperText>
-                    </Grid>
-                    <Grid item>
-                        <TextField 
-                          id="careTakerField"
-                          value={values.careTakerField}
-                          onChange={handleChange}
-                          // endAdornment={<InputAdornment position="end">Kg</InputAdornment>}
-                          aria-describedby="standard-weight-helper-text"
-                          inputProps={{
-                            'aria-label': 'weight',
-                          }}
-                          margin="normal"
-                        />
-                        <FormHelperText id="standard-weight-helper-text">Care Taker</FormHelperText>
-                    </Grid>
-                    <Grid item>
-                        <TextField 
-                          id="addressField"
-                          value={values.addressField}
-                          onChange={handleChange}
-                          // endAdornment={<InputAdornment position="end">Kg</InputAdornment>}
-                          aria-describedby="standard-weight-helper-text"
-                          inputProps={{
-                            'aria-label': 'weight',
-                          }}
-                          margin="normal"
-                        />
-                        <FormHelperText id="standard-weight-helper-text">Area</FormHelperText>
-                    </Grid>
                 </Grid>
                 </form>
               </MuiPickersUtilsProvider>
@@ -177,15 +140,15 @@ const Toolbar = (props) => {
           variant="contained"
           onClick={handleSubmit}
         >
-          Search
+          Select Dates
         </Button>
       </Box>
     </div>
   );
 };
 
-Toolbar.propTypes = {
+ChooseDate.propTypes = {
   className: PropTypes.string
 };
 
-export default Toolbar;
+export default ChooseDate;

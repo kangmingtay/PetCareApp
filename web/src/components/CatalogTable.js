@@ -55,17 +55,18 @@ export default function CatalogTable(props) {
   };
 
   const handleRowClick = (cname) => {
-    function toggle() {
-      setIsOpened(wasOpened => !wasOpened);
-    }
+    // function toggle() {
+    //   setIsOpened(wasOpened => !wasOpened);
+    // }
     console.log(cname);
     if (selected === cname) {
       setSelected('');
     } else {
       setSelected(cname);
-      toggle();
+      
     }
-    
+    props.setSelectedCaretaker(cname);
+    props.handleOpen();
   }
 
   const isSelected = (cname) => selected.indexOf(cname) !== -1;
@@ -97,7 +98,7 @@ export default function CatalogTable(props) {
                   tabIndex={-1} 
                   key={row.cname} 
                   onClick={() => handleRowClick(row.cname)}
-                  selected={isItemSelected}
+                  
                 >
                   {columns.map((column) => {
                     let value = row[column.id];
@@ -115,14 +116,6 @@ export default function CatalogTable(props) {
                 </TableRow>
               );
             })}
-            {/* {props.caretakers.map((item) => (
-              <TableRow key={item.cname} hover role="checkbox">
-                <TableCell component="th" scope="row">
-                  {item.cname}
-                </TableCell>
-              </TableRow>
-            ))} */}
-
           </TableBody>
         </Table>
       </TableContainer>
