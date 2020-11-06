@@ -78,6 +78,7 @@ CREATE TABLE IF NOT EXISTS Pets (
     category VARCHAR(256) NOT NULL REFERENCES Pet_Categories(category) ON DELETE CASCADE,
     pname VARCHAR(256) NOT NULL REFERENCES Pet_Owners(username) ON DELETE CASCADE,
     care_req TEXT,
+    image TEXT,
     PRIMARY KEY (pname, pet_name)
 );
 
