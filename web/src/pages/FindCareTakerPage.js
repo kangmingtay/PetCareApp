@@ -79,24 +79,17 @@ const FindCareTakerPage = () => {
     fetchPets();
   }, [])
 
+  const fetchPets = async () => {
+    const resp = await fetchListOfValidPets({ 
+      pName: context.username,
+      startDate: new Date(),
+      endDate: new Date(),
+    });
+    setListPets([...resp.data.results])
+  }
+
   const handleBid = async () => {
     console.log('Bidding...');
-    // try {
-    //   let resp = await fetchListOfCareTakers({...props.mainValues,
-    //      pName: context.username,
-    //      petNameField: values.pet_name,
-    //      careTakerField: values.careTakerField,
-    //      addressField: values.addressField,
-    //     });
-    //   if (resp.data.success === true) {
-    //       console.log([...resp.data.results]);
-    //       props.setCaretakers([...resp.data.results]);
-    //   }
-    // }
-    // catch(err) {
-    //   alert("Missing input fields")
-    //   console.log(err);
-    // }
 
     try {
       let resp = await insertNewBid({
@@ -104,11 +97,19 @@ const FindCareTakerPage = () => {
         cName: selectedCaretaker,
       });
       if (resp.data.success === true) {
-        console.log([...resp.data.message]);
+        alert(resp.data.message);
+        console.log([resp.data.message]);
+        isOpened(false);
+        
+        // Clear the current catalog
+        fetchPets();
+        setCaretakers([]);
       }
     } catch(err) {
-      alert("Invalid bid: " + err)
       console.log(err);
+      alert("Insufficient Amount! Please Try Again")
+      // alert("Invalid bid: " + resp.data.message);
+      // console.log(err, resp.data.message);
     }
   }
 
@@ -118,6 +119,10 @@ const FindCareTakerPage = () => {
 
   const amtFieldChanger = (event) => {
     setMainValues({ ...mainValues, paymentAmt: event.target.value});
+  };
+
+  const handleCloseModal = (event) => {
+    isOpened(false);
   };
 
   const modalInfo = (
@@ -217,7 +222,7 @@ const FindCareTakerPage = () => {
           />
         </Box>
       </Container>
-      <ModalUtil open={open} handleClose={() => isOpened(false) }>
+      <ModalUtil open={open} handleClose={handleCloseModal}>
         {modalInfo}
       </ModalUtil>
     </Page>
