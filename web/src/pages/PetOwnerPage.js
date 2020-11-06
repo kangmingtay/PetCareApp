@@ -1,15 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {
   Box,
   Container,
   Grid,
-  makeStyles
+  makeStyles,
+  TextField
 } from '@material-ui/core';
 import { Pagination } from '@material-ui/lab';
 import Page from 'src/components/Page';
 import PetOwnerToolbar from '../components/PetOwnerToolbar';
 import PetCard from '../components/PetCard';
 import data from '../utils/PetOwnerData';
+import { fetchPets, updatePet, createPet, deletePet } from 'src/calls/petCalls';
+import { UserContext } from 'src/UserContext';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -23,33 +26,56 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const ProductList = () => {
+const PetOwnerPage = () => {
   const classes = useStyles();
+  const [ pets, setPets ] = useState([]); //second argument is a function
   const [products] = useState(data);
+  const { context } = useContext(UserContext)
+  const pname = context.username
+  const [ params, setParams] = useState({
+    offset: 0,
+    limit: 10,
+    sort_category: "username",
+    sort_direction: "+",
+  });
+
+  useEffect(() => {
+    async function fetchData() {
+      const resp = await fetchPets(pname);
+      console.log(resp);
+      setPets([...resp.data.results]);
+    }
+    fetchData();
+  }, []);
 
   return (
     <Page
       className={classes.root}
-      title="Products"
+      title="Your Pets"
     >
       <Container maxWidth={false}>
-        <PetOwnerToolbar />
+        <form className={classes.root} noValidate autoComplete="off">
+          <TextField id="standard-basic" label="Pet Name" />
+        </form>
+      </Container>
+      <Container maxWidth={false}>
+        Your pets
         <Box mt={3}>
           <Grid
             container
             spacing={3}
           >
-            {products.map((product) => (
+            {pets.map((pet) => (
               <Grid
                 item
-                key={product.id}
+                key={pet.pet_name}
                 lg={4}
                 md={6}
                 xs={12}
               >
                 <PetCard
                   className={classes.productCard}
-                  product={product}
+                  pet={pet}
                 />
               </Grid>
             ))}
@@ -71,4 +97,4 @@ const ProductList = () => {
   );
 };
 
-export default ProductList;
+export default PetOwnerPage;

@@ -21,4 +21,9 @@ export default {
     getLeaves: (username) => `${BASE_URL}/caretakers/requestDays/${username}`,
     getAvailability: (username) => `${BASE_URL}/caretakers/requestDays/${username}`,
     getListOfValidCareTakers: `${BASE_URL}/catalogue/`,
+
+    getPet: (pname) => `${BASE_URL}/pets/${pname}`,
+    createPet: (username) => `${BASE_URL}/pets/${username}`,
+    updatePet: (pname, pet_name) => `${BASE_URL}/pets/${pname}/${pet_name}`,
+    deletePet: (pname, petname) => `${BASE_URL}/pets/${pname}/${petname}`
 }
