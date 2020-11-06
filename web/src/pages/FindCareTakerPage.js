@@ -5,18 +5,17 @@ import {
   makeStyles,
   Button,
   Grid,
-  Typography
+  Typography,
+  TextField,
+  InputAdornment,
 } from '@material-ui/core';
 import Page from 'src/components/Page';
 import CatalogTable from '../components/CatalogTable';
 import ChooseDate from '../components/CatalogChooseDate';
 import ChoosePet from '../components/CatalogChoosePet';
-import { fetchListOfCareTakers, fetchListOfValidPets } from 'src/calls/catalogueCalls'
+import { insertNewBid, fetchListOfValidPets } from 'src/calls/catalogueCalls'
 import { UserContext } from 'src/UserContext';
-import Modal from '@material-ui/core/Modal';
-import Backdrop from '@material-ui/core/Backdrop';
-import Fade from '@material-ui/core/Fade';
-import ModalUtil from 'src/components/ModalUtil';
+import ModalUtil from 'src/components/UI/ModalUtil';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -36,6 +35,9 @@ const useStyles = makeStyles((theme) => ({
     boxShadow: theme.shadows[5],
     padding: theme.spacing(2, 4, 3),
   },
+  textfield: {
+    margin: theme.spacing(2),
+  },
 }));
 
 const FindCareTakerPage = () => {
@@ -44,18 +46,25 @@ const FindCareTakerPage = () => {
 
   const [listPets, setListPets] = useState([]);
 
-  const [selectedPet, setSelectedPet] = useState('');
+  // const [selectedPet, setSelectedPet] = useState('');
   const [caretakers, setCaretakers] = useState([]);
+  
+  //Need to pass through bid insertion!
   const [selectedCaretaker, setSelectedCaretaker] = useState('');
-  // const [open, setOpen] = useState(false);
   const [open, isOpened] = useState(false);
 
   const [mainValues, setMainValues] = useState({
+    pName: context.username,
+    petNameField: '',
+
     startDate: new Date(),
     endDate: new Date(),
-    petNameField: '',
+    
     careTakerField: '',
     addressField: '',
+    
+    paymentAmt: 0,
+    transactionType: 'Credit Card',
   });
   
   useEffect(() => {
@@ -70,14 +79,90 @@ const FindCareTakerPage = () => {
     fetchPets();
   }, [])
 
+  const handleBid = async () => {
+    console.log('Bidding...');
+    // try {
+    //   let resp = await fetchListOfCareTakers({...props.mainValues,
+    //      pName: context.username,
+    //      petNameField: values.pet_name,
+    //      careTakerField: values.careTakerField,
+    //      addressField: values.addressField,
+    //     });
+    //   if (resp.data.success === true) {
+    //       console.log([...resp.data.results]);
+    //       props.setCaretakers([...resp.data.results]);
+    //   }
+    // }
+    // catch(err) {
+    //   alert("Missing input fields")
+    //   console.log(err);
+    // }
+
+    try {
+      let resp = await insertNewBid({
+        ...mainValues,
+        cName: selectedCaretaker,
+      });
+      if (resp.data.success === true) {
+        console.log([...resp.data.message]);
+      }
+    } catch(err) {
+      alert("Invalid bid: " + err)
+      console.log(err);
+    }
+  }
+
+  const transFieldChanger = (event) => {
+    setMainValues({ ...mainValues, transactionType: event.target.value});
+  };
+
+  const amtFieldChanger = (event) => {
+    setMainValues({ ...mainValues, paymentAmt: event.target.value});
+  };
+
   const modalInfo = (
-    <Grid container xs={12}>
-      <Grid item xs={12}>
-        <Typography variant="h2" align="center">
-            Select one of the sign-up options:
-        </Typography>
-      </Grid>
-    </Grid>
+    <form className={classes.root} noValidate autoComplete="off">
+      <Typography variant="h3" align="center" color="textPrimary">
+        Pokemon Day Care Payment Section
+      </Typography>
+      <Box justifyContent="space-evenly" display="flex">
+        <TextField
+          id="transactionType"
+          label="Payment Type"
+          InputLabelProps={{
+            shrink: true,
+          }}
+          variant="outlined"
+          onChange={transFieldChanger}
+          value={mainValues.transactionType}
+          placeholder="Type"
+          className={classes.textfield}
+        />
+        <TextField
+          id="amountPaid"
+          label="Payment Amount"
+          type="number"
+          InputLabelProps={{
+            shrink: true,
+          }}
+          variant="outlined"
+          value={mainValues.paymentAmt}
+          onChange={amtFieldChanger}
+          InputProps={{
+            startAdornment: <InputAdornment position="start">$</InputAdornment>,
+          }}
+          className={classes.textfield}
+        />
+        <Button 
+          className={classes.button}
+          variant="outlined" 
+          onClick={handleBid}
+          className={classes.textfield}
+        >
+          Bid
+        </Button>
+      </Box> 
+    </form>
   );
 
   return (
@@ -120,12 +205,19 @@ const FindCareTakerPage = () => {
         </Box>
       </Container>
       {/* (3) Select caretaker => (4) Will pop up model to confirm paymentAmt and transactionType*/}
-      <Container>
+      <Container maxWidth={false}>
         <Box mt={3}>
-          <CatalogTable caretakers={caretakers} setSelectedCaretaker={setSelectedCaretaker} isOpened={isOpened} />
+          <Typography variant="h3" align="left" color="textPrimary">
+            Step 3: Select your caretaker
+          </Typography>
+          <CatalogTable 
+            caretakers={caretakers} 
+            setSelectedCaretaker={setSelectedCaretaker} 
+            isOpened={isOpened} 
+          />
         </Box>
       </Container>
-      <ModalUtil open={open}>
+      <ModalUtil open={open} handleClose={() => isOpened(false) }>
         {modalInfo}
       </ModalUtil>
     </Page>
