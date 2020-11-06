@@ -67,7 +67,7 @@ const Profile = ({ className, ...rest }) => {
             gutterBottom
             variant="h3"
           >
-            Username: {context.username}
+            { context.isAdmin === "true" ? `Administrator: ${context.username}` : `Username: ${context.username}` }
           </Typography>
           {Object.keys(values).map(key => {
             let name = ""
@@ -87,8 +87,9 @@ const Profile = ({ className, ...rest }) => {
             }
             return (
               <Typography
-              color="textPrimary"
-              variant="h6"
+                key={name}
+                color="textPrimary"
+                variant="h6"
               >
                 {name}: {parseInt(values[key]) === 1 ? "Yes" : "No"}
               </Typography>
