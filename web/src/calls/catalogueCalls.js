@@ -38,3 +38,19 @@ export const fetchListOfValidPets = async(data) => {
   return resp;
 }
 
+export const insertNewBid = async(data) => {
+  let { startDate, endDate, pName, petNameField, paymentAmt, transactionType, cName } = data;
+  startDate = format(new Date(startDate), 'dd/MM/yyyy');
+  endDate = format(new Date(endDate), 'dd/MM/yyyy');
+  console.log('insertBid', startDate, endDate, pName, petNameField, paymentAmt, transactionType, cName);
+  const resp = await axios.post(api.insertBid(cName), {
+    startDate: startDate,
+    endDate: endDate,
+    pName: pName,
+    petName: petNameField,
+    paymentAmt: paymentAmt,
+    transactionType: transactionType,
+  });
+  return resp;
+}
+

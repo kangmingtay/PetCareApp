@@ -9,11 +9,14 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import TablePagination from '@material-ui/core/TablePagination';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   table: {
     minWidth: 650,
   },
-});
+  tableList: {
+    marginTop: theme.spacing(3),
+  },
+}));
 
 const columns = [
   { id: 'cname', label: 'Caretaker Name', minWidth: 100, align: 'left' },
@@ -67,7 +70,7 @@ export default function CatalogTable(props) {
   const isSelected = (cname) => selected.indexOf(cname) !== -1;
 
   return (
-    <Paper className={classes.root}>
+    <Paper className={classes.root, classes.tableList}>
       <TableContainer className={classes.container}>
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
