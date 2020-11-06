@@ -71,10 +71,10 @@ INSERT INTO prefers VALUES ('p1','cat');
 INSERT INTO prefers VALUES ('p1','dog');
 
 --pets
-INSERT INTO pets VALUES ('nyaako','cat','p1','daily cuddles');
-INSERT INTO pets VALUES ('nyaako1','cat','p1','ball');
-INSERT INTO pets VALUES ('nyaako2','cat','p1','laser');
-INSERT INTO pets VALUES ('inu','dog','p1','play catch');
+INSERT INTO pets VALUES ('nyaako','cat','p1','daily cuddles', 'www.pog.com');
+INSERT INTO pets VALUES ('nyaako1','cat','p1','ball', 'www.pog.com');
+INSERT INTO pets VALUES ('nyaako2','cat','p1','laser', 'www.pog.com');
+INSERT INTO pets VALUES ('inu','dog','p1','play catch', 'www.pog.com');
 
 --schedule
 --Full timers' schedule

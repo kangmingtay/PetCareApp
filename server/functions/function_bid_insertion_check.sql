@@ -38,8 +38,8 @@ RETURNS void AS $$
       --   RAISE EXCEPTION 'Insufficient payment! Minimum expected: $% ', (min_rate + (min_rate * (CEILING(rating) - 1) / 4) ) * numDays;
       -- END IF;
 
-      INSERT INTO bids(pname, pet_name, cname, start_date, end_date, payment_amt, transaction_type)
-      VALUES (pnameA, pet_nameA, cnameA, TO_DATE(start_dateA, 'DD-MM-YYYY'), TO_DATE(end_dateA, 'DD-MM-YYYY'), payment_amtA, transaction_typeA);
+      INSERT INTO bids(pname, pet_name, cname, start_date, end_date, payment_amt, transaction_type, is_selected)
+      VALUES (pnameA, pet_nameA, cnameA, TO_DATE(start_dateA, 'DD-MM-YYYY'), TO_DATE(end_dateA, 'DD-MM-YYYY'), payment_amtA, transaction_typeA, false);
 
     END;
 $$ LANGUAGE plpgsql;

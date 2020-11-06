@@ -41,7 +41,7 @@ const useStyles = makeStyles((theme) => ({
 
 const FindCareTakerPage = () => {
   const classes = useStyles();
-  const { context } = useContext(UserContext)
+  const { context } = useContext(UserContext);
 
   const [listPets, setListPets] = useState([]);
   const [caretakers, setCaretakers] = useState([]);
