@@ -7,19 +7,21 @@ const pool = require("../db");
  */
 async function handleGetListOfCTs(req, res) {
   try {
-    console.log(req.query);
+    console.log('cHandler',req.query);
 
-    const { startDate, endDate, petCategory, cName, pName, address } = req.query;
+    const { startDate, endDate, petCategory, cName, pName, address, petName } = req.query;
 
     const queryOverall = `
     WITH cte_valid_caretakers AS (
       SELECT cname
       FROM (
         SELECT DISTINCT F.cname, L.date
-        FROM full_timer F, prefers P, accounts A,
+        FROM full_timer F, prefers P, accounts A, pets PET,
         (SELECT generate_series(TO_DATE('${startDate}', 'DD-MM-YYYY'), TO_DATE('${endDate}', 'DD-MM-YYYY'),'1 day'::interval) AS date) AS L
         WHERE F.cname = P.cname AND P.cname = A.username
-        AND P.category LIKE '${petCategory}' AND P.cname LIKE '${cName}'
+        AND PET.pet_name = '${petName}' AND PET.pname = '${pName}'
+        AND PET.category = P.category
+        AND P.cname LIKE '${cName}'
         AND A.address LIKE '${address}' AND F.cname != '${pName}'
         AND NOT EXISTS (
           SELECT DISTINCT L1.date
@@ -40,10 +42,12 @@ async function handleGetListOfCTs(req, res) {
       SELECT cname
       FROM (
         SELECT DISTINCT A.cname, A.date
-        FROM availability A, prefers P, accounts AC
+        FROM availability A, prefers P, accounts AC, pets PET
         WHERE A.date >= TO_DATE('${startDate}', 'DD-MM-YYYY') AND A.date <= TO_DATE('${endDate}', 'DD-MM-YYYY')
         AND P.cname = A.cname AND A.cname = AC.username
-        AND P.category LIKE '${petCategory}' AND P.cname LIKE '${cName}'
+        AND PET.pet_name = '${petName}' AND PET.pname = '${pName}'
+        AND PET.category = P.category
+        AND P.cname LIKE '${cName}'
         AND AC.address LIKE '${address}' AND P.cname != '${pName}'
         AND NOT EXISTS (
           SELECT DISTINCT S.cname
@@ -75,8 +79,6 @@ async function handleGetListOfCTs(req, res) {
     AND P.category = PC.category
     `;
 
-    
-
     const allCareTakers = await pool.query(queryOverall);
 
     const resp = { 
@@ -95,7 +97,7 @@ async function handleGetListOfCTs(req, res) {
 /**
  * <For display in dropdown menu before being able to bid>
  * Gets a list of pets matching pname that are available to be put inside bid for that given date range
- * GET: http://127.0.0.1:8888/api/catalogue/p1?startDate=1-11-2021&endDate=1-11-2021&petCategory=%
+ * GET: http://127.0.0.1:8888/api/catalogue/p1?startDate=1-11-2021&endDate=1-11-2021
  * @param {pname} req.params
  * @param {startDate, endDate, petCategory} req.query Date(DD-MM-YYYY), petCategory(% for all)
  */
@@ -103,13 +105,12 @@ async function handleGetPetsForDateRange(req, res) {
   try {
     console.log(req.params, req.query);
     const { pname } = req.params;
-    const { startDate, endDate, petCategory } = req.query;
+    const { startDate, endDate } = req.query;
     console.log(pname, startDate);
     const query = `
     SELECT P.pet_name
       FROM pets P
       WHERE P.pname = '${pname}'
-      AND P.category LIKE '${petCategory}'
       AND P.pet_name NOT IN (
         SELECT B.pet_name
         FROM bids B
