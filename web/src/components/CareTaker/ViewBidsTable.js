@@ -1,16 +1,14 @@
 import React, { useContext, useEffect, useState } from 'react';
-import PropTypes from 'prop-types';
 import {
   makeStyles, Typography
 } from '@material-ui/core';
-import Table from '@material-ui/core/Table';
+import Container from '@material-ui/core/Container';
 import TableUtil from '../UI/TableUtil';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
+import PendingBids from './PendingBids';
 import { fetchAllBids } from 'src/calls/bidsCalls'
 import { UserContext } from 'src/UserContext';
+import SelectedBids from './SelectedBids';
+import { updateSingleBid } from 'src/calls/bidsCalls'
 
 const useStyles = makeStyles((theme) => ({
   root: {},
@@ -22,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ViewBidsTable = ({ className, customers, ...rest }) => {
+const ViewBidsTable = () => {
   const classes = useStyles();
 
   const [ pendingBids, setPendingBids ] = useState([])
@@ -57,41 +55,29 @@ const ViewBidsTable = ({ className, customers, ...rest }) => {
     console.log("Previous page")
   }
 
-  const tableContent = (bids) => {
-    return (
-      <Table className={classes.table} aria-label="simple table">
-        <TableHead>
-          <TableRow>
-              {["Pet Owner", "Pet Name", "Start Date", "End Date", "Review"].map(item => {
-                  return <TableCell key={item} align="right">{item}</TableCell>
-              })}
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {bids.map((bid) => (
-            <TableRow key={bid} hover>
-              <TableCell component="th" scope="row">
-                {bid.pname}
-              </TableCell>
-              <TableCell align="right">{bid.pet_name}</TableCell>
-              <TableCell align="right">{bid.start_date.slice(0,10)}</TableCell>
-              <TableCell align="right">{bid.end_date.slice(0, 10)}</TableCell>
-              <TableCell align="right">{bid.review}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    )
+  const handleRowClick = async(bid) => {
+    const resp = await updateSingleBid({
+      username: context.username,
+      pname: bid.pname,
+      pet_name: bid.pet_name,
+      start_date: bid.start_date,
+      end_date: bid.end_date,
+    })
+    const newPendingBids = pendingBids.filter(item => item !== bid);
+    setPendingBids([...newPendingBids]);
+    setSelectedBids([...selectedBids, bid]);
+    console.log(resp);
   }
-
 
   return (
     <React.Fragment>
-      <Typography variant="h2" align="center">
-        View your bids
-      </Typography>
+      <Container>
+        <Typography variant="h2" align="center">
+          View your bids
+        </Typography>
+      </Container>
       <Typography variant="h3" align="center">
-        Pending
+        Pending Bids
       </Typography>
       <TableUtil
         handleOnNext={handleOnNext} 
@@ -99,10 +85,10 @@ const ViewBidsTable = ({ className, customers, ...rest }) => {
         hasNext={pendingBids.length}
         hasPrev={0}
       >
-        {tableContent(pendingBids)}
+        <PendingBids bids={pendingBids} handleClick={handleRowClick}/>
       </TableUtil>
       <Typography variant="h3" align="center">
-        Selected
+        Accepted Bids
       </Typography>
       <TableUtil
         handleOnNext={handleOnNext} 
@@ -110,7 +96,7 @@ const ViewBidsTable = ({ className, customers, ...rest }) => {
         hasNext={selectedBids.length}
         hasPrev={0}
       >
-        {tableContent(selectedBids)}
+        <SelectedBids bids={selectedBids} />
       </TableUtil>
     </React.Fragment>
     
