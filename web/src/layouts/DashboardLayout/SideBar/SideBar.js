@@ -11,14 +11,13 @@ import {
   Typography,
   makeStyles
 } from '@material-ui/core';
-import {
-  BarChart as BarChartIcon,
-  Lock as LockIcon,
-  ShoppingBag as ShoppingBagIcon,
-  User as UserIcon,
-  Users as UsersIcon,
-  Home as HomeIcon
-} from 'react-feather';
+import DashboardOutlinedIcon from '@material-ui/icons/DashboardOutlined';
+import HomeOutlinedIcon from '@material-ui/icons/HomeOutlined';
+import PetsIcon from '@material-ui/icons/Pets';
+import AccessibilityNewOutlinedIcon from '@material-ui/icons/AccessibilityNewOutlined';
+import ChildFriendlyOutlinedIcon from '@material-ui/icons/ChildFriendlyOutlined';
+import SettingsOutlinedIcon from '@material-ui/icons/SettingsOutlined';
+import ExitToAppOutlinedIcon from '@material-ui/icons/ExitToAppOutlined';
 import NavItem from './SideBarItem';
 import { UserContext } from 'src/UserContext';
 import LogoutButton from 'src/components/LogoutButton';
@@ -32,25 +31,30 @@ const user = {
 const userItems = [
   {
     href: '/app/dashboard',
-    icon: BarChartIcon,
+    icon: DashboardOutlinedIcon,
     title: 'Dashboard'
   },
   {
-    href: '/app/caretakers',
-    icon: UsersIcon,
+    href: '/app/catalogue',
+    icon: AccessibilityNewOutlinedIcon,
     title: 'Find a Caretaker'
   },
   {
     href: '/app/pets',
-    icon: ShoppingBagIcon,
-    title: 'Pets'
+    icon: PetsIcon,
+    title: 'Your Pets'
+  },
+  {
+    href: '/app/caretakers',
+    icon: ChildFriendlyOutlinedIcon,
+    title: 'Be a Caretaker'
   },
 ];
 
 const adminItems = [
   {
     href: '/app/admin',
-    icon: HomeIcon,
+    icon: HomeOutlinedIcon,
     title: 'Admin'
   },
 ]
@@ -58,7 +62,7 @@ const adminItems = [
 const generalItems = [
   {
     href: '/app/account',
-    icon: UserIcon,
+    icon: SettingsOutlinedIcon,
     title: 'Account'
   },
 ]
@@ -132,7 +136,7 @@ const SideBar = ({ onMobileClose, openMobile }) => {
           <LogoutButton
             href='/login'
             title='Logout'
-            icon={LockIcon}
+            icon={ExitToAppOutlinedIcon}
           />
         </List>
       </Box>

@@ -1,8 +1,7 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext } from 'react';
 import { Container, makeStyles, Typography } from '@material-ui/core';
 import Page from 'src/components/Page';
-import data from '../utils/CareTakerData';
-import AdminTable from '../components/AdminTable';
+import AdminTable from '../components/Admin/AdminTable';
 import { UserContext } from 'src/UserContext';
 import Jobs from '../components/Admin/Jobs';
 
@@ -15,9 +14,8 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const AdminView = () => {
+const AdminPage = () => {
   const classes = useStyles();
-  const [users, setUsers] = useState(data);
   const { context } = useContext(UserContext);
 
   return (
@@ -33,4 +31,4 @@ const AdminView = () => {
   );
 };
 
-export default AdminView;
+export default AdminPage;

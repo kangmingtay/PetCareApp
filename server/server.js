@@ -8,6 +8,8 @@ const port = process.env.PORT || 8888;
 var loginRouter = require('./routes/login.js');
 var userRouter = require('./routes/user.js');
 var careTakerRouter = require('./routes/careTaker.js');
+var fullTimerRouter = require('./routes/fullTimer.js');
+var partTimerRouter = require('./routes/partTimer.js');
 var bidsRouter = require('./routes/bids.js');
 var catalogueRouter = require('./routes/catalogueViewer.js');
 var adminRouter = require('./routes/admin.js');
@@ -23,6 +25,8 @@ app.use('/api/login', loginRouter);
 app.use('/api/users', userRouter);
 app.use('/api/bids', bidsRouter);
 app.use('/api/caretakers', careTakerRouter);
+app.use('/api/fulltimers', fullTimerRouter);
+app.use('/api/parttimers', partTimerRouter);
 app.use('/api/catalogue', catalogueRouter);
 app.use('/api/admin', adminRouter);
 
