@@ -7,6 +7,7 @@ import {
 import Page from 'src/components/Page';
 import Profile from '../components/Profile';
 import ProfileDetails from '../components/ProfileDetails';
+import PastPets from 'src/components/CareHistory/PastPets';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -48,6 +49,7 @@ const ProfilePage = () => {
           </Grid>
         </Grid>
       </Container>
+      <PastPets/>
     </Page>
   );
 };
