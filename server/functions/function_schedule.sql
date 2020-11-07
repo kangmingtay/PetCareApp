@@ -73,3 +73,15 @@ CREATE OR REPLACE FUNCTION specify_availability(username VARCHAR(256), work date
             END LOOP;
     END;
 $$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION encode_string(str VARCHAR(256)) RETURNS INTEGER AS $func$
+    BEGIN
+        RETURN (SELECT SUM(ascii(char)) % 7 + 2 
+        FROM (select unnest( string_to_array(str, null) )) AS 
+        chars(char));
+    END
+$func$ LANGUAGE plpgsql;
+
+SELECT specify_leaves('${username}'::VARCHAR(256), '${dates}'::date[])
+FROM full_timer
+WHERE cname = '${username}';
