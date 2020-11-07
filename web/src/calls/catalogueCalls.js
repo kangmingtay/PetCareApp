@@ -5,13 +5,14 @@ import { format } from 'date-fns';
 
 export const fetchListOfCareTakers = async(data) => {
     let { startDate, endDate, petCategoryField, careTakerField, pName, addressField, petNameField } = data;
-    
+    console.log(data);
     startDate = format(new Date(startDate), 'dd/MM/yyyy');
     endDate = format(new Date(endDate), 'dd/MM/yyyy');
     petCategoryField = petCategoryField === '' ? '%' : petCategoryField;
     careTakerField = careTakerField === '' ? '%' : careTakerField;
     addressField = addressField === '' ? '%' : addressField;
-    console.log(startDate, endDate, petCategoryField, careTakerField, pName, addressField, petNameField);
+    console.log('cc1', careTakerField, 'c', petNameField)
+    console.log('cc', startDate, endDate, petCategoryField, careTakerField, pName, addressField, petNameField);
     const resp = await axios.get(api.getListOfValidCareTakers, {params: {
         startDate: startDate,
         endDate: endDate,
