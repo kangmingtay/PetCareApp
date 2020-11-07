@@ -82,6 +82,5 @@ insert into Schedule select 'zw', generate_series(TO_DATE('1/10/2021', 'DD/MM/YY
 insert into Schedule select 'zw', generate_series(TO_DATE('27/9/2021', 'DD/MM/YYYY'), TO_DATE('30/9/2021', 'DD/MM/YYYY'),'1 day'::interval), 1;
 insert into Schedule select 'zw', generate_series(TO_DATE('4/10/2021', 'DD/MM/YYYY'), TO_DATE('10/10/2021', 'DD/MM/YYYY'),'1 day'::interval), 1;
 insert into Schedule select 'zw', generate_series(TO_DATE('29/10/2021', 'DD/MM/YYYY'), TO_DATE('4/11/2021', 'DD/MM/YYYY'),'1 day'::interval), 1;
-
+insert into Schedule select 'zw', generate_series(TO_DATE('29/10/2020', 'DD/MM/YYYY'), TO_DATE('4/11/2020', 'DD/MM/YYYY'),'1 day'::interval), 1;
 insert into Schedule select 'shannon', generate_series(TO_DATE('1/10/2021', 'DD/MM/YYYY'), TO_DATE('30/10/2021', 'DD/MM/YYYY'),'1 day'::interval), 3;
-

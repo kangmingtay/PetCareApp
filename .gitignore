@@ -9,3 +9,11 @@
 .env_prod
 
 npm-debug.log*
+
+.env-backup
+.env
+package-lock.json
+package.json
+web/yarn.lock
+web/package-lock.json
+web/package.json
