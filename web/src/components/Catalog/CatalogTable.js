@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -34,7 +34,7 @@ const columns = [
   },
   {
     id: 'minprice',
-    label: 'Base Price per day',
+    label: 'Total Price',
     minWidth: 50,
     align: 'center',
   },
@@ -48,10 +48,8 @@ const columns = [
 
 export default function CatalogTable(props) {
   const classes = useStyles();
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
-  const [selected, setSelected] = React.useState('');
-  const [isOpened, setIsOpened] = React.useState(false);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -62,14 +60,18 @@ export default function CatalogTable(props) {
     setPage(0);
   };
 
-  const handleRowClick = (cname) => {
-    setSelected(cname);
-    console.log('CTable:', cname);
-    props.setSelectedCaretaker(cname);
+  const handleRowClick = (cname, minprice) => {
+    console.log('CTable:', cname, minprice);
+    props.setSelectedCaretaker({
+      cname: cname,
+      minprice: minprice,
+    });
+    props.setMainValues({
+      ...props.mainValues,
+      paymentAmt: minprice,
+    });
     props.isOpened(true);
   }
-
-  const isSelected = (cname) => selected.indexOf(cname) !== -1;
 
   return (
     <Container maxWidth={false}>
@@ -81,7 +83,7 @@ export default function CatalogTable(props) {
           <TableContainer className={classes.container}>
             <Table stickyHeader aria-label="sticky table">
               <TableHead>
-                <TableRow >
+                <TableRow>
                   {columns.map((column) => (
                     <TableCell
                       key={column.id}
@@ -95,20 +97,17 @@ export default function CatalogTable(props) {
               </TableHead>
               <TableBody>
                 {props.caretakers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                  const isItemSelected = isSelected(row.cname);
                   return (
                     <TableRow 
                       hover 
                       role="checkbox" 
                       tabIndex={-1} 
                       key={row.cname} 
-                      onClick={() => handleRowClick(row.cname)}
+                      onClick={() => handleRowClick(row.cname, row.minprice)}
                     >
                       {columns.map((column) => {
                         let value = row[column.id];
-                        // console.log(column.id, value, column.id === 'rating', value == -1);
                         if (column.id === 'rating' && value == -1) {
-                          // console.log(column.id, 'null rating');
                           value = '-';
                         }
                         return (
