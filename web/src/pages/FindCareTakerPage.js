@@ -106,7 +106,7 @@ const FindCareTakerPage = () => {
     } catch(err) {
       console.log(err);
       // alert("Insufficient Amount! Please Try Again");
-      addToast(`Your bid of $${mainValues.paymentAmt} is insufficient...`, {
+      addToast(`Your bid of $${mainValues.paymentAmt} is insufficient... Please bid at least $${selectedCaretaker.minprice}`, {
         appearance: 'error',
         autoDismiss: true,
       })
