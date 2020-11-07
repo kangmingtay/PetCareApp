@@ -20,18 +20,18 @@ INSERT INTO Accounts VALUES ('cpt15', '123', 'a@b.com', 'xxx', TO_DATE('01-01-20
 INSERT INTO Pet_Owners VALUES ('p1');
 
 --CareTakers:
-INSERT INTO Care_Takers VALUES ('cft1', NULL);
-INSERT INTO Care_Takers VALUES ('cft2', NULL);
-INSERT INTO Care_Takers VALUES ('cft3', NULL);
-INSERT INTO Care_Takers VALUES ('cpt1', NULL);
-INSERT INTO Care_Takers VALUES ('cpt2', NULL);
-INSERT INTO Care_Takers VALUES ('cpt3', NULL);
-INSERT INTO Care_Takers VALUES ('cpt11', 1);
-INSERT INTO Care_Takers VALUES ('cpt12', 2);
-INSERT INTO Care_Takers VALUES ('cpt13', 2.5);
-INSERT INTO Care_Takers VALUES ('cpt14', 4);
-INSERT INTO Care_Takers VALUES ('cpt15', 5);
-INSERT INTO Care_Takers VALUES ('p1', NULL);
+-- INSERT INTO Care_Takers VALUES ('cft1', NULL);
+-- INSERT INTO Care_Takers VALUES ('cft2', NULL);
+-- INSERT INTO Care_Takers VALUES ('cft3', NULL);
+-- INSERT INTO Care_Takers VALUES ('cpt1', NULL);
+-- INSERT INTO Care_Takers VALUES ('cpt2', NULL);
+-- INSERT INTO Care_Takers VALUES ('cpt3', NULL);
+-- INSERT INTO Care_Takers VALUES ('cpt11', 1);
+-- INSERT INTO Care_Takers VALUES ('cpt12', 2);
+-- INSERT INTO Care_Takers VALUES ('cpt13', 2.5);
+-- INSERT INTO Care_Takers VALUES ('cpt14', 4);
+-- INSERT INTO Care_Takers VALUES ('cpt15', 5);
+-- INSERT INTO Care_Takers VALUES ('p1', NULL);
 
 --Full_timer:
 INSERT INTO Full_timer VALUES ('cft1');

@@ -2,7 +2,6 @@ import React, { useState, useContext } from 'react';
 import PropTypes from 'prop-types';
 import {
   Box,
-  Button,
   Card,
   CardContent,
   makeStyles,
@@ -12,7 +11,7 @@ import {
 } from '@material-ui/core';
 import DateFnsUtils from '@date-io/date-fns';
 import {
-  KeyboardDatePicker,
+  DatePicker,
   MuiPickersUtilsProvider,
 } from '@material-ui/pickers';
 import { fetchListOfValidPets } from 'src/calls/catalogueCalls'
@@ -33,28 +32,26 @@ const ChooseDate = (props) => {
   const classes = useStyles();
   const { context, setContext } = useContext(UserContext);
 
-  const [values, setValues] = useState({
-    startDate: new Date(),
-    endDate: new Date(),
-  });
-
-  const handleSubmit = async () => {
-    console.log('button pressed');
-    props.setMainValues({...props.mainValues, startDate: values.startDate, endDate: values.endDate});
+  const handleSubmit = async (data) => {
+    console.log('Date button pressed', data);
+    props.setCaretakers([]);
     try {
-      let resp = await fetchListOfValidPets({...values, 
+      let resp = await fetchListOfValidPets({...props.mainValues, 
+        ...data,
         pName: context.username,
-        startDate: values.startDate,
-        endDate: values.endDate
       });
       if (resp.data.success === true) {
-          console.log('toolbar:', [...resp.data.results]);
-          props.setListPets([...resp.data.results]);
-          
-          console.log('CCD:', props.mainValues);
+        console.log('CCD:', [...resp.data.results]);
+        props.setListPets([...resp.data.results]);
+        props.setMainValues({...props.mainValues, 
+          ...data,
+          petNameField: '',
+          careTakerField: '',
+          addressField: '',
+        });
       }
     }
-    catch(err) {
+    catch (err) {
       alert("Missing input fields " + err)
       console.log(err);
     }
@@ -74,11 +71,11 @@ const ChooseDate = (props) => {
                   <form className={classes.root} noValidate autoComplete="off">
                     <Grid container className={classes.root} direction="row" justify="space-evenly" alignItems="center">
                         <Grid item>
-                            <KeyboardDatePicker
+                            <DatePicker
                               disableToolbar
                               label="Start Date"
-                              value={values.startDate}
-                              onChange={date => setValues({...values, startDate: date})}
+                              value={props.mainValues.startDate}
+                              onChange={date => handleSubmit({startDate: date})}
                               format={"dd/MM/yyyy"}
                               disablePast
                               variant="inline"
@@ -89,11 +86,11 @@ const ChooseDate = (props) => {
                             />
                         </Grid>
                         <Grid item>
-                            <KeyboardDatePicker
+                            <DatePicker
                               disableToolbar
                               label="End Date"
-                              value={values.endDate}
-                              onChange={date => setValues({...values, endDate: date})}
+                              value={props.mainValues.endDate}
+                              onChange={date => handleSubmit({endDate: date})}
                               format={"dd/MM/yyyy"}
                               disablePast
                               variant="inline"
@@ -108,19 +105,6 @@ const ChooseDate = (props) => {
                   </MuiPickersUtilsProvider>
               </CardContent>
             </Card>
-          </Box>
-          <Box
-            display="flex"
-            justifyContent="flex-end"
-            mt={3}
-          >
-            <Button
-              color="primary"
-              variant="contained"
-              onClick={handleSubmit}
-            >
-              Select Dates
-            </Button>
           </Box>
         </div>
       </Box>

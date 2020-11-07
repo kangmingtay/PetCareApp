@@ -15,6 +15,7 @@ import ChoosePet from '../components/Catalog/CatalogChoosePet';
 import { insertNewBid, fetchListOfValidPets } from 'src/calls/catalogueCalls'
 import { UserContext } from 'src/UserContext';
 import ModalUtil from 'src/components/UI/ModalUtil';
+import { useToasts } from 'react-toast-notifications'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -41,12 +42,18 @@ const useStyles = makeStyles((theme) => ({
 
 const FindCareTakerPage = () => {
   const classes = useStyles();
+  const { addToast } = useToasts();
   const { context } = useContext(UserContext);
-
+  
   const [listPets, setListPets] = useState([]);
   const [caretakers, setCaretakers] = useState([]);
-  const [selectedCaretaker, setSelectedCaretaker] = useState('');
   const [open, isOpened] = useState(false);
+
+  // const [selectedCaretaker, setSelectedCaretaker] = useState('');
+  const [selectedCaretaker, setSelectedCaretaker] = useState({
+    cname: '',
+    minprice: 0,
+  });
 
   const [mainValues, setMainValues] = useState({
     pName: context.username,
@@ -77,20 +84,32 @@ const FindCareTakerPage = () => {
     try {
       let resp = await insertNewBid({
         ...mainValues,
-        cName: selectedCaretaker,
+        cName: selectedCaretaker.cname,
       });
       if (resp.data.success === true) {
-        alert(resp.data.message);
         console.log([resp.data.message]);
+        addToast(`Your bid for ${mainValues.careTakerField} has been submitted!`, {
+          appearance: 'success',
+          autoDismiss: true,
+        })
+        setMainValues({
+          ...mainValues,
+          petNameField: '',
+        });
+
         isOpened(false);
-        
+
         // Clear the current catalog
         fetchPets();
         setCaretakers([]);
       }
     } catch(err) {
       console.log(err);
-      alert("Insufficient Amount! Please Try Again");
+      // alert("Insufficient Amount! Please Try Again");
+      addToast(`Your bid of $${mainValues.paymentAmt} is insufficient... Please bid at least $${selectedCaretaker.minprice}`, {
+        appearance: 'error',
+        autoDismiss: true,
+      })
     }
   }
 
@@ -104,6 +123,10 @@ const FindCareTakerPage = () => {
 
   const handleCloseModal = (event) => {
     isOpened(false);
+    setMainValues({
+      ...mainValues,
+      paymentAmt: selectedCaretaker.minprice,
+    });
   };
 
   const modalInfo = (
@@ -128,6 +151,7 @@ const FindCareTakerPage = () => {
           id="amountPaid"
           label="Payment Amount"
           type="number"
+          required
           InputLabelProps={{
             shrink: true,
           }}
@@ -167,6 +191,7 @@ const FindCareTakerPage = () => {
         setListPets={setListPets}
         setMainValues={setMainValues}
         mainValues={mainValues}
+        setCaretakers={setCaretakers}
       />
       {/* (2) Select pet_name, caretaker and area if needed */}
       <ChoosePet
@@ -178,7 +203,9 @@ const FindCareTakerPage = () => {
       {/* (3) Select caretaker => (4) Will pop up model to confirm paymentAmt and transactionType*/}
       <CatalogTable 
         caretakers={caretakers} 
-        setSelectedCaretaker={setSelectedCaretaker} 
+        setSelectedCaretaker={setSelectedCaretaker}
+        mainValues={mainValues}
+        setMainValues={setMainValues}
         isOpened={isOpened} 
       />
       <ModalUtil open={open} handleClose={handleCloseModal}>
