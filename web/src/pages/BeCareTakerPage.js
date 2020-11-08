@@ -30,15 +30,15 @@ const BeCareTakerPage = () => {
   const classes = useStyles();
   const { context } = useContext(UserContext)
   const [isCareTaker, setCareTaker] = useState(false);
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     async function fetchData() {
         const resp = await fetchUserType(context.username) 
         if (parseInt(resp.data.results.isCareTaker) === 1) {
-            console.log("isCareTaker")
             setCareTaker(true)
-            setOpen(false)
+        } else {
+          setOpen(true)
         }
     }
     fetchData();
@@ -98,10 +98,6 @@ const BeCareTakerPage = () => {
       className={classes.root}
       title="Caretaker"
     >
-      <Container maxWidth={false}>
-          Welcome to the CareTaker Page!
-          Caretaker status: {isCareTaker.toString()}
-      </Container>
       <ViewBidsTable/>
       <ModalUtil open={open} handleClose={handleClick}>
         {modalInfo}

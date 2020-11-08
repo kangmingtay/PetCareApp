@@ -79,73 +79,28 @@ const handleGetPetOwnerBids = async (req, res) => {
 
 const handleGetCaretakerBids = async (req, res) => {
     try{
+        const sort_category = (req.query.sort_category === '') ? 'start_date' : req.query.sort_category;
+        const sort_direction = (req.query.sort_direction !== "-") ? 'ASC' : 'DESC';
+        const is_selected = req.query.is_selected;
         const { username } = req.params;
-        const q = `SELECT * FROM bids WHERE cname = '${username}' ORDER BY end_date DESC`; 
-        const pastJobs = await pool.query(q);
-        const resp = { results: pastJobs.rows };
-        return res.status(200).json(resp);
-    }
-    catch(err) {
-        return res.status(400).send({
-            success: false,
-            message: err.message  
-        });
-    }
-}
-
-// Possible things care taker may want to see from bids
-
-// Sort
-// Payment_amont
-// Start date(think u did this alr)
-// End date
-// Duration
-// Payment_per_day
-// Price_above_base_per_day (price per day more than the base price of pet)
-
-// Filter
-// Pet owner
-// By month
-// By year
-
-const handleGetCareTakerBidsSortByAnything = async (req, res) => {
-    try{
-        const { username, sort, order } = req.params;
-        const q = `SELECT * FROM bids WHERE cname = '${username}' ORDER BY ${sort} ${order}`; 
-        const pastJobs = await pool.query(q);
-        const resp = { results: pastJobs.rows };
-        return res.status(200).json(resp);
-    }
-    catch(err) {
-        return res.status(400).send({
-            success: false,
-            message: err.message  
-        });
-    }
-}
-
-const handleGetCareTakerBidsFilterSortByAnything = async (req, res) => {
-    try{
-        const { username, filter, by, sort, order } = req.params;
-        const q = `SELECT * FROM bids WHERE cname = '${username}' AND ${filter} = '${by}' ORDER BY ${sort} ${order}`; 
-        const pastJobs = await pool.query(q);
-        const resp = { results: pastJobs.rows };
-        return res.status(200).json(resp);
-    }
-    catch(err) {
-        return res.status(400).send({
-            success: false,
-            message: err.message  
-        });
-    }
-}
-
-const handleGetCareTakerBidsFilterByAnything = async (req, res) => {
-    try{
-        const { username, filter, by } = req.params;
-        const q = `SELECT * FROM bids WHERE cname = '${username}' AND ${filter} = '${by}'`; 
-        const pastJobs = await pool.query(q);
-        const resp = { results: pastJobs.rows };
+        
+        let query = ""
+        if (is_selected === '') {
+            query = `
+                SELECT * FROM bids 
+                WHERE cname = '${username}' 
+                ORDER BY ${sort_category} ${sort_direction}
+            `
+        } else {
+            query = `
+                SELECT * FROM bids
+                WHERE cname = '${username}' AND is_selected = ${is_selected} 
+                ORDER BY ${sort_category} ${sort_direction}
+            `; 
+        }
+        console.log(query)
+        const bids = await pool.query(query);
+        const resp = { results: bids.rows };
         return res.status(200).json(resp);
     }
     catch(err) {
@@ -162,7 +117,4 @@ module.exports = {
     handleGetOneReview,
     handleGetPetOwnerBids,
     handleGetCaretakerBids,
-    handleGetCareTakerBidsSortByAnything,
-    handleGetCareTakerBidsFilterByAnything,
-    handleGetCareTakerBidsFilterSortByAnything
 }

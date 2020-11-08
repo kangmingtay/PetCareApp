@@ -1,5 +1,6 @@
 import 'react-perfect-scrollbar/dist/css/styles.css';
 import React, { useState } from 'react';
+import { ToastProvider } from 'react-toast-notifications';  
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { ThemeProvider } from '@material-ui/core';
 import GlobalStyles from 'src/components/GlobalStyles';
@@ -24,34 +25,36 @@ const App = () => {
     isAdmin: localStorage.getItem('isAdmin'),
   })
   return (
-    <ThemeProvider theme={theme}>
-      <GlobalStyles />
-      <UserContext.Provider value={{ context, setContext }}>
-        <Routes>
-          <ProtectedRoute 
-            component={<DashboardLayout/>}
-            redirectLink="/login" 
-            path="/app"
-          >
-            <Route 
-              path="admin" 
-              element={context.isAdmin === "true" ? <AdminPage /> : <Navigate to="/app/dashboard" />} 
-            />
-            <Route path="dashboard" element={<DashboardPage />} />
-            <Route path="caretakers" element={<BeCareTakerPage />} />
-            <Route path="catalogue" element={<FindCareTakerPage />} />
-            <Route path="pets" element={<PetOwnerPage />} />
-            <Route path="account" element={<ProfilePage />} />
-          </ProtectedRoute>
+    <ToastProvider placement="bottom-right">
+      <ThemeProvider theme={theme}>
+        <GlobalStyles />
+        <UserContext.Provider value={{ context, setContext }}>
+          <Routes>
+            <ProtectedRoute 
+              component={<DashboardLayout/>}
+              redirectLink="/login" 
+              path="/app"
+            >
+              <Route 
+                path="admin" 
+                element={context.isAdmin === "true" ? <AdminPage /> : <Navigate to="/app/dashboard" />} 
+              />
+              <Route path="dashboard" element={<DashboardPage />} />
+              <Route path="caretakers" element={<BeCareTakerPage />} />
+              <Route path="catalogue" element={<FindCareTakerPage />} />
+              <Route path="pets" element={<PetOwnerPage />} />
+              <Route path="account" element={<ProfilePage />} />
+            </ProtectedRoute>
 
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          <Route path="/404" element={<NotFoundPage />} />
-          <Route path="/" element={<Navigate to="/app/admin" />} />
-          <Route path="*" element={<Navigate to="/404" />} />
-        </Routes>
-      </UserContext.Provider>
-    </ThemeProvider>
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+            <Route path="/404" element={<NotFoundPage />} />
+            <Route path="/" element={<Navigate to="/app/admin" />} />
+            <Route path="*" element={<Navigate to="/404" />} />
+          </Routes>
+        </UserContext.Provider>
+      </ThemeProvider>
+    </ToastProvider>
   );
 };
 

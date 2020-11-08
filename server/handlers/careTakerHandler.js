@@ -1,8 +1,8 @@
 const pool = require("../db");
 
 /**
- * GET: http://localhost:8888/api/caretakers/expectedSalary/zw?month=10-2021
- * @param {*} req.query.month = 'MM-YYYY' 
+ * GET: http://localhost:8888/api/caretakers/expectedSalary/zw?month=2021-10
+ * @param {*} req.query.month = 'YYYY-MM' 
  * @Returns {salary: , revenue: }
  */
 async function handleGetExpectedSalary(req, res) {
@@ -11,7 +11,6 @@ async function handleGetExpectedSalary(req, res) {
         const month = req.query.month;
         const query = `
             SELECT 
-                --to_char(date, 'MM-YYYY') mm_yyyy,
                 CASE
                     WHEN '${username}' IN (SELECT cname FROM part_timer) THEN SUM(payment_amt / (end_date - start_date + 1)) * 0.75
                     WHEN '${username}' IN (SELECT cname FROM full_timer) AND COUNT(*) <= 60 THEN 3000
@@ -20,9 +19,8 @@ async function handleGetExpectedSalary(req, res) {
                 SUM(payment_amt / (end_date - start_date + 1)) revenue
             FROM Schedule NATURAL JOIN Bids
             WHERE cname = '${username}' AND date <= end_date AND date >= start_date AND is_selected 
-            GROUP BY to_char(date, 'MM-YYYY')
-            HAVING to_char(date, 'MM-YYYY') = '${month}';
-            --ORDER BY to_char(date, 'MM-YYYY')
+            GROUP BY to_char(date, 'YYYY-MM')
+            HAVING to_char(date, 'YYYY-MM') = '${month}';
         `;
         const monthlySalary = await pool.query(query);
         const resp = { 
@@ -40,17 +38,25 @@ async function handleGetExpectedSalary(req, res) {
 
 
 /**
- * GET: http://localhost:8888/api/caretakers/calendar/shannon?date=02-10-2021
- * @param {*} req.query.date = 'DD-MM-YYYY' 
- * @Returns list of {pname: , pet_name: , category:, care_req:}
+ * GET: http://localhost:8888/api/caretakers/calendar/shannon?date=2021-10
+ * @param {*} req.query.month = 'YYYY-MM' 
+ * @Returns list of {date:, pname: , pet_name: , category:, care_req:}
  */
 async function handleGetCareTakerCalendar(req, res) {
     try {
         const { username } = req.params;
-        const date = req.query.date;
-        const query = `SELECT pname, pet_name, category, care_req
-        FROM pets NATURAL JOIN Schedule NATURAL JOIN Bids
-        WHERE cname = '${username}' AND date <= end_date AND date >= start_date AND date = TO_DATE('${date}','DD-MM-YYYY') AND is_selected
+        const month = req.query.month;
+        const query = `SELECT to_char(start_date, 'YYYY-MM-DD') AS start, to_char(end_date, 'YYYY-MM-DD') AS end, pet_name || ' (' || pname || '''s ' || category || ')' AS title, care_req AS body, 
+        encode_string(pname || pet_name) AS "calendarId", 'allday' AS category
+        FROM pets NATURAL JOIN Bids
+        WHERE cname = '${username}' AND 
+        ((to_char(start_date, 'YYYY-MM') <= '${month}' AND to_char(end_date, 'YYYY-MM') >= '${month}')
+        OR
+        to_char(end_date + interval '1 month', 'YYYY-MM') = '${month}'
+        OR
+        to_char(start_date - interval '1 month', 'YYYY-MM') = '${month}'
+        ) 
+        AND is_selected
         `;
         const CareTakerCalendar = await pool.query(query);
         const resp = { 
@@ -67,16 +73,52 @@ async function handleGetCareTakerCalendar(req, res) {
 }
 
 /**
- * GET: http://localhost:8888/api/caretakers/leaves/shannon?year=2021
- * @param {*} req.query.year = 'YYYY' 
+ * GET: http://localhost:8888/api/caretakers/leaves/shannon?month=2021-10
+ * @param {*} req.query.month = 'YYYY-MM'
  * @Returns list of {leave: }
  */
 async function handleGetLeaves(req, res) {
     try {
         const { username } = req.params;
-        const year = req.query.year;
+        const month = req.query.month;
         const query = `
-        SELECT to_char(date, 'DD-MM-YYYY') leave FROM leaves where to_char(date, 'YYYY') = '${year}' AND cname = '${username}'
+        (
+            SELECT to_char(date, 'YYYY-MM-DD') AS start
+
+            ,0 AS "calendarId", 'allday' AS category, 'ON LEAVE' AS title
+
+            FROM leaves 
+            WHERE cname = '${username}' AND (
+            to_char(date - interval '1 month' , 'YYYY-MM') = '${month}' OR
+            to_char(date, 'YYYY-MM') = '${month}' OR
+            to_char(date + interval '1 month', 'YYYY-MM') = '${month}'
+            )
+        )
+        UNION
+        (
+            SELECT to_char(date, 'YYYY-MM-DD') AS start  
+            
+            ,0 AS "calendarId", 'allday' AS category, 'UNAVAILABLE' AS title
+
+            FROM generate_series(
+                TO_DATE('${month}', 'YYYY-MM') - interval '1 month',
+                TO_DATE('${month}', 'YYYY-MM') + interval '2 month',
+                '1 day'::interval) AS date
+            WHERE '${username}' IN (SELECT cname FROM part_timer)
+        )
+        EXCEPT
+        (
+            SELECT to_char(date, 'YYYY-MM-DD') AS start  
+            
+            ,0 AS "calendarId", 'allday' AS category, 'UNAVAILABLE' AS title
+            
+            FROM availability
+            WHERE cname = '${username}' AND (
+            to_char(date - interval '1 month' , 'YYYY-MM') = '${month}' OR
+            to_char(date, 'YYYY-MM') = '${month}' OR
+            to_char(date + interval '1 month', 'YYYY-MM') = '${month}'
+            )
+        )
         `;
         const leaves = await pool.query(query);
         const resp = { 
@@ -217,6 +259,27 @@ async function handleGetPreferences(req, res) {
     }
 }
 
+async function handleGetAllCategories(req, res) {
+    try {
+        const { username } = req.params;
+        const query = `SELECT category FROM pet_categories;`;
+        const Categories = await pool.query(query);
+        const resp = { 
+            success: true,
+            results: Categories.rows 
+        };
+        return res.status(200).json(resp);
+    } catch (err) {
+        return res.status(400).send({
+            success: false,
+            message: err.message,
+        })
+    }
+}
+
+
+
+
 /**
  * DELETE: http://localhost:8888/api/caretakers/prefers/zw?category=dog
  * @param {*} req.query.category = 'pet_category' 
@@ -269,20 +332,25 @@ async function handleUpdatePreferences(req, res) {
 }
 
 /**
- * POST: http://localhost:8888/api/caretakers/prefers/zw?category=dog
- * @param {*} req.query.category = 'pet_category' 
+ * POST: http://localhost:8888/api/caretakers/prefers/zw?categories
+ * @param {*} req.query.categories = 'pet_category' 
  */
 async function handleCreatePreferences(req, res) {
     try {
         const { username } = req.params;
-        const category = req.query.category;
-        // const { category} = req.body;
-        if (category == null) throw new Error("category is undefined");
-        const query = `INSERT INTO prefers(cname,category) VALUES ('${username}', '${category}');`;
-        await pool.query(query);
+        const categories = req.body.categories;
+        console.log(req.query);
+        console.log(req.body);
+        const query = `
+        DELETE FROM prefers WHERE cname = '${username}';
+        INSERT INTO prefers SELECT '${username}', category FROM unnest('${categories}'::VARCHAR(256)[]) AS category;
+        `;
+        console.log(query);
+        const updateResult = await pool.query(query);
+        
         const resp = {
             success: true,
-            message: `Added '${category}' successfully`,
+            message: `Added '${categories}' successfully, ${updateResult.rowCount} rows updated`,
         };
         return res.status(200).json(resp);
     } catch (err) {
@@ -317,23 +385,23 @@ async function handleGetRating(req, res) {
     }
 }
 
-
 /**
  * POST: http://localhost:8888/api/caretakers/selectbid/shannon?pname=km&pet_name=km_dog&start_date=03-12-2021&end_date=30-12-2021
  * 
  * @param req.query.pname = pet owner name
  * @param req.query.pet_name = pet name
- * @param req.query.start_date = start date 'DD-MM-YYYY'
- * @param req.query.end_date = end date 'DD-MM-YYYY'
+ * @param req.query.start_date = start date 'YYYY-MM-DD'
+ * @param req.query.end_date = end date 'YYYY-MM-DD'
  */
 async function handleSelectBid(req, res) {
     try {
         const { username } = req.params;
         const { pname, pet_name, start_date, end_date} = req.query;
+        console.log(req.query)
         const query = `
         UPDATE bids SET is_selected=true WHERE pname='${pname}'
-            AND pet_name = '${pet_name}' AND start_date = TO_DATE('${start_date}', 'DD-MM-YYYY') AND end_date = TO_DATE('${end_date}', 'DD-MM-YYYY')
-            AND cname = '${username}' AND pname = '${pname}'
+            AND pet_name = '${pet_name}' AND start_date = TO_DATE('${start_date}', 'YYYY-MM-DD') AND end_date = TO_DATE('${end_date}', 'YYYY-MM-DD')
+            AND cname = '${username}'
             
             -- check if caretaker is overbooked on those days
             AND (
@@ -373,12 +441,21 @@ async function handleSelectBid(req, res) {
                 (SELECT category FROM prefers WHERE cname = '${username}')
             )
         `;
-        await pool.query(query);
-        const resp = {
-            success: true,
-            message: `Selected bid successfully`,
-        };
+        const updateResult = await pool.query(query);
+        let resp = {}
+        if (updateResult.rowCount === 1) {
+            resp = {
+                success: true,
+                message: `Selected bid successfully`,
+            };
+        } else {
+            resp = {
+                success: false,
+                message: `Update failed`,
+            }
+        }
         return res.status(200).json(resp);
+
     } catch (err) {
         return res.status(400).send({
             success: false,
@@ -386,7 +463,6 @@ async function handleSelectBid(req, res) {
         })
     }
 }
-
 
 
 module.exports = {
@@ -397,6 +473,7 @@ module.exports = {
     handleCreatePreferences,
     handleDeletePreferences,
     handleGetPreferences,
+    handleGetAllCategories,
     handleGetLeaves,
     handleGetAvailability,
     handlerDeleteLeavesAvailability,

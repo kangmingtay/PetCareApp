@@ -21,7 +21,22 @@ const theme = createMuiTheme({
     }
   },
   shadows,
-  typography
+  typography,
+  zIndex: {
+// set these to whatever, I just set the appbar to 1
+    mobileStepper: 1000,
+    appBar: 998,
+    drawer: 998,
+    modal: 999,
+    snackbar: 1400,
+    tooltip: 1500,
+    mobileStepper: 1000,
+    // appBar: 1100
+    // drawer: 1200
+    // modal: 1300
+    // snackbar: 1400
+    // tooltip: 1500
+  },
 });
 
 export default theme;
