@@ -5,6 +5,7 @@ COPY ./web/package.json /app
 RUN npm install
 
 ENV PATH="./node_modules/.bin:$PATH"
+ENV REACT_APP_API="https://furry-fantasy-app.herokuapp.com/api"
 
 COPY ./web/. .
 RUN npm run build
