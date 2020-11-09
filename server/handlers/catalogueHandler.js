@@ -69,10 +69,12 @@ async function handleGetListOfCTs(req, res) {
     , P.category,
       CASE
         WHEN CT.rating IS NOT NULL
-          THEN ROUND(PC.base_price + (PC.base_price * (CEILING(CT.rating) - 1) / 4)::numeric, 2)
+          THEN
+          ROUND(PC.base_price + (PC.base_price * (CEILING(CT.rating) - 1) / 4)::numeric, 2)
+          * (TO_DATE('${endDate}', 'DD-MM-YYYY') - TO_DATE('${startDate}', 'DD-MM-YYYY') + 1)
         ELSE
-          ROUND(PC.base_price::numeric, 2)
-      END AS minPrice,
+          ROUND(PC.base_price::numeric, 2) * (TO_DATE('${endDate}', 'DD-MM-YYYY') - TO_DATE('${startDate}', 'DD-MM-YYYY') + 1)
+      END AS minprice,
       A.address
     FROM cte_valid_caretakers CVC, care_takers CT, prefers P, pet_categories PC, accounts A
     WHERE CVC.cname = CT.cname AND CT.cname = P.cname AND P.cname = A.username

@@ -13,9 +13,11 @@ const getLeaves = require('../handlers/careTakerHandler').handleGetLeaves;
 const getAvailability = require('../handlers/careTakerHandler').handleGetAvailability;
 const getRating = require('../handlers/careTakerHandler').handleGetRating;
 const selectBid = require('../handlers/careTakerHandler').handleSelectBid;
+const getAllPreferences = require('../handlers/careTakerHandler').handleGetAllCategories;
 
 router.get('/expectedSalary/:username', (req, res) => getExpectedSalary(req, res));
 router.get('/calendar/:username', (req, res) => getCareTakerCalender(req, res));
+router.get('/prefers/', (req, res) => getAllPreferences(req,res));
 router.get('/prefers/:username', (req, res) => getPreferences(req,res));
 router.delete('/prefers/:username', (req, res) => deletePreferences(req,res));
 router.post('/prefers/:username', (req, res) => createPreferences(req,res));

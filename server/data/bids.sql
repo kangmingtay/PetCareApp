@@ -1,0 +1,1 @@
+SELECT check_valid_amount_before_insert('Rosalinda', 'Prozac', 'Zolly', '20-02-2022', '30-03-2022', NULL, NULL);

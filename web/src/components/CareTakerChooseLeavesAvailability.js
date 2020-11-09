@@ -2,6 +2,7 @@ import React, { useState, useContext } from 'react';
 import PropTypes from 'prop-types';
 import {
   Box,
+  Button,
   Card,
   CardContent,
   makeStyles,
@@ -11,7 +12,7 @@ import {
 } from '@material-ui/core';
 import DateFnsUtils from '@date-io/date-fns';
 import {
-  DatePicker,
+  KeyboardDatePicker,
   MuiPickersUtilsProvider,
 } from '@material-ui/pickers';
 import { fetchListOfValidPets } from 'src/calls/catalogueCalls'
@@ -28,30 +29,32 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-const ChooseDate = (props) => {
+const ChooseLeavesAvailability = (props) => {
   const classes = useStyles();
   const { context, setContext } = useContext(UserContext);
 
-  const handleSubmit = async (data) => {
-    console.log('Date button pressed', data);
-    props.setCaretakers([]);
+  const [values, setValues] = useState({
+    startDate: new Date(),
+    endDate: new Date(),
+  });
+
+  const handleSubmit = async () => {
+    console.log('button pressed');
+    props.setMainValues({...props.mainValues, startDate: values.startDate, endDate: values.endDate});
     try {
-      let resp = await fetchListOfValidPets({...props.mainValues, 
-        ...data,
+      let resp = await fetchListOfValidPets({...values, 
         pName: context.username,
+        startDate: values.startDate,
+        endDate: values.endDate
       });
       if (resp.data.success === true) {
-        console.log('CCD:', [...resp.data.results]);
-        props.setListPets([...resp.data.results]);
-        props.setMainValues({...props.mainValues, 
-          ...data,
-          petNameField: '',
-          careTakerField: '',
-          addressField: '',
-        });
+          console.log('toolbar:', [...resp.data.results]);
+          props.setListPets([...resp.data.results]);
+          
+          console.log('CCD:', props.mainValues);
       }
     }
-    catch (err) {
+    catch(err) {
       alert("Missing input fields " + err)
       console.log(err);
     }
@@ -60,8 +63,8 @@ const ChooseDate = (props) => {
   return (
     <Container maxWidth={false}>
       <Box mt={3}>
-        <Typography variant="h3" align="left" color="textPrimary">
-          Step 1: Select your Date Range
+        <Typography variant="h3" align="center" color="textPrimary">
+          Apply for Leaves/Availability
         </Typography>
         <div>
           <Box mt={3}>
@@ -71,11 +74,11 @@ const ChooseDate = (props) => {
                   <form className={classes.root} noValidate autoComplete="off">
                     <Grid container className={classes.root} direction="row" justify="space-evenly" alignItems="center">
                         <Grid item>
-                            <DatePicker
+                            <KeyboardDatePicker
                               disableToolbar
                               label="Start Date"
-                              value={props.mainValues.startDate}
-                              onChange={date => handleSubmit({startDate: date})}
+                              value={values.startDate}
+                              onChange={date => setValues({...values, startDate: date})}
                               format={"dd/MM/yyyy"}
                               disablePast
                               variant="inline"
@@ -86,11 +89,11 @@ const ChooseDate = (props) => {
                             />
                         </Grid>
                         <Grid item>
-                            <DatePicker
+                            <KeyboardDatePicker
                               disableToolbar
                               label="End Date"
-                              value={props.mainValues.endDate}
-                              onChange={date => handleSubmit({endDate: date})}
+                              value={values.endDate}
+                              onChange={date => setValues({...values, endDate: date})}
                               format={"dd/MM/yyyy"}
                               disablePast
                               variant="inline"
@@ -106,14 +109,27 @@ const ChooseDate = (props) => {
               </CardContent>
             </Card>
           </Box>
+          <Box
+            display="flex"
+            justifyContent="flex-end"
+            mt={3}
+          >
+            <Button
+              color="primary"
+              variant="contained"
+              onClick={handleSubmit}
+            >
+              Select Dates
+            </Button>
+          </Box>
         </div>
       </Box>
     </Container>
   );
 };
 
-ChooseDate.propTypes = {
+ChooseLeavesAvailability.propTypes = {
   className: PropTypes.string
 };
 
-export default ChooseDate;
+export default ChooseLeavesAvailability;
