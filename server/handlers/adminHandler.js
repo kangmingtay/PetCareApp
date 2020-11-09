@@ -121,7 +121,6 @@ async function handleGetRating(req, res) {
   }
 }
 
-
 // // Count pet days within one month
 // async function handleGetBidsInMonth(req, res) {
 //   try {

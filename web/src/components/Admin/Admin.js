@@ -1,16 +1,15 @@
-import React, { Fragment, useState, useEffect } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import React, { Fragment, useState } from 'react';
+import { makeStyles, Grid } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
-import PetJobs from './PetJobs';
+import Pets from './Pets';
+import WorkDays from './WorkDays';
 import Months from './Months';
 import Salary from './Salary';
 import Underperform from './Underperform';
 
-const Jobs = () => {
+const Admin = () => {
   const [month, setMonth] = useState('');
   const [year, setYear] = useState('');
-
-  const [salary, setSalary] = useState({ results: [] });
 
   const useStyles = makeStyles(theme => ({
     root: {
@@ -24,12 +23,6 @@ const Jobs = () => {
 
   return (
     <Fragment>
-      <h3>
-        Salary
-        {salary.results.map((row, i) => (
-          <div key={i}>{row.salary}</div>
-        ))}
-      </h3>
       <form className={classes.root} noValidate autoComplete="off">
         <TextField
           id="standard-basic"
@@ -42,12 +35,15 @@ const Jobs = () => {
           onChange={e => setYear(e.target.value)}
         />
       </form>
-      <PetJobs month={month} year={year} />
-      <Months year={year} />
-      <Salary month={month} year={year} />
-      <Underperform month={month} year={year} />
+      <Grid container spacing={3}>
+        <Pets month={month} year={year} />
+        <Salary month={month} year={year} />
+      </Grid>
+
+      {/* <Months year={year} />
+      <Underperform month={month} year={year} /> */}
     </Fragment>
   );
 };
 
-export default Jobs;
+export default Admin;

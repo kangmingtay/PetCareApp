@@ -1,12 +1,16 @@
 import React, { Fragment, useState, useEffect } from 'react';
 import Button from '@material-ui/core/Button';
 import { fetchAllDays } from 'src/calls/adminCalls';
+import AdminCard from './AdminCard';
 
 const Months = ({ year }) => {
   const [busyMonth, setBusyMonth] = useState([]);
 
-  const getMonth = async e => {
-    e.preventDefault();
+  useEffect(() => {
+    getMonth();
+  });
+
+  const getMonth = async () => {
     try {
       var monthList = [];
       for (var i = 1; i <= 12; i++) {

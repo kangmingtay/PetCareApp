@@ -1,9 +1,11 @@
 import React, { useContext } from 'react';
-import { Container, makeStyles, Typography } from '@material-ui/core';
+import { Container, makeStyles, Typography, Grid } from '@material-ui/core';
 import Page from 'src/components/Page';
 import AdminTable from '../components/Admin/AdminTable';
 import { UserContext } from 'src/UserContext';
-import Jobs from '../components/Admin/Jobs';
+import Admin from '../components/Admin/Admin';
+import AdminCard from '../components/Admin/AdminCard';
+import Pets from '../components/Admin/Pets';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -20,8 +22,8 @@ const AdminPage = () => {
 
   return (
     <Page className={classes.root} title="Administrator">
-      <Jobs />
       <Container maxWidth={false}>
+        <Admin />
         <Typography variant="h2" align="center">
           Hello Admin, {context.username}
         </Typography>
