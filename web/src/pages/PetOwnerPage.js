@@ -4,15 +4,28 @@ import {
   Container,
   Grid,
   makeStyles,
-  TextField
+  TextField,
+  Card,
+  CardContent,
+  Button,
+  InputLabel,
+  MenuItem,
+  FormHelperText,
+  FormControl,
+  Select
 } from '@material-ui/core';
 import { Pagination } from '@material-ui/lab';
 import Page from 'src/components/Page';
 import PetOwnerToolbar from '../components/PetOwnerToolbar';
 import PetCard from '../components/PetCard';
 import data from '../utils/PetOwnerData';
-import { fetchPets, updatePet, createPet, deletePet } from 'src/calls/petCalls';
+import { fetchPets, updatePet, createPet, deletePet, getPetCategories } from 'src/calls/petCalls';
 import { UserContext } from 'src/UserContext';
+import Fab from '@material-ui/core/Fab';
+import AddIcon from '@material-ui/icons/Add';
+import Zoom from '@material-ui/core/Zoom';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import Dialog from '@material-ui/core/Dialog';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -23,22 +36,145 @@ const useStyles = makeStyles((theme) => ({
   },
   productCard: {
     height: '100%'
-  }
+  },
+  floatinBtn: {
+    position: 'absolute',
+    right: 20,
+    bottom: 20
+  },
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 }));
+
+function SimpleDialog(props) {
+  const classes = useStyles();
+  const { onClose, selectedValue, open } = props;
+  const [ pets, setPets ] = useState(); //second argument is a function
+  const { context } = useContext(UserContext)
+  const [description, setDescription] = React.useState('Description');
+  const [image, setImage] = React.useState('Image');
+  const [categories, setCategories] = React.useState([]);
+  const [category, setCategory] = React.useState('Fox');
+  const [petName, setPetName] = React.useState('Name');
+  const pname = context.username;
+
+  const handleCategorySelect = (event) => {
+    setCategory(event.target.value);
+  };
+
+  const handleChange = (event) => {
+    setDescription(event.target.value);
+  }
+
+  const handleNameChange = (event) => {
+    setPetName(event.target.value);
+  }
+
+  const handleImageChange = (event) => {
+    setImage(event.target.value);
+  }
+
+  useEffect(() => {
+    async function fetchData() {
+      const resp = await getPetCategories(props);
+      setCategories([...resp.data.results]);
+    }
+    fetchData();
+  }, []);
+
+  const handleClose = () => {
+    onClose(selectedValue);
+  };
+
+  const handleListItemClick = (value) => {
+    onClose(value);
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault()
+    let resp = await createPet({"care_req": description, "pname": pname, "category": category, "petName": petName, "image": image});
+    if(resp.data.success === true){     
+      window.location.reload(false);
+    } else {
+      alert('failed!')
+    }
+  }
+
+  console.log(petName)
+
+  return (
+    <Dialog onClose={handleClose} aria-labelledby="simple-dialog-title" open={open} fullWidth={true}>
+      <DialogTitle id="simple-dialog-title">Add new Pet</DialogTitle>
+      <Card className={classes.root}>
+        <CardContent>
+          <form className={classes.root} noValidate autoComplete="off" onSubmit={handleSubmit}>
+            <TextField
+              value={petName}
+              onChange={handleNameChange}
+              id="outlined-required"
+              label="Pet Name"
+              variant="outlined"
+            /> <br/>
+            <FormControl variant="outlined" className={classes.formControl}>
+              <InputLabel id="demo-simple-select-outlined-label">Pet Type</InputLabel>
+              <Select
+                labelId="demo-simple-select-outlined-label"
+                id="demo-simple-select-outlined"
+                value={category}
+                onChange={handleCategorySelect}
+              >
+                {categories.map((category) => (
+                  <MenuItem value={category.category}>{category.category}</MenuItem>
+                ))}
+              </Select>
+            </FormControl> <br/>
+            <TextField 
+              value={description}
+              onChange={handleChange}
+              id="outlined-multiline-static"
+              label="Care Requirements"
+              multiline
+              rows={4}
+              variant="outlined"
+            /> <br/>
+            <TextField
+              value={image}
+              onChange={handleImageChange}
+              id="outlined-required"
+              label="Image"
+              variant="outlined"
+            /> <br/>
+            <Button 
+              onClick={() => handleListItemClick(props)}
+              size="small" color="primary"
+              type="submit">
+              Done
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
+    </Dialog>
+  );
+}
 
 const PetOwnerPage = () => {
   const classes = useStyles();
   const [ pets, setPets ] = useState([]); //second argument is a function
-  const [products] = useState(data);
   const { context } = useContext(UserContext)
-  const pname = context.username
-  const [ params, setParams] = useState({
-    offset: 0,
-    limit: 10,
-    sort_category: "username",
-    sort_direction: "+",
-  });
+  const pname = context.username;
+  const [open, setOpen] = React.useState(false);
+  const [selectedValue, setSelectedValue] = React.useState('');
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
 
+  const handleClose = (value) => {
+    setOpen(false);
+    setSelectedValue(value);
+  };
   useEffect(() => {
     async function fetchData() {
       const resp = await fetchPets(pname);
@@ -51,15 +187,9 @@ const PetOwnerPage = () => {
   return (
     <Page
       className={classes.root}
-      title="Your Pets"
     >
-      <Container maxWidth={false}>
-        <form className={classes.root} noValidate autoComplete="off">
-          <TextField id="standard-basic" label="Pet Name" />
-        </form>
-      </Container>
-      <Container maxWidth={false}>
-        Your pets
+      <Container maxWidth={false}
+      style={useStyles.container}> 
         <Box mt={3}>
           <Grid
             container
@@ -86,12 +216,16 @@ const PetOwnerPage = () => {
           display="flex"
           justifyContent="center"
         >
-          <Pagination
+          {/* <Pagination
             color="primary"
             count={3}
             size="small"
-          />
+          /> */}
         </Box>
+        <Fab color="primary" aria-label="add" style={useStyles.floatinBtn} onClick={handleClickOpen}>
+          <AddIcon />
+        </Fab>
+        <SimpleDialog selectedValue={selectedValue} open={open} onClose={handleClose} />
       </Container>
     </Page>
   );

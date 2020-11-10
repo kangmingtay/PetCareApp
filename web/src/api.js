@@ -25,5 +25,6 @@ export default {
     getPet: (pname) => `${BASE_URL}/pets/${pname}`,
     createPet: (username) => `${BASE_URL}/pets/${username}`,
     updatePet: (pname, pet_name) => `${BASE_URL}/pets/${pname}/${pet_name}`,
-    deletePet: (pname, petname) => `${BASE_URL}/pets/${pname}/${petname}`
+    deletePet: (pname, petname) => `${BASE_URL}/pets/${pname}/${petname}`,
+    getPetCategories: `${BASE_URL}/pets/categories/pet`
 }

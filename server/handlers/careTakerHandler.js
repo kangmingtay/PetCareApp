@@ -366,12 +366,6 @@ async function handleSelectBid(req, res) {
                 )
             )
 
-            --check if caretaker can take care of the pet
-            AND (
-                (SELECT category FROM pets WHERE pname = '${pname}' AND pet_name = '${pet_name}') 
-                IN 
-                (SELECT category FROM prefers WHERE cname = '${username}')
-            )
         `;
         await pool.query(query);
         const resp = {

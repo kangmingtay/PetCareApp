@@ -13,8 +13,12 @@ export const updatePet = async (data) => {
         care_req: care_req,
         image: image
     }});
+    return resp; 
+}
+
+export const getPetCategories = async () => {
+    const resp = await axios.get(api.getPetCategories);
     return resp;
-    
 }
 
 export const deletePet = async (data) => {
@@ -24,11 +28,12 @@ export const deletePet = async (data) => {
 }
 
 export const createPet = async (data) => {
-    const { pet_name, category, pname, care_req, image } = data;
+    const { petName, category, pname, care_req, image } = data;
     const resp = await axios.post(api.createPet(pname), null, { params: {
-        pet_name: pet_name,
+        petName: petName,
         category: category,
         care_req: care_req,
         image: image
     }});
+    return resp;
 }

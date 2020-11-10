@@ -3,7 +3,7 @@ const pool = require("../db");
 const handleCreatePet = async (req, res) => {
     try {
         const { username } = req.params;
-        const petname = req.query.petname;
+        const petname = req.query.petName;
         const category = req.query.category;
         const care_req = req.query.care_req;
         const image = req.query.image;
@@ -62,6 +62,20 @@ const handleGetPet = async (req, res) => {
     }
 }
 
+const handleGetPetCategories = async (req, res) => {
+    try{
+        const query = 'SELECT category FROM pet_categories';
+        const getCategories = await pool.query(query);
+        const resp = { results: getCategories.rows };
+        return res.status(200).json(resp);
+    } catch(err) {
+        return res.status(400).send({
+            success: false,
+            message: err.message,
+        });
+    }
+}
+
 const handleDeletePet = async (req, res) => {
     try{
         const { pname, petname} = req.params;
@@ -85,5 +99,6 @@ module.exports = {
     handleCreatePet,
     handleUpdatePet,
     handleGetPet,
-    handleDeletePet
+    handleDeletePet,
+    handleGetPetCategories
 }
