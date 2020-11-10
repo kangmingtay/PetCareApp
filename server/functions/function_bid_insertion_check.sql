@@ -21,12 +21,25 @@ RETURNS void AS $$
       SELECT TO_DATE(end_dateA, 'DD-MM-YYYY') - TO_DATE(start_dateA, 'DD-MM-YYYY') + 1
       INTO numDays;
 
-      IF (min_rate + (min_rate * (CEILING(rating) - 1) / 4) ) * numDays > payment_amtA THEN
-        RAISE EXCEPTION 'Insufficient payment! Minimum expected: $% ', (min_rate + (min_rate * (CEILING(rating) - 1) / 4) ) * numDays;
+      IF rating IS NULL THEN
+        IF min_rate * numDays > payment_amtA THEN
+          RAISE EXCEPTION 'Insufficient payment! Minimum expected: $% ', ROUND(min_rate * numDays::NUMERIC, 2);
+        END IF;
+      ELSE
+        IF (min_rate + (min_rate * (CEILING(rating) - 1) / 4) ) * numDays > payment_amtA THEN
+          RAISE EXCEPTION 'Insufficient payment! Minimum expected: $% ', ROUND((min_rate + (min_rate * (CEILING(rating) - 1) / 4) ) * numDays::NUMERIC, 2);
+        END IF;
       END IF;
 
-      INSERT INTO bids(pname, pet_name, cname, start_date, end_date, payment_amt, transaction_type)
-      VALUES (pnameA, pet_nameA, cnameA, TO_DATE(start_dateA, 'DD-MM-YYYY'), TO_DATE(end_dateA, 'DD-MM-YYYY'), payment_amtA, transaction_typeA);
+      -- IF (min_rate + (min_rate * (CEILING(rating) - 1) / 4) ) * numDays > payment_amtA THEN
+      --   RAISE EXCEPTION 'Insufficient payment! Minimum expected: $% ', (min_rate + (min_rate * (CEILING(rating) - 1) / 4) ) * numDays;
+      -- END IF;
+      -- IF 1 THEN
+      --   RAISE EXCEPTION 'Insufficient payment! Minimum expected: $% ', (min_rate + (min_rate * (CEILING(rating) - 1) / 4) ) * numDays;
+      -- END IF;
+
+      INSERT INTO bids(pname, pet_name, cname, start_date, end_date, payment_amt, transaction_type, is_selected)
+      VALUES (pnameA, pet_nameA, cnameA, TO_DATE(start_dateA, 'DD-MM-YYYY'), TO_DATE(end_dateA, 'DD-MM-YYYY'), payment_amtA, transaction_typeA, false);
 
     END;
 $$ LANGUAGE plpgsql;

@@ -20,18 +20,18 @@ INSERT INTO Accounts VALUES ('cpt15', '123', 'a@b.com', 'xxx', TO_DATE('01-01-20
 INSERT INTO Pet_Owners VALUES ('p1');
 
 --CareTakers:
-INSERT INTO Care_Takers VALUES ('cft1', NULL);
-INSERT INTO Care_Takers VALUES ('cft2', NULL);
-INSERT INTO Care_Takers VALUES ('cft3', NULL);
-INSERT INTO Care_Takers VALUES ('cpt1', NULL);
-INSERT INTO Care_Takers VALUES ('cpt2', NULL);
-INSERT INTO Care_Takers VALUES ('cpt3', NULL);
-INSERT INTO Care_Takers VALUES ('cpt11', 1);
-INSERT INTO Care_Takers VALUES ('cpt12', 2);
-INSERT INTO Care_Takers VALUES ('cpt13', 2.5);
-INSERT INTO Care_Takers VALUES ('cpt14', 4);
-INSERT INTO Care_Takers VALUES ('cpt15', 5);
-INSERT INTO Care_Takers VALUES ('p1', NULL);
+-- INSERT INTO Care_Takers VALUES ('cft1', NULL);
+-- INSERT INTO Care_Takers VALUES ('cft2', NULL);
+-- INSERT INTO Care_Takers VALUES ('cft3', NULL);
+-- INSERT INTO Care_Takers VALUES ('cpt1', NULL);
+-- INSERT INTO Care_Takers VALUES ('cpt2', NULL);
+-- INSERT INTO Care_Takers VALUES ('cpt3', NULL);
+-- INSERT INTO Care_Takers VALUES ('cpt11', 1);
+-- INSERT INTO Care_Takers VALUES ('cpt12', 2);
+-- INSERT INTO Care_Takers VALUES ('cpt13', 2.5);
+-- INSERT INTO Care_Takers VALUES ('cpt14', 4);
+-- INSERT INTO Care_Takers VALUES ('cpt15', 5);
+-- INSERT INTO Care_Takers VALUES ('p1', NULL);
 
 --Full_timer:
 INSERT INTO Full_timer VALUES ('cft1');
@@ -71,10 +71,10 @@ INSERT INTO prefers VALUES ('p1','cat');
 INSERT INTO prefers VALUES ('p1','dog');
 
 --pets
-INSERT INTO pets VALUES ('nyaako','cat','p1','daily cuddles');
-INSERT INTO pets VALUES ('nyaako1','cat','p1','ball');
-INSERT INTO pets VALUES ('nyaako2','cat','p1','laser');
-INSERT INTO pets VALUES ('inu','dog','p1','play catch');
+INSERT INTO pets VALUES ('nyaako','cat','p1','daily cuddles', 'www.pog.com');
+INSERT INTO pets VALUES ('nyaako1','cat','p1','ball', 'www.pog.com');
+INSERT INTO pets VALUES ('nyaako2','cat','p1','laser', 'www.pog.com');
+INSERT INTO pets VALUES ('inu','dog','p1','play catch', 'www.pog.com');
 
 --schedule
 --Full timers' schedule
