@@ -12,7 +12,7 @@ import {
   MenuItem,
   FormHelperText,
   FormControl,
-  Select
+  Select,
 } from '@material-ui/core';
 import { Pagination } from '@material-ui/lab';
 import Page from 'src/components/Page';
@@ -110,50 +110,53 @@ function SimpleDialog(props) {
       <DialogTitle id="simple-dialog-title">Add new Pet</DialogTitle>
       <Card className={classes.root}>
         <CardContent>
-          <form className={classes.root} noValidate autoComplete="off" onSubmit={handleSubmit}>
-            <TextField
-              value={petName}
-              onChange={handleNameChange}
-              id="outlined-required"
-              label="Pet Name"
-              variant="outlined"
-            /> <br/>
-            <FormControl variant="outlined" className={classes.formControl}>
-              <InputLabel id="demo-simple-select-outlined-label">Pet Type</InputLabel>
-              <Select
-                labelId="demo-simple-select-outlined-label"
-                id="demo-simple-select-outlined"
-                value={category}
-                onChange={handleCategorySelect}
-              >
-                {categories.map((category) => (
-                  <MenuItem value={category.category}>{category.category}</MenuItem>
-                ))}
-              </Select>
-            </FormControl> <br/>
-            <TextField 
-              value={description}
-              onChange={handleChange}
-              id="outlined-multiline-static"
-              label="Care Requirements"
-              multiline
-              rows={4}
-              variant="outlined"
-            /> <br/>
-            <TextField
-              value={image}
-              onChange={handleImageChange}
-              id="outlined-required"
-              label="Image"
-              variant="outlined"
-            /> <br/>
-            <Button 
-              onClick={() => handleListItemClick(props)}
-              size="small" color="primary"
-              type="submit">
-              Done
-            </Button>
-          </form>
+          <div style={{ textAlign: 'center', padding: 8, margin: '24px -24px -24px -24px' }}>
+            <form className={classes.root} noValidate autoComplete="off" onSubmit={handleSubmit}>
+              <TextField style={{ width: '300px', padding: 12}}
+                value={petName}
+                onChange={handleNameChange}
+                id="outlined-required"
+                label="Pet Name"
+                variant="outlined"
+              />
+              <FormControl variant="outlined" className={classes.formControl} style={{padding: 12}}>
+                <InputLabel id="demo-simple-select-outlined-label">Pet Type</InputLabel>
+                <Select
+                  labelId="demo-simple-select-outlined-label"
+                  id="demo-simple-select-outlined"
+                  value={category}
+                  onChange={handleCategorySelect}
+                >
+                  {categories.map((category) => (
+                    <MenuItem value={category.category}>{category.category}</MenuItem>
+                  ))}
+                </Select>
+              </FormControl> <br/>
+              <TextField style={{ width: '400px', padding: 12, paddingTop: 10}}
+                value={description}
+                onChange={handleChange}
+                id="outlined-multiline-static"
+                label="Care Requirements"
+                multiline
+                rows={4}
+                variant="outlined"
+              /> <br/>
+              <TextField
+                style={{ width: '400px', padding: 12, paddingTop: 10}}
+                value={image}
+                onChange={handleImageChange}
+                id="outlined-required"
+                label="Image"
+                variant="outlined"
+              /> <br/>
+              <Button 
+                onClick={() => handleListItemClick(props)}
+                size="small" color="primary"
+                type="submit">
+                Done
+              </Button>
+            </form>
+            </div>
         </CardContent>
       </Card>
     </Dialog>

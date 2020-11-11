@@ -26,6 +26,8 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import { fetchPets, updatePet, createPet, deletePet } from 'src/calls/petCalls';
 import { withRouter } from 'react-router'
+import IconButton from '@material-ui/core/IconButton';
+import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -113,6 +115,9 @@ function PetCard({ className, pet, ...rest }) {
           aria-label="show more">
           Edit
         </Button>
+        <IconButton aria-label="add to favorites">
+          <DeleteOutlinedIcon />
+        </IconButton>
       </CardActions>
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent>
