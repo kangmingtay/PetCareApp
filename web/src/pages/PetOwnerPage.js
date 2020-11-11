@@ -128,7 +128,7 @@ function SimpleDialog(props) {
                   onChange={handleCategorySelect}
                 >
                   {categories.map((category) => (
-                    <MenuItem value={category.category}>{category.category}</MenuItem>
+                    <MenuItem key={category.category} value={category.category}>{category.category}</MenuItem>
                   ))}
                 </Select>
               </FormControl> <br/>

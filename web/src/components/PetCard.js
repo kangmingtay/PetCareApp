@@ -151,8 +151,7 @@ function PetCard({ className, pet, ...rest }) {
 }
 
 PetCard.propTypes = {
-  className: PropTypes.string,
-  product: PropTypes.object.isRequired
+  className: PropTypes.string
 };
 
 export default PetCard;
