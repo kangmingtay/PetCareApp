@@ -60,8 +60,8 @@ const AdminTable = () => {
         </TableRow>
       </TableHead>
       <TableBody>
-        {users.map((user) => (
-          <TableRow key={user} hover>
+        {users.map((user, i) => (
+          <TableRow key={i} hover>
             <TableCell component="th" scope="row">
               {user.username}
             </TableCell>

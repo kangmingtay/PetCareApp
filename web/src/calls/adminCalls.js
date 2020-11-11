@@ -50,5 +50,16 @@ export const fetchRevenue = async data => {
     const resp = await axios.get(api.getRating);
     return resp;
   };
+
+  export const fetchCaretakers = async data => {
+      const { month, year } = data;
+      const resp = await axios.get(api.getCaretakers, {
+        params: {
+          month: month,
+          year: year
+        }
+      });
+      return resp;
+    };
   
   

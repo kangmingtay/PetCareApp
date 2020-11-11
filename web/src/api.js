@@ -33,4 +33,5 @@ export default {
     getPets: `${BASE_URL}/admin/pets/`,
     getRevenue: `${BASE_URL}/admin/revenue/`,
     getRating: `${BASE_URL}/admin/rating/`,
+    getCaretakers: `${BASE_URL}/admin/caretakers/`,
 }
