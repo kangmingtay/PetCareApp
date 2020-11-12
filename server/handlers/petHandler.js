@@ -95,10 +95,33 @@ const handleDeletePet = async (req, res) => {
     }
 }
 
+const handleGetPetInBids = async (req, res) => {
+    try {
+        const { pname, petname } = req.params
+        const query = `SELECT * FROM bids WHERE (pname, pet_name) = ('${pname}', '${petname}')`
+        const getBids = await pool.query(query);
+        console.log(getBids.rows)
+        let haveBids
+        if (getBids.rowCount === 1) {
+            haveBids = false
+        } else {
+            haveBids = true
+        }
+        const resp = { results: haveBids }
+        return res.status(200).json(resp);
+    } catch(err) {
+        return res.status(400).send({
+            success: false,
+            message: err.message,
+        });
+    }
+}
+
 module.exports = {
     handleCreatePet,
     handleUpdatePet,
     handleGetPet,
     handleDeletePet,
-    handleGetPetCategories
+    handleGetPetCategories,
+    handleGetPetInBids
 }

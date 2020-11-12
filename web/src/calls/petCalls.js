@@ -37,3 +37,9 @@ export const createPet = async (data) => {
     }});
     return resp;
 }
+
+export const getPetBids = async (data) => {
+    const { petName, pname } = data;
+    const resp = await axios.get(api.getPetBids(pname, petName));
+    return resp;
+}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import PropTypes from 'prop-types';
 import clsx from 'clsx';
 import {
@@ -12,7 +12,11 @@ import {
   makeStyles,
   CardActionArea,
   CardActions,
-  Button
+  Button,
+  List,
+  ListItem,
+  DialogTitle,
+  Dialog
 } from '@material-ui/core';
 
 import CardHeader from '@material-ui/core/CardHeader';
@@ -24,7 +28,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
-import { fetchPets, updatePet, createPet, deletePet } from 'src/calls/petCalls';
+import { fetchPets, updatePet, getPetBids, deletePet } from 'src/calls/petCalls';
 import { withRouter } from 'react-router'
 import IconButton from '@material-ui/core/IconButton';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
@@ -55,13 +59,60 @@ const useStyles = makeStyles((theme) => ({
 //   },
 // });
 
+function SimpleDialog(props) {
+  const classes = useStyles();
+  const { onClose, selectedValue, open , pname, petName} = props;
+
+  const handleClose = () => {
+    onClose(selectedValue);
+  };
+
+  const handleDelete = async (event) => {
+    event.preventDefault()
+    let resp = await deletePet({"pname": pname, "pet_name": petName});
+    if(resp.data.success === true){     
+      window.location.reload(false);
+    } else {
+      alert('failed!')
+    }
+  }
+
+  return (
+    <Dialog onClose={handleClose} aria-labelledby="simple-dialog-title" open={open}>
+        <DialogTitle id="simple-dialog-title">Are you sure?</DialogTitle>
+        <List>
+            <ListItem button onClick={handleDelete}>
+              <Button>
+                Yes
+              </Button>
+            </ListItem>
+            <ListItem button onClick={handleClose}>
+              <Button>
+                No
+              </Button>
+            </ListItem>
+        </List>
+      </Dialog>
+  );
+}
+
 function PetCard({ className, pet, ...rest }) {
   const classes = useStyles();
   const [expanded, setExpanded] = React.useState(false);
   const [description, setDescription] = React.useState(pet.care_req);
   const [image, setImage] = React.useState(pet.image);
+  const [canDelete, setDelete] = React.useState(false);
+  const [open, setOpen] = React.useState(false);
   const petName = pet.pet_name;
   const pname = pet.pname;
+
+  useEffect(() => {
+    async function fetchData() {
+      const resp = await getPetBids({"pname": pname, "petName": petName})
+      setDelete(!resp.data.results)
+    }
+    fetchData();
+  }, []);
 
   const handleChange = (event) => {
     setDescription(event.target.value);
@@ -72,8 +123,17 @@ function PetCard({ className, pet, ...rest }) {
   }
 
   console.log(description);
+
   const handleExpandClick = () => {
     setExpanded(!expanded);
+  };
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = (value) => {
+    setOpen(false);
   };
 
   const handleSubmit = async (event) => {
@@ -115,9 +175,10 @@ function PetCard({ className, pet, ...rest }) {
           aria-label="show more">
           Edit
         </Button>
-        <IconButton aria-label="add to favorites">
+        <IconButton aria-label="delete" disabled={canDelete} onClick={handleClickOpen}>
           <DeleteOutlinedIcon />
         </IconButton>
+        <SimpleDialog open={open} onClose={handleClose} pname={pname} petName={petName}/>
       </CardActions>
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent>
