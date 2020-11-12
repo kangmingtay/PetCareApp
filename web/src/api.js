@@ -35,4 +35,6 @@ export default {
     updateCareTakerBid: (username) => `${BASE_URL}/caretakers/selectbid/${username}`,
     getPetsForDateRange: (username) => `${BASE_URL}/catalogue/${username}`,
     insertBid: (username) => `${BASE_URL}/catalogue/${username}`,
+    updateReviewAndRating: (username) => `${BASE_URL}/review/${username}`,
+    getReviewAndRating: (username) => `${BASE_URL}/review/${username}`,
 }

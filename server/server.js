@@ -14,6 +14,7 @@ var partTimerRouter = require('./routes/partTimer.js');
 var bidsRouter = require('./routes/bids.js');
 var catalogueRouter = require('./routes/catalogueViewer.js');
 var adminRouter = require('./routes/admin.js');
+var reviewRouter = require('./routes/petOwnerReview.js');
 
 // configure middleware
 app.use(express.static('./public'));
@@ -31,6 +32,7 @@ app.use('/api/fulltimers', fullTimerRouter);
 app.use('/api/parttimers', partTimerRouter);
 app.use('/api/catalogue', catalogueRouter);
 app.use('/api/admin', adminRouter);
+app.use('/api/review', reviewRouter)
 
 app.get('/api', (req, res) => {
   res.send('Hello World! Welcome to Furry Fantasy API Server!');

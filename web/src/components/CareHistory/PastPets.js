@@ -8,12 +8,14 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import TablePagination from '@material-ui/core/TablePagination';
+import { getReviewAndRating, updateReviewAndRating } from 'src/calls/petHistoryCalls'
 import {
   Box,
   Container,
   Typography,
 } from '@material-ui/core';
 import { UserContext } from 'src/UserContext';
+import { format } from 'date-fns';
 
 const useStyles = makeStyles((theme) => ({
   table: {
@@ -26,33 +28,39 @@ const useStyles = makeStyles((theme) => ({
 
 const columns = [
   {
-    id: 'petName',
+    id: 'pet_name',
     label: 'Pet Name',
     minWidth: 80,
     align: 'center',
   },
   {
-    id: 'cName',
+    id: 'cname',
     label: 'Caretaker Name',
     minWidth: 80,
     align: 'center',
   },
   {
-    id: 'startDate',
+    id: 'start_date',
     label: 'Start Date',
     minWidth: 80,
     align: 'center',
   },
   {
-    id: 'endDate',
+    id: 'end_date',
     label: 'End Date',
     minWidth: 80,
     align: 'center',
   },
   {
+    id: 'rating',
+    label: 'Rating',
+    minWidth: 40,
+    align: 'center',
+  },
+  {
     id: 'review',
     label: 'Review',
-    minWidth: 80,
+    minWidth: 120,
     align: 'center',
   },
 ];
@@ -65,24 +73,17 @@ export default function PastPets(props) {
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [pets, setPets] = useState([]);
 
-  const [values, setValues] = useState({
-    petName: '',
-    cName: '',
-    startDate: new Date(),
-    endDate: new Date(),
-    review: '',
-  });
-
   useEffect(() => {
     fetchPets();
   }, [])
 
   const fetchPets = async () => {
-    // const resp = await fetchPetsUnderCare({ 
-    //   pName: context.username,
-    //   currDate: new Date(),
-    // });
-    // setPets([...resp.data.results])
+    const resp = await getReviewAndRating({ 
+      pname: context.username,
+      currDate: new Date(),
+    });
+    setPets([...resp.data.results])
+    console.log('PP',[...resp.data.results]);
   }
 
   const handleChangePage = (event, newPage) => {
@@ -94,11 +95,23 @@ export default function PastPets(props) {
     setPage(0);
   };
 
+  const handleRowClick = (pet_name, cname, startDate, endDate) => {
+    console.log('ReviewModal:');
+    props.setSelectedReview({
+      ...props.selectedReview,
+      pet_name: pet_name,
+      cname: cname,
+      startDate: startDate,
+      endDate: endDate,
+    })
+    props.isOpened(true);
+  }
+
   return (
     <Container maxWidth={false}>
       <Box mt={12}>
         <Typography variant="h3" align="center" color="textPrimary">
-          Current Pets Under Care
+          Previous Caretakers
         </Typography>
         <Paper className={classes.root, classes.tableList}>
           <TableContainer className={classes.container}>
@@ -125,15 +138,22 @@ export default function PastPets(props) {
                       hover 
                       role="checkbox" 
                       tabIndex={-1} 
-                      key={row.cname}
+                      key={row.pet_name}
+                      onClick={() => handleRowClick(row.pet_name, row.cname, row.start_date, row.end_date)}
                     >
                       {columns.map((column) => {
                         let value = row[column.id];
-                        if (column.id === 'rating' && value == -1) {
+                        if ( (column.id === 'rating' || column.id === 'review') && !value) {
                           value = '-';
                         }
+                        if (column.id === 'start_date' || column.id === 'end_date') {
+                          value = format(new Date(value), 'dd/MM/yyyy');;
+                        }
                         return (
-                          <TableCell key={column.id} align={column.align}>
+                          <TableCell 
+                          key={column.id} 
+                          align={column.align}
+                          >
                             {column.format && typeof value === 'number' ? column.format(value) : value}
                           </TableCell>
                         );
