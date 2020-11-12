@@ -24,6 +24,13 @@ export default {
     deleteLeavesAvailability: (username) => `${BASE_URL}/caretakers/requestDays/${username}`,
     getRating: (username) => `${BASE_URL}/caretakers/rating/${username}`,
     getListOfValidCareTakers: `${BASE_URL}/catalogue/`,
+
+    getPet: (pname) => `${BASE_URL}/pets/${pname}`,
+    createPet: (username) => `${BASE_URL}/pets/${username}`,
+    updatePet: (pname, pet_name) => `${BASE_URL}/pets/${pname}/${pet_name}`,
+    deletePet: (pname, petname) => `${BASE_URL}/pets/${pname}/${petname}`,
+    getPetCategories: `${BASE_URL}/pets/categories/pet`,
+    getPetBids: (pname, petname) => `${BASE_URL}/pets/${pname}/${petname}`,
     getCareTakerBids: (username) => `${BASE_URL}/bids/caretakers/${username}`,
     updateCareTakerBid: (username) => `${BASE_URL}/caretakers/selectbid/${username}`,
     getPetsForDateRange: (username) => `${BASE_URL}/catalogue/${username}`,

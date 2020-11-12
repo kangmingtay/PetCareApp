@@ -6,6 +6,7 @@ const port = process.env.PORT || 8888;
 
 // configure routes
 var loginRouter = require('./routes/login.js');
+var petsRouter = require('./routes/pets.js');
 var userRouter = require('./routes/user.js');
 var careTakerRouter = require('./routes/careTaker.js');
 var fullTimerRouter = require('./routes/fullTimer.js');
@@ -22,6 +23,7 @@ app.use(cors());
 
 // initialise routes
 app.use('/api/login', loginRouter);
+app.use('/api/pets', petsRouter);
 app.use('/api/users', userRouter);
 app.use('/api/bids', bidsRouter);
 app.use('/api/caretakers', careTakerRouter);
