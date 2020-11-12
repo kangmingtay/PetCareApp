@@ -1,5 +1,4 @@
-import React, { useContext } from 'react';
-// import clsx from 'clsx';
+import React from 'react';
 import PropTypes from 'prop-types';
 import {
   Avatar,
@@ -13,7 +12,6 @@ import {
 } from '@material-ui/core';
 import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import MoneyIcon from '@material-ui/icons/Money';
-import { UserContext } from 'src/UserContext';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -34,13 +32,9 @@ const useStyles = makeStyles(theme => ({
 }));
 
 const AdminCard = props => {
-  // const AdminCard = ({ className, ...rest }) => {
   const classes = useStyles();
 
-  const { context, setContext } = useContext(UserContext);
-
   return (
-    // <Card className={clsx(classes.root, className)} {...rest}>
     <Card>
       <CardContent>
         <Grid container justify="space-between" spacing={3}>

@@ -4,7 +4,6 @@ import { fetchRevenue } from 'src/calls/adminCalls';
 import AdminCard from './AdminCard';
 
 const Salary = ({ month, year }) => {
-  const [data, setData] = useState([]);
   const [salary, setSalary] = useState([]);
   const [revenue, setRevenue] = useState([]);
 
@@ -16,13 +15,10 @@ const Salary = ({ month, year }) => {
     try {
       const response = await fetchRevenue({ month: month, year: year });
       var results = [...response.data.results];
-      setData(results);
       var sumSalary = 0;
       var sumRevenue = 0;
-      results.forEach(element => {
-        sumSalary += parseInt(element.salary);
-        sumRevenue += parseInt(element.revenue);
-      });
+      sumSalary = parseInt(results[0].salary);
+      sumRevenue = parseInt(results[0].revenue);
       setSalary(sumSalary);
       setRevenue(sumRevenue);
     } catch (err) {
@@ -32,17 +28,6 @@ const Salary = ({ month, year }) => {
 
   return (
     <Fragment>
-      {/* <Button variant="contained" value="salary" onClick={getSalary}>
-        Get salary and revenue
-      </Button>
-      <h3>
-        Salary for each caretaker:
-        {data.map((row, i) => (
-          <li key={i}>
-            {row.cname} : {row.salary}
-          </li>
-        ))}
-      </h3> */}
       <Grid item lg={3} sm={6} xl={3} xs={12}>
         <AdminCard heading="Total Caretaker Cost" value={'$' + salary} />
       </Grid>

@@ -1,7 +1,6 @@
 import React, { Fragment, useState, useEffect } from 'react';
 import Button from '@material-ui/core/Button';
 import { fetchAllDays } from 'src/calls/adminCalls';
-import AdminCard from './AdminCard';
 
 const Months = ({ year }) => {
   const [busyMonth, setBusyMonth] = useState([]);

@@ -1,11 +1,10 @@
 import React, { Fragment, useState } from 'react';
-import { Container, makeStyles, Grid } from '@material-ui/core';
+import { Container, makeStyles, Grid, Typography } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
 import Pets from './Pets';
-import WorkDays from './WorkDays';
-import Months from './Months';
+// import Months from './Months';
 import Salary from './Salary';
-import Underperform from './Underperform';
+import Chart from './AdminChart';
 import CaretakerTable from './CaretakerTable';
 
 const Admin = () => {
@@ -42,9 +41,12 @@ const Admin = () => {
           <Salary month={month} year={year} />
         </Grid>
       </Container>
-      {/* <CaretakerTable month={month} year={year} /> */}
+      <Chart month={month} year={year} />
+      <Typography variant="h4" align="center">
+        Caretakers
+      </Typography>
+      <CaretakerTable month={month} year={year} />
       {/* <Months year={year} /> */}
-      <Underperform month={month} year={year} />
     </Fragment>
   );
 };
