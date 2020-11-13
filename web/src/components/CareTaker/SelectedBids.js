@@ -20,7 +20,7 @@ const SelectedBids = (props) => {
         <Table className={classes.table} aria-label="simple table">
             <TableHead>
                 <TableRow>
-                    {["Pet Owner", "Pet Name", "Start Date", "End Date", "Review"].map(item => {
+                    {["Pet Owner", "Pet Name", "Start Date", "End Date", "Rating", "Review"].map(item => {
                         return <TableCell key={item} align="right">{item}</TableCell>
                     })}
                 </TableRow>
@@ -34,7 +34,8 @@ const SelectedBids = (props) => {
                     <TableCell align="right">{bid.pet_name}</TableCell>
                     <TableCell align="right">{bid.start_date.slice(0,10)}</TableCell>
                     <TableCell align="right">{bid.end_date.slice(0, 10)}</TableCell>
-                    <TableCell align="right">{bid.review}</TableCell>
+                    <TableCell align="right">{(bid.rating === null) ? "-" : bid.rating}</TableCell>
+                    <TableCell align="right">{(bid.review === null) ? "-": bid.review}</TableCell>
                 </TableRow>
             ))}
             </TableBody>

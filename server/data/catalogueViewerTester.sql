@@ -16,6 +16,8 @@ INSERT INTO Accounts VALUES ('cpt13', '123', 'a@b.com', 'xxx', TO_DATE('01-01-20
 INSERT INTO Accounts VALUES ('cpt14', '123', 'a@b.com', 'yyy', TO_DATE('01-01-2020', 'DD-MM-YYYY'), 'false');
 INSERT INTO Accounts VALUES ('cpt15', '123', 'a@b.com', 'xxx', TO_DATE('01-01-2020', 'DD-MM-YYYY'), 'false');
 
+INSERT INTO Accounts VALUES ('ed', '123', 'a@b.com', 'xxx', TO_DATE('01-01-2020', 'DD-MM-YYYY'), 'true');
+
 --Petowners:
 INSERT INTO Pet_Owners VALUES ('p1');
 

@@ -52,7 +52,7 @@ CREATE OR REPLACE FUNCTION specify_leaves(username VARCHAR(256), leaves_ date[])
             END LOOP;
 
         IF contiguous_150_blocks < 2 THEN
-            RAISE EXCEPTION'Failed to meet the requirement of 2x150 pet days, %', contiguous_150_blocks;
+            RAISE EXCEPTION'Failed to meet the requirement of 2x150 pet days';
         END IF;
     END;
 $$ LANGUAGE plpgsql;
@@ -81,7 +81,3 @@ CREATE OR REPLACE FUNCTION encode_string(str VARCHAR(256)) RETURNS INTEGER AS $f
         chars(char));
     END
 $func$ LANGUAGE plpgsql;
-
-SELECT specify_leaves('${username}'::VARCHAR(256), '${dates}'::date[])
-FROM full_timer
-WHERE cname = '${username}';

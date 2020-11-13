@@ -6,10 +6,8 @@ import {
   Button,
   Typography,
   TextField,
-  InputAdornment,
   Grid,
   FormControl,
-  FormHelperText,
   InputLabel,
   MenuItem,
   Select,
@@ -19,7 +17,7 @@ import Profile from '../components/Profile';
 import ProfileDetails from '../components/ProfileDetails';
 import PastPets from 'src/components/CareHistory/PastPets';
 import ModalUtil from 'src/components/UI/ModalUtil';
-import { updateReviewAndRating } from 'src/calls/petHistoryCalls'
+import { getReviewAndRating, updateReviewAndRating } from 'src/calls/petHistoryCalls'
 import { useToasts } from 'react-toast-notifications'
 import { UserContext } from 'src/UserContext';
 
@@ -58,6 +56,17 @@ const ProfilePage = () => {
     rating: 0,
     review: '',
   });
+  const [pets, setPets] = useState([]);
+
+  const fetchPets = async () => {
+    const resp = await getReviewAndRating({ 
+      pname: context.username,
+      currDate: new Date(),
+    });
+    setPets([...resp.data.results])
+    console.log('PP_parent',[...resp.data.results]);
+  }
+
 
   const handleSubmit = async () => {
     console.log('Submitting...');
@@ -71,6 +80,8 @@ const ProfilePage = () => {
           appearance: 'success',
           autoDismiss: true,
         })
+        fetchPets();
+        isOpened(false);
       }
     } catch(err) {
       console.log(err);
@@ -89,8 +100,27 @@ const ProfilePage = () => {
     setSelectedReview({...selectedReview, review: event.target.value});
   };
 
-  const handleCloseModal = (event) => {
+  const handleCloseModal = () => {
     isOpened(false);
+  };
+
+  const showReviews = () => {
+    if (context.isAdmin === 'false') {
+      return (
+        <>
+          <PastPets
+            isOpened={isOpened}
+            setSelectedReview={setSelectedReview}
+            selectedReview={selectedReview}
+            setPets={setPets}
+            pets={pets}
+          />
+          <ModalUtil open={open} handleClose={handleCloseModal}>
+            {modalInfo}
+          </ModalUtil>
+        </>
+      )
+    }
   };
 
   const modalInfo = (
@@ -160,14 +190,7 @@ const ProfilePage = () => {
           </Grid>
         </Grid>
       </Container>
-      <PastPets
-        isOpened={isOpened}
-        setSelectedReview={setSelectedReview}
-        selectedReview={selectedReview}
-      />
-      <ModalUtil open={open} handleClose={handleCloseModal}>
-        {modalInfo}
-      </ModalUtil>
+      {showReviews()}
     </Page>
   );
 };
