@@ -9,11 +9,7 @@ import {
   Typography,
   Container,
 } from '@material-ui/core';
-import DateFnsUtils from '@date-io/date-fns';
-import {
-  DatePicker,
-  MuiPickersUtilsProvider,
-} from '@material-ui/pickers';
+import { DatePicker } from '@material-ui/pickers';
 import { fetchListOfValidPets } from 'src/calls/catalogueCalls'
 import { UserContext } from 'src/UserContext';
 
@@ -67,42 +63,40 @@ const ChooseDate = (props) => {
           <Box mt={3}>
             <Card>
               <CardContent>
-                  <MuiPickersUtilsProvider utils={DateFnsUtils}>
-                  <form className={classes.root} noValidate autoComplete="off">
-                    <Grid container className={classes.root} direction="row" justify="space-evenly" alignItems="center">
-                        <Grid item>
-                            <DatePicker
-                              disableToolbar
-                              label="Start Date"
-                              value={props.mainValues.startDate}
-                              onChange={date => handleSubmit({startDate: date})}
-                              format={"dd/MM/yyyy"}
-                              disablePast
-                              variant="inline"
-                              margin="normal"
-                              KeyboardButtonProps={{
-                                'aria-label': 'change date',
-                              }}
-                            />
-                        </Grid>
-                        <Grid item>
-                            <DatePicker
-                              disableToolbar
-                              label="End Date"
-                              value={props.mainValues.endDate}
-                              onChange={date => handleSubmit({endDate: date})}
-                              format={"dd/MM/yyyy"}
-                              disablePast
-                              variant="inline"
-                              margin="normal"
-                              KeyboardButtonProps={{
-                                'aria-label': 'change date',
-                              }}
-                            />
-                        </Grid>
-                    </Grid>
-                    </form>
-                  </MuiPickersUtilsProvider>
+                <form className={classes.root} noValidate autoComplete="off">
+                  <Grid container className={classes.root} direction="row" justify="space-evenly" alignItems="center">
+                      <Grid item>
+                          <DatePicker
+                            disableToolbar
+                            label="Start Date"
+                            value={props.mainValues.startDate}
+                            onChange={date => handleSubmit({startDate: date})}
+                            format={"dd/MM/yyyy"}
+                            disablePast
+                            variant="inline"
+                            margin="normal"
+                            KeyboardButtonProps={{
+                              'aria-label': 'change date',
+                            }}
+                          />
+                      </Grid>
+                      <Grid item>
+                          <DatePicker
+                            disableToolbar
+                            label="End Date"
+                            value={props.mainValues.endDate}
+                            onChange={date => handleSubmit({endDate: date})}
+                            format={"dd/MM/yyyy"}
+                            disablePast
+                            variant="inline"
+                            margin="normal"
+                            KeyboardButtonProps={{
+                              'aria-label': 'change date',
+                            }}
+                          />
+                      </Grid>
+                  </Grid>
+                </form>
               </CardContent>
             </Card>
           </Box>
