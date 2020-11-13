@@ -64,7 +64,7 @@ async function handleGetListOfCTs(req, res) {
         WHEN CT.rating IS NULL
           THEN -1
         ELSE
-          CT.rating
+          ROUND(CT.rating::numeric, 2)
       END AS rating
     , P.category,
       CASE
@@ -79,6 +79,11 @@ async function handleGetListOfCTs(req, res) {
     FROM cte_valid_caretakers CVC, care_takers CT, prefers P, pet_categories PC, accounts A
     WHERE CVC.cname = CT.cname AND CT.cname = P.cname AND P.cname = A.username
     AND P.category = PC.category
+    AND PC.category = (
+      SELECT P1.category
+      FROM pets P1
+      WHERE '${petName}' = P1.pet_name
+    )
     `;
 
     const allCareTakers = await pool.query(queryOverall);
