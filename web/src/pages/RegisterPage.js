@@ -36,7 +36,6 @@ const RegisterPage = () => {
       let resp = await createUserAccount(values);
       if (resp.data.success === true) {
           navigate('/login', { replace: true });
-          // alert("Account created successfully! Please login with your credentials!")
           addToast("Account created successfully! Please login with your credentials!", {
             appearance: 'success',
             autoDismiss: true,
@@ -45,7 +44,6 @@ const RegisterPage = () => {
     }
     catch(err) {
       // err.response.data.message -> to see actual error msg
-      // alert("Username already exists! Please use another username.")
       addToast("Username already exists! Please use another username.", {
         appearance: 'error',
         autoDismiss: true,
