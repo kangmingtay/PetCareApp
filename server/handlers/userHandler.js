@@ -40,7 +40,7 @@ async function handleGetUser(req, res) {
         const query = `
             SELECT username, email, address, date_created, is_admin 
             FROM accounts 
-            WHERE username = '${username}'`;
+            WHERE username = '${username.toLowerCase()}'`;
         const singleUser = await pool.query(query);
         let resp = { results: singleUser.rows};
         if (singleUser.rowCount === 0) {
@@ -58,9 +58,9 @@ async function handleGetUser(req, res) {
 async function handleCreateUser(req, res) {
     try {
         const { username, password, email, address, isAdmin } = req.body;
-        // if isAdmin = true, use trigger to insert into PCS admin table 
+        
         const query = `INSERT INTO Accounts(username, password, email, address, date_created, is_admin) 
-            VALUES ('${username}', '${password}', '${email}', '${address}', NOW(), '${isAdmin}')
+            VALUES ('${username.toLowerCase()}', '${password}', '${email}', '${address}', NOW(), '${isAdmin}')
         `;
         const createUser = await pool.query(query);
         let resp = {};
