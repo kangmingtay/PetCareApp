@@ -10,22 +10,32 @@ async function handleGetExpectedSalary(req, res) {
         const { username } = req.params;
         const month = req.query.month;
         const query = `
-            SELECT 
-                CASE
-                    WHEN '${username}' IN (SELECT cname FROM part_timer) THEN SUM(payment_amt / (end_date - start_date + 1)) * 0.75
-                    WHEN '${username}' IN (SELECT cname FROM full_timer) AND COUNT(*) <= 60 THEN 3000
-                    WHEN '${username}' IN (SELECT cname FROM full_timer) THEN 3000.0 + 1.0 * (COUNT(*) - 60) / COUNT(*) * SUM(payment_amt / (end_date - start_date + 1)) * 0.8
-                END salary,
-                SUM(payment_amt / (end_date - start_date + 1)) revenue
-            FROM Schedule NATURAL JOIN Bids
-            WHERE cname = '${username}' AND date <= end_date AND date >= start_date AND is_selected 
-            GROUP BY to_char(date, 'YYYY-MM')
-            HAVING to_char(date, 'YYYY-MM') = '${month}';
+            (
+                SELECT 3000 AS salary, 0 AS revenue, 0 AS petdays
+                FROM full_timer
+                WHERE cname = '${username}' 
+                AND cname NOT IN (SELECT cname FROM Schedule WHERE to_char(date, 'YYYY-MM') = '${month}') 
+            )
+            UNION
+            (
+                SELECT 
+                    CASE
+                        WHEN '${username}' IN (SELECT cname FROM part_timer) THEN SUM(payment_amt / (end_date - start_date + 1)) * 0.75
+                        WHEN '${username}' IN (SELECT cname FROM full_timer) AND COUNT(*) <= 60 THEN 3000
+                        WHEN '${username}' IN (SELECT cname FROM full_timer) THEN 3000.0 + 1.0 * (COUNT(*) - 60) / COUNT(*) * SUM(payment_amt / (end_date - start_date + 1)) * 0.8
+                    END salary,
+                    SUM(payment_amt / (end_date - start_date + 1)) revenue,
+                    COUNT(*) AS petdays
+                FROM Schedule NATURAL JOIN Bids
+                WHERE cname = '${username}' AND date <= end_date AND date >= start_date AND is_selected 
+                GROUP BY to_char(date, 'YYYY-MM')
+                HAVING to_char(date, 'YYYY-MM') = '${month}'
+            );
         `;
         const monthlySalary = await pool.query(query);
-        const resp = { 
+        const resp = {
             success: true,
-            results: monthlySalary.rows 
+            results: monthlySalary.rows
         };
         return res.status(200).json(resp);
     } catch (err) {
@@ -59,9 +69,9 @@ async function handleGetCareTakerCalendar(req, res) {
         AND is_selected
         `;
         const CareTakerCalendar = await pool.query(query);
-        const resp = { 
+        const resp = {
             success: true,
-            results: CareTakerCalendar.rows 
+            results: CareTakerCalendar.rows
         };
         return res.status(200).json(resp);
     } catch (err) {
@@ -121,9 +131,9 @@ async function handleGetLeaves(req, res) {
         )
         `;
         const leaves = await pool.query(query);
-        const resp = { 
+        const resp = {
             success: true,
-            results: leaves.rows 
+            results: leaves.rows
         };
         return res.status(200).json(resp);
     } catch (err) {
@@ -147,9 +157,9 @@ async function handleGetAvailability(req, res) {
         SELECT to_char(date, 'DD-MM-YYYY') available FROM availability where to_char(date, 'YYYY') = '${year}' AND cname = '${username}'
         `;
         const availability = await pool.query(query);
-        const resp = { 
+        const resp = {
             success: true,
-            results: availability.rows 
+            results: availability.rows
         };
         return res.status(200).json(resp);
     } catch (err) {
@@ -167,27 +177,33 @@ async function handleGetAvailability(req, res) {
  * POST: http://localhost:8888/api/caretakers/requestDays/zw?dates={01-01-2023, 06-06-2023, 12-31-2023}
  * @param {*} req.query.dates = '{DD-MM-YYYY, DD-MM-YYY, DD-MM-YYYY....}' 
  */
-async function handlerInsertLeavesAvailability(req, res) {
+async function handlerAddNotWorking(req, res) {
     //disabling selection of dates before current year should be done in frontend.
     try {
         const { username } = req.params;
-        const dates = req.query.dates;
+        const dates = req.body.dates;
         // const { dates } = req.body;
-        const query = `
+        const query1 = `
         SELECT specify_leaves('${username}'::VARCHAR(256), '${dates}'::date[])
         FROM full_timer
         WHERE cname = '${username}';
-        
-        SELECT specify_availability('${username}'::VARCHAR(256), '${dates}'::date[])
-        FROM part_timer
-        WHERE cname = '${username}';
+        `
+        const query2 = `
+        DELETE FROM availability
+            WHERE cname = '${username}' 
+            AND date = ANY('${dates}'::date[])
+            AND date NOT IN (SELECT date FROM schedule WHERE cname = '${username}')
+            AND '${username}' IN (SELECT cname FROM part_timer)
+            AND date > CURRENT_DATE;
         `;
-        await pool.query(query);
-        const resp = { 
+        const updateResult1 = await pool.query(query1);
+        const updateResult2 = await pool.query(query2);
+        const resp = {
             success: true,
-            message: "successfully applied dates",
+            message: `${updateResult1.rowCount + updateResult2.rowCount}`,
         };
         return res.status(200).json(resp);
+
     } catch (err) {
         return res.status(400).send({
             success: false,
@@ -202,30 +218,29 @@ async function handlerInsertLeavesAvailability(req, res) {
  * DELETE: http://localhost:8888/api/caretakers/requestDays/zw?dates={01-01-2023, 06-06-2023, 12-31-2023}
  * @param {*} req.query.dates = '{DD-MM-YYYY, DD-MM-YYY, DD-MM-YYYY....}' 
  */
-async function handlerDeleteLeavesAvailability(req, res) {
+async function handlerDeleteNotWorking(req, res) {
     //disabling selection of dates before current year should be done in frontend.
     try {
         const { username } = req.params;
-        // const { dates } = req.body;
         const dates = req.query.dates;
-        const query = `
+
+        const query1 = `
         DELETE FROM leaves
             WHERE cname = '${username}' 
             AND date = ANY('${dates}'::date[])
             AND '${username}' IN (SELECT cname FROM full_timer)
             AND date > CURRENT_DATE;
-        
-        DELETE FROM availability
-            WHERE cname = '${username}' 
-            AND date = ANY('${dates}'::date[])
-            AND date NOT IN (SELECT date FROM schedule WHERE cname = '${username}')
-            AND '${username}' IN (SELECT cname FROM part_timer)
-            AND date > CURRENT_DATE;
+        `
+        const query2 = `
+        SELECT specify_availability('${username}'::VARCHAR(256), '${dates}'::date[])
+        FROM part_timer
+        WHERE cname = '${username}';
         `;
-        await pool.query(query);
-        const resp = { 
+        const updateResult1 = await pool.query(query1);
+        const updateResult2 = await pool.query(query2);
+        const resp = {
             success: true,
-            message: "successfuly deleted dates",
+            message: `${updateResult1.rowCount + updateResult2.rowCount}`,
         };
         return res.status(200).json(resp);
     } catch (err) {
@@ -246,9 +261,9 @@ async function handleGetPreferences(req, res) {
         const { username } = req.params;
         const query = `SELECT category FROM prefers WHERE cname = '${username}';`;
         const Categories = await pool.query(query);
-        const resp = { 
+        const resp = {
             success: true,
-            results: Categories.rows 
+            results: Categories.rows
         };
         return res.status(200).json(resp);
     } catch (err) {
@@ -264,9 +279,9 @@ async function handleGetAllCategories(req, res) {
         const { username } = req.params;
         const query = `SELECT category FROM pet_categories;`;
         const Categories = await pool.query(query);
-        const resp = { 
+        const resp = {
             success: true,
-            results: Categories.rows 
+            results: Categories.rows
         };
         return res.status(200).json(resp);
     } catch (err) {
@@ -291,7 +306,7 @@ async function handleDeletePreferences(req, res) {
         if (category == null) throw new Error("category is undefined");
         const query = `DELETE FROM prefers WHERE cname = '${username}' AND category = '${category}';`;
         await pool.query(query);
-        const resp = { 
+        const resp = {
             success: true,
             message: `'${category}' has successfully been deleted from '${username}'`,
         };
@@ -318,7 +333,7 @@ async function handleUpdatePreferences(req, res) {
         if (category_from == null || category_to == null) throw new Error("'category_from' and 'category_to' are undefined");
         const query = `UPDATE prefers SET category = '${category_to}' WHERE cname = '${username}' AND category = '${category_from}';`;
         await pool.query(query);
-        const resp = { 
+        const resp = {
             success: true,
             message: `'${category_from}' has successfully been updated to '${category_to}'`,
         };
@@ -339,15 +354,12 @@ async function handleCreatePreferences(req, res) {
     try {
         const { username } = req.params;
         const categories = req.body.categories;
-        console.log(req.query);
-        console.log(req.body);
         const query = `
         DELETE FROM prefers WHERE cname = '${username}';
         INSERT INTO prefers SELECT '${username}', category FROM unnest('${categories}'::VARCHAR(256)[]) AS category;
         `;
-        console.log(query);
         const updateResult = await pool.query(query);
-        
+
         const resp = {
             success: true,
             message: `Added '${categories}' successfully, ${updateResult.rowCount} rows updated`,
@@ -365,16 +377,16 @@ async function handleCreatePreferences(req, res) {
  * GET: http://localhost:8888/api/caretakers/rating/zw
  * @Returns {rating: }
  */
-async function handleGetRating(req, res) {
+async function handleGetCareTakerRating(req, res) {
     try {
         const { username } = req.params;
         const query = `
         SELECT rating FROM care_takers where cname = '${username}';
         `;
         const rating = await pool.query(query);
-        const resp = { 
+        const resp = {
             success: true,
-            results: rating.rows 
+            results: rating.rows
         };
         return res.status(200).json(resp);
     } catch (err) {
@@ -396,8 +408,7 @@ async function handleGetRating(req, res) {
 async function handleSelectBid(req, res) {
     try {
         const { username } = req.params;
-        const { pname, pet_name, start_date, end_date} = req.query;
-        console.log(req.query)
+        const { pname, pet_name, start_date, end_date } = req.query;
         const query = `
         UPDATE bids SET is_selected=true WHERE pname='${pname}'
             AND pet_name = '${pet_name}' AND start_date = TO_DATE('${start_date}', 'YYYY-MM-DD') AND end_date = TO_DATE('${end_date}', 'YYYY-MM-DD')
@@ -462,7 +473,7 @@ async function handleSelectBid(req, res) {
 module.exports = {
     handleGetExpectedSalary,
     handleGetCareTakerCalendar,
-    handlerInsertLeavesAvailability,
+    handlerDeleteNotWorking,
     handleUpdatePreferences,
     handleCreatePreferences,
     handleDeletePreferences,
@@ -470,7 +481,7 @@ module.exports = {
     handleGetAllCategories,
     handleGetLeaves,
     handleGetAvailability,
-    handlerDeleteLeavesAvailability,
-    handleGetRating,
+    handlerAddNotWorking,
+    handleGetCareTakerRating,
     handleSelectBid
 }
