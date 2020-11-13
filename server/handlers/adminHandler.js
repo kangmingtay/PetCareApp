@@ -175,6 +175,34 @@ async function handleGetCaretakers(req, res) {
   }
 }
 
+// Find pets care for by a caretaker
+async function handleGetCaredFor(req, res) {
+  try {
+    if (Object.keys(req.query).length !== 3) {
+      throw Error('Missing request params');
+    }
+    var date = new Date();
+    const month = req.query.month === '' ? date.getMonth() + 1 : req.query.month;
+    const year = req.query.year === '' ? date.getFullYear() : req.query.year;
+    const username = req.query.username;
+    const query = await pool.query(`
+      SELECT cname, pet_name, pname, COUNT(date)
+      FROM (SELECT DISTINCT cname, pet_name, pname, date
+          FROM schedule NATURAL LEFT JOIN bids
+          WHERE cname = '${username}'
+          AND EXTRACT(MONTH FROM date) = ${month}
+          AND EXTRACT(YEAR FROM date) = ${year}) AS pets
+      GROUP BY cname, pet_name, pname`);
+    const resp = { results: query.rows };
+    return res.status(200).json(resp);
+  } catch (err) {
+    return res.status(400).send({
+      success: false,
+      message: err.message,
+    });
+  }
+}
+
 module.exports = {
   handleGetAllDays,
   handleGetPetDays,
@@ -182,4 +210,5 @@ module.exports = {
   handleGetRevenue,
   handleGetRating,
   handleGetCaretakers,
+  handleGetCaredFor,
 };
