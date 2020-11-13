@@ -100,7 +100,6 @@ const handleGetPetInBids = async (req, res) => {
         const { pname, petname } = req.params
         const query = `SELECT * FROM bids WHERE (pname, pet_name) = ('${pname}', '${petname}')`
         const getBids = await pool.query(query);
-        console.log(getBids.rows)
         let haveBids
         if (getBids.rowCount === 1) {
             haveBids = false

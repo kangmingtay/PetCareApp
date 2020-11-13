@@ -54,11 +54,11 @@ function SimpleDialog(props) {
   const { onClose, selectedValue, open } = props;
   const [ pets, setPets ] = useState(); //second argument is a function
   const { context } = useContext(UserContext)
-  const [description, setDescription] = React.useState('Description');
-  const [image, setImage] = React.useState('Image');
+  const [description, setDescription] = React.useState();
+  const [image, setImage] = React.useState();
   const [categories, setCategories] = React.useState([]);
   const [category, setCategory] = React.useState('Fox');
-  const [petName, setPetName] = React.useState('Name');
+  const [petName, setPetName] = React.useState();
   const pname = context.username;
 
   const handleCategorySelect = (event) => {
@@ -103,8 +103,6 @@ function SimpleDialog(props) {
     }
   }
 
-  console.log(petName)
-
   return (
     <Dialog onClose={handleClose} aria-labelledby="simple-dialog-title" open={open} fullWidth={true}>
       <DialogTitle id="simple-dialog-title">Add new Pet</DialogTitle>
@@ -112,7 +110,7 @@ function SimpleDialog(props) {
         <CardContent>
           <div style={{ textAlign: 'center', padding: 8, margin: '24px -24px -24px -24px' }}>
             <form className={classes.root} noValidate autoComplete="off" onSubmit={handleSubmit}>
-              <TextField style={{ width: '300px', padding: 12}}
+              <TextField required style={{ width: '300px', padding: 12}}
                 value={petName}
                 onChange={handleNameChange}
                 id="outlined-required"
@@ -146,7 +144,7 @@ function SimpleDialog(props) {
                 value={image}
                 onChange={handleImageChange}
                 id="outlined-required"
-                label="Image"
+                label="Image URL"
                 variant="outlined"
               /> <br/>
               <Button 
