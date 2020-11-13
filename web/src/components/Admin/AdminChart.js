@@ -120,17 +120,17 @@ const AdminChart = props => {
         var max = 0;
         const startMonth = props.month - 6;
         for (var i = startMonth; i < startMonth + 12; i++) {
-          var mon = (i + 12) % 12;
-          var yr = i < 0 ? props.year - 1 : i > 11 ? props.year + 1 : props.year;
+          var month = (i + 12) % 12;
+          var year = i < 0 ? props.year - 1 : i > 11 ? props.year + 1 : props.year;
           const response = await fetchRevenue({
-            month: mon,
-            year: yr
+            month: month + 1,
+            year: year
           });
           var results = [...response.data.results];
           var salary = parseInt(results[0].salary);
           var revenue = parseInt(results[0].revenue);
           data.push({
-            month: props.monthList[mon].substring(0,3) + ', ' + yr,
+            month: props.monthList[month].substring(0,3) + ', ' + year,
             salary: salary,
             revenue: revenue,
             profit: revenue - salary

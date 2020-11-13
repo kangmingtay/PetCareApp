@@ -10,7 +10,7 @@ const Pets = ({ month, year }) => {
   useEffect(() => {
     const getAllDays = async () => {
       try {
-        const response = await fetchAllDays({ month: month, year: year });
+        const response = await fetchAllDays({ month: month + 1, year: year });
         setAllDays([...response.data.results[0].days]);
       } catch (err) {
         console.error(err.message);
