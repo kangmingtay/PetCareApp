@@ -1,16 +1,12 @@
 import React from 'react';
-import {
-  Container,
-  Grid,
-  makeStyles
-} from '@material-ui/core';
+import { Container, Grid, makeStyles } from '@material-ui/core';
 import Page from 'src/components/Page';
 import Budget from '../components/DashboardCard';
 import CareTakerSchedule from 'src/components/CareTakerSchedule';
 import CareTakerPrefersSelector from 'src/components/CareTakerPrefersSelector';
 import ChooseLeavesAvailability from 'src/components/CareTakerChooseLeavesAvailability';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(theme => ({
   root: {
     backgroundColor: theme.palette.background.dark,
     minHeight: '100%',
@@ -23,10 +19,7 @@ const DashboardPage = () => {
   const classes = useStyles();
 
   return (
-    <Page
-      className={classes.root}
-      title="Dashboard"
-    >
+    <Page className={classes.root} title="Dashboard">
       {/* <Container maxWidth={false}>
         <Grid
           container
@@ -40,12 +33,12 @@ const DashboardPage = () => {
             xs={12}
           >
             <Budget />
-          </Grid>          
+          </Grid>
         </Grid>
       </Container> */}
-        <ChooseLeavesAvailability/>
-        <CareTakerPrefersSelector/>
-        <CareTakerSchedule/>
+      <ChooseLeavesAvailability />
+      <CareTakerPrefersSelector />
+      <CareTakerSchedule />
     </Page>
   );
 };
