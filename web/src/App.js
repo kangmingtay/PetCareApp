@@ -12,13 +12,13 @@ import BeCareTakerPage from './pages/BeCareTakerPage';
 import FindCareTakerPage from './pages/FindCareTakerPage';
 import PetOwnerPage from './pages/PetOwnerPage';
 import DashboardLayout from './layouts/DashboardLayout';
-import DashboardPage from './pages/DashboardPage';
 import ProtectedRoute from './utils/ProtectedRoute';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import AdminPage from './pages/AdminPage';
 import { UserContext } from './UserContext';
 import NotFoundPage from './pages/NotFoundPage';
+import ManageUsersPage from './pages/ManageUsersPage';
 
 const App = () => {
   const [context, setContext] = useState({
@@ -40,9 +40,12 @@ const App = () => {
               >
                 <Route 
                   path="admin" 
-                  element={context.isAdmin === "true" ? <AdminPage /> : <Navigate to="/app/dashboard" />} 
+                  element={context.isAdmin === "true" ? <AdminPage /> : <Navigate to="/app/pets" />} 
                 />
-                <Route path="dashboard" element={<DashboardPage />} />
+                <Route 
+                  path="manage-users" 
+                  element={context.isAdmin === "true" ? <ManageUsersPage /> : <Navigate to="/app/pets" />} 
+                />
                 <Route path="caretakers" element={<BeCareTakerPage />} />
                 <Route path="catalogue" element={<FindCareTakerPage />} />
                 <Route path="pets" element={<PetOwnerPage />} />

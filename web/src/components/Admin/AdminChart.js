@@ -111,33 +111,41 @@ const AdminChart = props => {
   const classes = useStyles();
   const [chartData, setChartData] = useState([]);
   const [maxValue, setMaxValue] = useState([]);
-  const modifyDomain = () => [-2000, maxValue];
+  const [minValue, setMinValue] = useState([]);
+  const modifyDomain = () => [minValue, maxValue];
 
   useEffect(() => {
     const getSalary = async () => {
       try {
         var data = [];
         var max = 0;
+        var min = 0;
         const startMonth = props.month - 6;
         for (var i = startMonth; i < startMonth + 12; i++) {
-          var mon = (i + 12) % 12;
-          var yr = i < 0 ? props.year - 1 : i > 11 ? props.year + 1 : props.year;
+          var month = (i + 12) % 12;
+          if (month === 0) {
+            month = 12
+          }
+          var year = i < 0 ? props.year - 1 : i > 12 ? props.year + 1 : props.year;
           const response = await fetchRevenue({
-            month: mon,
-            year: yr
+            month: month,
+            year: year
           });
           var results = [...response.data.results];
           var salary = parseInt(results[0].salary);
           var revenue = parseInt(results[0].revenue);
+          var profit = revenue - salary;
           data.push({
-            month: props.monthList[mon] + ', ' + yr,
+            month: props.monthList[month-1].substring(0,3) + ', ' + year,
             salary: salary,
             revenue: revenue,
-            profit: revenue - salary
+            profit: profit
           });
           if (revenue > max) max = revenue;
+          if (profit < min) min = profit;
         }
-
+        
+        setMinValue(min > 0 ? -5000 : min - 5000);
         setMaxValue(max < 35000 ? 40000 : max + 5000);
         setChartData(data);
       } catch (err) {

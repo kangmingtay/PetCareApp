@@ -6,10 +6,8 @@ import {
   Button,
   Typography,
   TextField,
-  InputAdornment,
   Grid,
   FormControl,
-  FormHelperText,
   InputLabel,
   MenuItem,
   Select,
@@ -102,7 +100,7 @@ const ProfilePage = () => {
     setSelectedReview({...selectedReview, review: event.target.value});
   };
 
-  const handleCloseModal = (event) => {
+  const handleCloseModal = () => {
     isOpened(false);
   };
 

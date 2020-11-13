@@ -58,7 +58,7 @@ async function handleGetUser(req, res) {
 async function handleCreateUser(req, res) {
     try {
         const { username, password, email, address, isAdmin } = req.body;
-        // if isAdmin = true, use trigger to insert into PCS admin table 
+        
         const query = `INSERT INTO Accounts(username, password, email, address, date_created, is_admin) 
             VALUES ('${username}', '${password}', '${email}', '${address}', NOW(), '${isAdmin}')
         `;
