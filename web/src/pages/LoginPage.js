@@ -48,7 +48,7 @@ const LoginPage = () => {
             if (resp.data.isAdmin) {
               navigate('/app/admin', { replace: true });
             } else {
-              navigate('/app/dashboard', { replace: true });
+              navigate('/app/pets', { replace: true });
             }
             addToast("Login Successful", {
               appearance: 'success',

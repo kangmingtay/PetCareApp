@@ -53,13 +53,7 @@ function a11yProps(index) {
 
 const AdminPage = () => {
   const classes = useStyles();
-  const [value, setValue] = useState(0);
-  const [selectedDate, handleDateChange] = useState(new Date());
   const { context } = useContext(UserContext);
-
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
 
   return (
     <Page className={classes.root} title="Administrator">

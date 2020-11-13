@@ -10,15 +10,6 @@ import { Animation } from '@devexpress/dx-react-chart';
 import { fetchCaredFor } from '../../../src/calls/adminCalls';
 
 const CaretakerPieChart = props => {
-  const data = [
-    { region: 'Asia', val: 4119626293 },
-    { region: 'Africa', val: 1012956064 },
-    { region: 'Northern America', val: 344124520 },
-    { region: 'Latin America and the Caribbean', val: 590946440 },
-    { region: 'Europe', val: 727082222 },
-    { region: 'Oceania', val: 35104756 }
-  ];
-
   const [chartData, setChartData] = useState([]);
 
   useEffect(() => {
@@ -27,7 +18,7 @@ const CaretakerPieChart = props => {
         const response = await fetchCaredFor({
           month: props.month, 
           year: props.year,
-          username: 'cft2'
+          username: props.cname,
         });
         var results = [...response.data.results];
 
@@ -52,7 +43,8 @@ const CaretakerPieChart = props => {
         <PieSeries
           valueField="days"
           argumentField="pet_name"
-          innerRadius={0.6}
+          innerRadius={0.3}
+          outerRadius={0.5}
         />
         <Title text="Pets cared for by caretaker" />
         <Legend />

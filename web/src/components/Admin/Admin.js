@@ -67,8 +67,7 @@ const Admin = () => {
       <Typography variant="h4" align="center">
         Caretakers
       </Typography>
-      <CaretakerPieChart month={month} year={year} />
-      {/* <CaretakerTable month={month} year={year} /> */}
+      <CaretakerTable month={month} year={year} />
     </Fragment>
   );
 };
