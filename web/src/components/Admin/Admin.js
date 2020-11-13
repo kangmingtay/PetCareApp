@@ -1,52 +1,71 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useState, useEffect } from 'react';
 import { Container, makeStyles, Grid, Typography } from '@material-ui/core';
-import TextField from '@material-ui/core/TextField';
 import Pets from './Pets';
-// import Months from './Months';
 import Salary from './Salary';
-import Chart from './AdminChart';
+import AdminChart from './AdminChart';
+import SelectMonth from './SelectMonth';
 import CaretakerTable from './CaretakerTable';
+
+const useStyles = makeStyles(theme => ({
+  root: {
+    marginTop: theme.spacing(3)
+  },
+  formControl: {
+    margin: theme.spacing(1),
+    minWidth: 120
+  },
+  selectEmpty: {
+    marginTop: theme.spacing(2)
+  }
+}));
+
+const monthList = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December'
+];
 
 const Admin = () => {
   const [month, setMonth] = useState('');
   const [year, setYear] = useState('');
 
-  const useStyles = makeStyles(theme => ({
-    root: {
-      '& > *': {
-        margin: theme.spacing(1),
-        width: '25ch'
-      }
-    }
-  }));
   const classes = useStyles();
+
+  useEffect(() => {
+    const date = new Date();
+    setMonth(month === '' ? date.getMonth() : parseInt(month));
+    setYear(year === '' ? date.getFullYear() : parseInt(year));
+  }, [month, year]);
 
   return (
     <Fragment>
-      <Container maxWidth={false}>
-        <form className={classes.root} noValidate autoComplete="off">
-          <TextField
-            id="standard-basic"
-            label="Month:"
-            onChange={e => setMonth(e.target.value)}
-          />
-          <TextField
-            id="standard-basic"
-            label="Year:"
-            onChange={e => setYear(e.target.value)}
-          />
-        </form>
+      <SelectMonth
+        month={month}
+        year={year}
+        setMonth={setMonth}
+        setYear={setYear}
+        monthList={monthList}
+      />
+      <Container maxWidth={false} className={classes.root}>
         <Grid container spacing={3}>
           <Pets month={month} year={year} />
           <Salary month={month} year={year} />
         </Grid>
       </Container>
-      <Chart month={month} year={year} />
+      <AdminChart month={month} year={year} monthList={monthList} />
       <Typography variant="h4" align="center">
         Caretakers
       </Typography>
       <CaretakerTable month={month} year={year} />
-      {/* <Months year={year} /> */}
     </Fragment>
   );
 };

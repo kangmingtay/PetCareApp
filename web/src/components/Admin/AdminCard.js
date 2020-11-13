@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {
   Avatar,
-  Box,
+  // Box,
   Card,
   CardContent,
   Grid,
@@ -10,13 +10,10 @@ import {
   colors,
   makeStyles
 } from '@material-ui/core';
-import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
+// import ArrowDownwardIcon from '@material-ui/icons/ArrowDownward';
 import MoneyIcon from '@material-ui/icons/Money';
 
 const useStyles = makeStyles(theme => ({
-  root: {
-    height: '100%'
-  },
   avatar: {
     backgroundColor: colors.red[600],
     height: 56,
@@ -52,7 +49,7 @@ const AdminCard = props => {
             </Avatar>
           </Grid>
         </Grid>
-        <Box mt={2} display="flex" alignItems="center">
+        {/* <Box mt={2} display="flex" alignItems="center">
           <ArrowDownwardIcon className={classes.differenceIcon} />
           <Typography className={classes.differenceValue} variant="body2">
             12%
@@ -60,7 +57,7 @@ const AdminCard = props => {
           <Typography color="textSecondary" variant="caption">
             Since last month
           </Typography>
-        </Box>
+        </Box> */}
       </CardContent>
     </Card>
   );

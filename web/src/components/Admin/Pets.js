@@ -1,11 +1,24 @@
 import React, { Fragment, useState, useEffect } from 'react';
-import { Grid } from '@material-ui/core';
+import {
+  Grid
+  //  Avatar, colors, makeStyles
+} from '@material-ui/core';
 import { fetchAllDays, fetchPets } from 'src/calls/adminCalls';
 import AdminCard from './AdminCard';
+// import WorkIcon from '@material-ui/icons/Work';
+
+// const useStyles = makeStyles(theme => ({
+//   avatar: {
+//     backgroundColor: colors.red[600],
+//     height: 56,
+//     width: 56
+//   }
+// }));
 
 const Pets = ({ month, year }) => {
   const [allDays, setAllDays] = useState();
   const [pets, setPets] = useState([]);
+  // const classes = useStyles();
 
   useEffect(() => {
     const getAllDays = async () => {
@@ -25,10 +38,18 @@ const Pets = ({ month, year }) => {
         console.error(err.message);
       }
     };
-    
+
     getAllDays();
     getPets();
   }, [month, year]);
+
+  // const workIcon = () => {
+  //   return (
+  //     <Avatar className={classes.avatar}>
+  //       <WorkIcon />
+  //     </Avatar>
+  //   );
+  // };
 
   return (
     <Fragment>

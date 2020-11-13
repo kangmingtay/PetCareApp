@@ -8,23 +8,22 @@ const Salary = ({ month, year }) => {
   const [revenue, setRevenue] = useState([]);
 
   useEffect(() => {
+    const getSalary = async () => {
+      try {
+        const response = await fetchRevenue({ month: month, year: year });
+        var results = [...response.data.results];
+        var sumSalary = 0;
+        var sumRevenue = 0;
+        sumSalary = parseInt(results[0].salary);
+        sumRevenue = parseInt(results[0].revenue);
+        setSalary(sumSalary);
+        setRevenue(sumRevenue);
+      } catch (err) {
+        console.error(err.message);
+      }
+    };
     getSalary();
   }, [month, year]);
-
-  const getSalary = async () => {
-    try {
-      const response = await fetchRevenue({ month: month, year: year });
-      var results = [...response.data.results];
-      var sumSalary = 0;
-      var sumRevenue = 0;
-      sumSalary = parseInt(results[0].salary);
-      sumRevenue = parseInt(results[0].revenue);
-      setSalary(sumSalary);
-      setRevenue(sumRevenue);
-    } catch (err) {
-      console.error(err.message);
-    }
-  };
 
   return (
     <Fragment>

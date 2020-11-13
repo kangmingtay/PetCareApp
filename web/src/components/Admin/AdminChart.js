@@ -107,63 +107,46 @@ const useStyles = makeStyles(() => ({
   }
 }));
 
-const Demo = props => {
+const AdminChart = props => {
   const classes = useStyles();
   const [chartData, setChartData] = useState([]);
   const [maxValue, setMaxValue] = useState([]);
   const modifyDomain = () => [-2000, maxValue];
 
   useEffect(() => {
-    getSalary();
-  }, [props.month, props.year]);
+    const getSalary = async () => {
+      try {
+        var data = [];
+        var max = 0;
+        const startMonth = props.month - 6;
+        for (var i = startMonth; i < startMonth + 12; i++) {
+          var mon = (i + 12) % 12;
+          var yr = i < 0 ? props.year - 1 : i > 11 ? props.year + 1 : props.year;
+          const response = await fetchRevenue({
+            month: mon,
+            year: yr
+          });
+          var results = [...response.data.results];
+          var salary = parseInt(results[0].salary);
+          var revenue = parseInt(results[0].revenue);
+          data.push({
+            month: props.monthList[mon] + ', ' + yr,
+            salary: salary,
+            revenue: revenue,
+            profit: revenue - salary
+          });
+          if (revenue > max) max = revenue;
+        }
 
-  const getSalary = async () => {
-    try {
-      const monthList = [
-        'Jan',
-        'Feb',
-        'Mar',
-        'Apr',
-        'May',
-        'Jun',
-        'Jul',
-        'Aug',
-        'Sep',
-        'Oct',
-        'Nov',
-        'Dec'
-      ];
-      var data = [];
-      var max = 0;
-      const date = new Date();
-      const month =
-        props.month === '' ? date.getMonth() : parseInt(props.month);
-      const year =
-        props.year === '' ? date.getFullYear() : parseInt(props.year);
-      const startMonth = month - 6;
-      for (var i = startMonth; i < startMonth + 12; i++) {
-        const response = await fetchRevenue({
-          month: (i + 12) % 12,
-          year: i < 0 ? year - 1 : i > 12 ? year + 1 : year
-        });
-        var results = [...response.data.results];
-        var salary = parseInt(results[0].salary);
-        var revenue = parseInt(results[0].revenue);
-        data.push({
-          month: monthList[(i + 12) % 12],
-          salary: salary,
-          revenue: revenue,
-          profit: revenue - salary
-        });
-        if (revenue > max) max = revenue;
+        setMaxValue(max < 35000 ? 40000 : max + 5000);
+        setChartData(data);
+      } catch (err) {
+        console.error(err.message);
       }
+    };
 
-      setMaxValue(max < 35000 ? 40000 : max + 5000);
-      setChartData(data);
-    } catch (err) {
-      console.error(err.message);
-    }
-  };
+    getSalary();
+  }, [props]);
 
   return (
     <Paper className={classes.paper}>
@@ -203,4 +186,4 @@ const Demo = props => {
   );
 };
 
-export default Demo;
+export default AdminChart;
