@@ -160,9 +160,6 @@ const ProfilePage = () => {
           </Grid>
         </Grid>
       </Container>
-<<<<<<< HEAD
-      <PastPets />
-=======
       <PastPets
         isOpened={isOpened}
         setSelectedReview={setSelectedReview}
@@ -171,7 +168,6 @@ const ProfilePage = () => {
       <ModalUtil open={open} handleClose={handleCloseModal}>
         {modalInfo}
       </ModalUtil>
->>>>>>> upstream/master
     </Page>
   );
 };
