@@ -40,7 +40,7 @@ async function handleGetUser(req, res) {
         const query = `
             SELECT username, email, address, date_created, is_admin 
             FROM accounts 
-            WHERE username = '${username.toLowerCase()}'`;
+            WHERE username = '${username}'`;
         const singleUser = await pool.query(query);
         let resp = { results: singleUser.rows};
         if (singleUser.rowCount === 0) {
@@ -60,7 +60,7 @@ async function handleCreateUser(req, res) {
         const { username, password, email, address, isAdmin } = req.body;
         
         const query = `INSERT INTO Accounts(username, password, email, address, date_created, is_admin) 
-            VALUES ('${username.toLowerCase()}', '${password}', '${email}', '${address}', NOW(), '${isAdmin}')
+            VALUES ('${username}', '${password}', '${email}', '${address}', NOW(), '${isAdmin}')
         `;
         const createUser = await pool.query(query);
         let resp = {};
