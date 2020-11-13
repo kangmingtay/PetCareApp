@@ -5,6 +5,7 @@ import Salary from './Salary';
 import AdminChart from './AdminChart';
 import SelectMonth from './SelectMonth';
 import CaretakerTable from './CaretakerTable';
+import CaretakerPieChart from './CaretakerPieChart';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -35,16 +36,11 @@ const monthList = [
 ];
 
 const Admin = () => {
-  const [month, setMonth] = useState('');
-  const [year, setYear] = useState('');
+  const date = new Date();
+  const [month, setMonth] = useState(date.getMonth() + 1);
+  const [year, setYear] = useState(date.getFullYear());
 
   const classes = useStyles();
-
-  useEffect(() => {
-    const date = new Date();
-    setMonth(month === '' ? date.getMonth() : parseInt(month));
-    setYear(year === '' ? date.getFullYear() : parseInt(year));
-  }, [month, year]);
 
   return (
     <Fragment>
@@ -65,7 +61,8 @@ const Admin = () => {
       <Typography variant="h4" align="center">
         Caretakers
       </Typography>
-      <CaretakerTable month={month} year={year} />
+      <CaretakerPieChart month={month} year={year} />
+      {/* <CaretakerTable month={month} year={year} /> */}
     </Fragment>
   );
 };

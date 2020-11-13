@@ -28,17 +28,12 @@ const useStyles = makeStyles(theme => ({
 
 const SelectMonth = props => {
   const classes = useStyles();
-  const [month, setMonth] = React.useState('');
-  const [year, setYear] = React.useState('');
-  const date = new Date().getFullYear();
 
   const handleChangeMonth = event => {
     props.setMonth(event.target.value);
-    setMonth(event.target.value);
   };
   const handleChangeYear = event => {
     props.setYear(event.target.value);
-    setYear(event.target.value);
   };
 
   return (
@@ -52,7 +47,7 @@ const SelectMonth = props => {
                 variant="h5"
                 color="textPrimary"
               >
-                Summary for the month of {props.monthList[props.month]}
+                Summary for the month of {props.monthList[props.month-1]}
               </Typography>
             </Grid>
             <Grid item>
@@ -62,25 +57,25 @@ const SelectMonth = props => {
                   <Select
                     labelId="month-label"
                     id="month-id"
-                    value={month}
+                    value={props.month}
                     onChange={handleChangeMonth}
                     label="month"
                   >
                     <MenuItem value="">
                       <em>Current</em>
                     </MenuItem>
-                    <MenuItem value={0}>{props.monthList[0]}</MenuItem>
-                    <MenuItem value={1}>{props.monthList[1]}</MenuItem>
-                    <MenuItem value={2}>{props.monthList[2]}</MenuItem>
-                    <MenuItem value={3}>{props.monthList[3]}</MenuItem>
-                    <MenuItem value={4}>{props.monthList[4]}</MenuItem>
-                    <MenuItem value={5}>{props.monthList[5]}</MenuItem>
-                    <MenuItem value={6}>{props.monthList[6]}</MenuItem>
-                    <MenuItem value={7}>{props.monthList[7]}</MenuItem>
-                    <MenuItem value={8}>{props.monthList[8]}</MenuItem>
-                    <MenuItem value={9}>{props.monthList[9]}</MenuItem>
-                    <MenuItem value={10}>{props.monthList[10]}</MenuItem>
-                    <MenuItem value={11}>{props.monthList[11]}</MenuItem>
+                    <MenuItem value={1}>{props.monthList[0]}</MenuItem>
+                    <MenuItem value={2}>{props.monthList[1]}</MenuItem>
+                    <MenuItem value={3}>{props.monthList[2]}</MenuItem>
+                    <MenuItem value={4}>{props.monthList[3]}</MenuItem>
+                    <MenuItem value={5}>{props.monthList[4]}</MenuItem>
+                    <MenuItem value={6}>{props.monthList[5]}</MenuItem>
+                    <MenuItem value={7}>{props.monthList[6]}</MenuItem>
+                    <MenuItem value={8}>{props.monthList[7]}</MenuItem>
+                    <MenuItem value={9}>{props.monthList[8]}</MenuItem>
+                    <MenuItem value={10}>{props.monthList[9]}</MenuItem>
+                    <MenuItem value={11}>{props.monthList[10]}</MenuItem>
+                    <MenuItem value={12}>{props.monthList[11]}</MenuItem>
                   </Select>
                 </FormControl>
                 <FormControl variant="outlined" className={classes.formControl}>
@@ -88,24 +83,24 @@ const SelectMonth = props => {
                   <Select
                     labelId="year-label"
                     id="year-id"
-                    value={year}
+                    value={props.year}
                     onChange={handleChangeYear}
                     label="year"
                   >
                     <MenuItem value="">
                       <em>Current</em>
                     </MenuItem>
-                    <MenuItem value={date - 5}>{date - 5}</MenuItem>
-                    <MenuItem value={date - 4}>{date - 4}</MenuItem>
-                    <MenuItem value={date - 3}>{date - 3}</MenuItem>
-                    <MenuItem value={date - 2}>{date - 2}</MenuItem>
-                    <MenuItem value={date - 1}>{date - 1}</MenuItem>
-                    <MenuItem value={date}>{date}</MenuItem>
-                    <MenuItem value={date + 1}>{date + 1}</MenuItem>
-                    <MenuItem value={date + 2}>{date + 2}</MenuItem>
-                    <MenuItem value={date + 3}>{date + 3}</MenuItem>
-                    <MenuItem value={date + 4}>{date + 4}</MenuItem>
-                    <MenuItem value={date + 5}>{date + 5}</MenuItem>
+                    <MenuItem value={props.year - 5}>{props.year - 5}</MenuItem>
+                    <MenuItem value={props.year - 4}>{props.year - 4}</MenuItem>
+                    <MenuItem value={props.year - 3}>{props.year - 3}</MenuItem>
+                    <MenuItem value={props.year - 2}>{props.year - 2}</MenuItem>
+                    <MenuItem value={props.year - 1}>{props.year - 1}</MenuItem>
+                    <MenuItem value={props.year}>{props.year}</MenuItem>
+                    <MenuItem value={props.year + 1}>{props.year + 1}</MenuItem>
+                    <MenuItem value={props.year + 2}>{props.year + 2}</MenuItem>
+                    <MenuItem value={props.year + 3}>{props.year + 3}</MenuItem>
+                    <MenuItem value={props.year + 4}>{props.year + 4}</MenuItem>
+                    <MenuItem value={props.year + 5}>{props.year + 5}</MenuItem>
                   </Select>
                 </FormControl>
               </div>

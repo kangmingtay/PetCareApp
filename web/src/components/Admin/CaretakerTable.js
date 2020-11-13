@@ -10,6 +10,7 @@ import { fetchAllUsersInfo } from 'src/calls/userCalls';
 import { fetchCaretakers } from 'src/calls/adminCalls';
 import theme from 'src/theme';
 import TableUtil from 'src/components/UI/TableUtil';
+import CaretakerPieChart from 'src/components/Admin/CaretakerPieChart';
 
 const useStyles = makeStyles({
   root: {
@@ -138,14 +139,17 @@ const CaretakerTable = props => {
   );
 
   return (
-    <TableUtil
-      handleOnNext={handleOnNext}
-      handleOnPrev={handleOnPrev}
-      hasNext={users.length}
-      hasPrev={params.offset}
-    >
-      {tableContent}
-    </TableUtil>
+    <> 
+      <CaretakerPieChart month={props.month} year={props.year} />
+      <TableUtil
+        handleOnNext={handleOnNext}
+        handleOnPrev={handleOnPrev}
+        hasNext={users.length}
+        hasPrev={params.offset}
+      >
+        {tableContent}
+      </TableUtil>
+    </>
   );
 };
 
