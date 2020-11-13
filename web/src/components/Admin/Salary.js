@@ -10,7 +10,7 @@ const Salary = ({ month, year }) => {
   useEffect(() => {
     const getSalary = async () => {
       try {
-        const response = await fetchRevenue({ month: month, year: year });
+        const response = await fetchRevenue({ month: month + 1, year: year });
         var results = [...response.data.results];
         var sumSalary = 0;
         var sumRevenue = 0;
