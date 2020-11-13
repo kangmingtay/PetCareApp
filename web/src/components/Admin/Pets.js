@@ -3,7 +3,7 @@ import {
   Grid
   //  Avatar, colors, makeStyles
 } from '@material-ui/core';
-import { fetchAllDays, fetchPets } from 'src/calls/adminCalls';
+import { fetchAllDays, fetchPets, fetchCaredFor } from '../../../src/calls/adminCalls';
 import AdminCard from './AdminCard';
 // import WorkIcon from '@material-ui/icons/Work';
 
@@ -25,6 +25,8 @@ const Pets = ({ month, year }) => {
       try {
         const response = await fetchAllDays({ month: month, year: year });
         setAllDays([...response.data.results[0].days]);
+        const res = await fetchCaredFor({ month: 10, year: 2021, username: 'zw' });
+        console.log([...res.data.results]);
       } catch (err) {
         console.error(err.message);
       }

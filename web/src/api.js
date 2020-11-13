@@ -41,6 +41,7 @@ export default {
     getRevenue: `${BASE_URL}/admin/revenue/`,
     getRating: `${BASE_URL}/admin/rating/`,
     getCaretakers: `${BASE_URL}/admin/caretakers/`,
+    getCaredFor: `${BASE_URL}/admin/caredfor/`,
     updateReviewAndRating: (username) => `${BASE_URL}/review/${username}`,
     getReviewAndRating: (username) => `${BASE_URL}/review/${username}`,
 }
