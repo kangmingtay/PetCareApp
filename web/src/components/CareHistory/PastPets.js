@@ -8,7 +8,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import TablePagination from '@material-ui/core/TablePagination';
-import { getReviewAndRating, updateReviewAndRating } from 'src/calls/petHistoryCalls'
+import { getReviewAndRating } from 'src/calls/petHistoryCalls'
 import {
   Box,
   Container,
@@ -82,7 +82,7 @@ export default function PastPets(props) {
       pname: context.username,
       currDate: new Date(),
     });
-    setPets([...resp.data.results])
+    props.setPets([...resp.data.results])
     console.log('PP',[...resp.data.results]);
   }
 
@@ -132,7 +132,7 @@ export default function PastPets(props) {
               </TableHead>
               {/* Body below */}
               <TableBody>
-                {pets.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
+                {props.pets.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
                   return (
                     <TableRow 
                       hover 
