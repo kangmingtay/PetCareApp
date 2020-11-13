@@ -43,8 +43,7 @@ const CaretakerPieChart = props => {
         <PieSeries
           valueField="days"
           argumentField="pet_name"
-          innerRadius={0.3}
-          outerRadius={0.5}
+          innerRadius={0.6}
         />
         <Title text="Pets cared for by caretaker" />
         <Legend />
