@@ -27,7 +27,7 @@ const CaretakerPieChart = props => {
         const response = await fetchCaredFor({
           month: props.month, 
           year: props.year,
-          username: ''
+          username: 'cft2'
         });
         var results = [...response.data.results];
 
@@ -39,14 +39,13 @@ const CaretakerPieChart = props => {
             pname: element.pname                                            // other data from fetch
           });
         });
-        setChartData(values);
+        setChartData([...values]);
       } catch (err) {
         console.error(err.message);
       }
     };
     getPetsInfo();
   }, [props]);
-
   return (
     <Paper>
       <Chart data={chartData}>
