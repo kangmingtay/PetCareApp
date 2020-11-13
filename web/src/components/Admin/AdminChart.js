@@ -132,7 +132,6 @@ const AdminChart = props => {
           var results = [...response.data.results];
           var salary = parseInt(results[0].salary);
           var revenue = parseInt(results[0].revenue);
-          console.log(props.monthList[month-1])
           data.push({
             month: props.monthList[month-1].substring(0,3) + ', ' + year,
             salary: salary,

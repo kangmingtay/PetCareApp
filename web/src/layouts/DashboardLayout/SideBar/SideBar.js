@@ -27,9 +27,9 @@ import { fetchUserType } from 'src/calls/userCalls';
 
 const userItems = [
   {
-    href: '/app/dashboard',
-    icon: DashboardOutlinedIcon,
-    title: 'Dashboard'
+    href: '/app/pets',
+    icon: PetsIcon,
+    title: 'Your Pets'
   },
   {
     href: '/app/catalogue',
@@ -37,14 +37,9 @@ const userItems = [
     title: 'Find a Caretaker'
   },
   {
-    href: '/app/pets',
-    icon: PetsIcon,
-    title: 'Your Pets'
-  },
-  {
     href: '/app/caretakers',
     icon: ChildFriendlyOutlinedIcon,
-    title: 'Be a Caretaker'
+    title: 'Caretaker Dashboard'
   },
 ];
 

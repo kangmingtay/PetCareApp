@@ -1,8 +1,6 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core';
 import Page from 'src/components/Page';
-import CareTakerSchedule from 'src/components/CareTakerSchedule';
-import CareTakerPrefersSelector from 'src/components/CareTakerPrefersSelector';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -18,24 +16,6 @@ const DashboardPage = () => {
 
   return (
     <Page className={classes.root} title="Dashboard">
-      {/* <Container maxWidth={false}>
-        <Grid
-          container
-          spacing={3}
-        >
-          <Grid
-            item
-            lg={3}
-            sm={6}
-            xl={3}
-            xs={12}
-          >
-            <Budget />
-          </Grid>
-        </Grid>
-      </Container> */}
-      <CareTakerPrefersSelector />
-      <CareTakerSchedule />
     </Page>
   );
 };

@@ -86,11 +86,6 @@ const ViewBidsTable = () => {
 
   return (
     <React.Fragment>
-      <Container>
-        <Typography variant="h2" align="center">
-          View your bids
-        </Typography>
-      </Container>
       <Typography variant="h3" align="center">
         Pending Bids
       </Typography>

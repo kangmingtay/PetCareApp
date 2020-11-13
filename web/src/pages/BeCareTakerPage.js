@@ -3,13 +3,20 @@ import {
   makeStyles,
   Typography, 
   Button,
-  Grid
+  Grid,
+  Box,
+  AppBar,
+  Tabs,
+  Tab,
 } from '@material-ui/core';
+import PropTypes from 'prop-types';
 import Page from 'src/components/Page';
 import { UserContext } from 'src/UserContext';
 import { fetchUserType } from 'src/calls/userCalls';
 import ModalUtil from 'src/components/UI/ModalUtil';
 import ViewBidsTable from 'src/components/CareTaker/ViewBidsTable';
+import CareTakerSchedule from 'src/components/CareTakerSchedule';
+import CareTakerPrefersSelector from 'src/components/CareTakerPrefersSelector';
 import { createFullTimer } from 'src/calls/fullTimerCalls';
 import { createPartTimer } from 'src/calls/partTimerCalls';
 
@@ -22,14 +29,53 @@ const useStyles = makeStyles((theme) => ({
   },
   button: {
       margin: theme.spacing(2),
+  },
+  tabs: {
+    justifyContent: "space-evenly",
+    alignContent: "center",
   }
 }));
+
+
+function TabPanel(props) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box p={3}>
+          <Typography>{children}</Typography>
+        </Box>
+      )}
+    </div>
+  );
+}
+
+TabPanel.propTypes = {
+  children: PropTypes.node,
+  index: PropTypes.any.isRequired,
+  value: PropTypes.any.isRequired,
+};
+
+function a11yProps(index) {
+  return {
+    id: `simple-tab-${index}`,
+    'aria-controls': `simple-tabpanel-${index}`,
+  };
+}
 
 const BeCareTakerPage = () => {
   const classes = useStyles();
   const { context } = useContext(UserContext)
   const [isCareTaker, setCareTaker] = useState(false);
   const [open, setOpen] = useState(false);
+  const [value, setValue] = useState(0);
 
   useEffect(() => {
     async function fetchData() {
@@ -59,6 +105,10 @@ const BeCareTakerPage = () => {
       }
       setOpen(false);
   }
+
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
 
   const modalInfo = (
     <Grid container xs={12}>
@@ -96,8 +146,18 @@ const BeCareTakerPage = () => {
     <Page
       className={classes.root}
       title="Caretaker"
-    >
-      <ViewBidsTable/>
+    > 
+      <Tabs centered value={value} onChange={handleChange} aria-label="simple tabs example">
+        <Tab label="View Bids" {...a11yProps(0)} />
+        <Tab label="View Schedule" {...a11yProps(1)} />
+      </Tabs>
+      <TabPanel value={value} index={0}>
+        <ViewBidsTable/>
+      </TabPanel>
+      <TabPanel value={value} index={1}>
+        <CareTakerPrefersSelector />
+        <CareTakerSchedule />
+      </TabPanel>
       <ModalUtil open={open} handleClose={handleClick}>
         {modalInfo}
       </ModalUtil>
