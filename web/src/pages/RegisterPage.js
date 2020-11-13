@@ -15,6 +15,7 @@ import {
 } from '@material-ui/core';
 import Page from 'src/components/Page';
 import { createUserAccount } from 'src/calls/loginCalls'
+import { useToasts } from 'react-toast-notifications'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -28,18 +29,27 @@ const useStyles = makeStyles((theme) => ({
 const RegisterPage = () => {
   const classes = useStyles();
   const navigate = useNavigate();
+  const { addToast } = useToasts()
 
   const handleRegisterSubmit = async (values) => {
     try {
       let resp = await createUserAccount(values);
       if (resp.data.success === true) {
           navigate('/login', { replace: true });
-          alert("Account created successfully! Please login with your credentials!")
+          // alert("Account created successfully! Please login with your credentials!")
+          addToast("Account created successfully! Please login with your credentials!", {
+            appearance: 'success',
+            autoDismiss: true,
+          })
       }
     }
     catch(err) {
       // err.response.data.message -> to see actual error msg
-      alert("Username already exists! Please use another username.")
+      // alert("Username already exists! Please use another username.")
+      addToast("Username already exists! Please use another username.", {
+        appearance: 'error',
+        autoDismiss: true,
+      })
     }
   }
 
