@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useContext } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
 import { Formik } from 'formik';
@@ -14,6 +14,7 @@ import {
 import Page from 'src/components/Page';
 import { UserContext } from 'src/UserContext';
 import { fetchLoginInfo } from 'src/calls/loginCalls'
+import { useToasts } from 'react-toast-notifications'
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -28,6 +29,7 @@ const LoginPage = () => {
   const classes = useStyles();
   const navigate = useNavigate();
   const { context, setContext } = useContext(UserContext)
+  const { addToast } = useToasts()
 
   const handleFormSubmit = async (values) => {
     console.log(values)
@@ -48,8 +50,15 @@ const LoginPage = () => {
             } else {
               navigate('/app/dashboard', { replace: true });
             }
+            addToast("Login Successful", {
+              appearance: 'success',
+              autoDismiss: true,
+            })
         } else {
-            alert("Account does not exist! Please sign up for an account.")
+            addToast("Account does not exist! Please sign up for an account.", {
+              appearance: 'error',
+              autoDismiss: true,
+            })
         }
   }
 
@@ -83,7 +92,6 @@ const LoginPage = () => {
               handleBlur,
               handleChange,
               handleSubmit,
-              isSubmitting,
               touched,
               values
             }) => (
@@ -132,7 +140,6 @@ const LoginPage = () => {
                 <Box my={2}>
                   <Button
                     color="primary"
-                    disabled={isSubmitting}
                     fullWidth
                     size="large"
                     type="submit"

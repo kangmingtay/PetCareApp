@@ -4,7 +4,6 @@ import {
 } from '@material-ui/core';
 import { useToasts } from 'react-toast-notifications'
 import Container from '@material-ui/core/Container';
-import Button from '@material-ui/core/Button';
 import TableUtil from '../UI/TableUtil';
 import PendingBids from './PendingBids';
 import { fetchAllBids } from 'src/calls/bidsCalls'
