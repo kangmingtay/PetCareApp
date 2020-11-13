@@ -19,6 +19,7 @@ import RegisterPage from './pages/RegisterPage';
 import AdminPage from './pages/AdminPage';
 import { UserContext } from './UserContext';
 import NotFoundPage from './pages/NotFoundPage';
+import ManageUsersPage from './pages/ManageUsersPage';
 
 const App = () => {
   const [context, setContext] = useState({
@@ -41,6 +42,10 @@ const App = () => {
                 <Route 
                   path="admin" 
                   element={context.isAdmin === "true" ? <AdminPage /> : <Navigate to="/app/dashboard" />} 
+                />
+                <Route 
+                  path="manage-users" 
+                  element={context.isAdmin === "true" ? <ManageUsersPage /> : <Navigate to="/app/dashboard" />} 
                 />
                 <Route path="dashboard" element={<DashboardPage />} />
                 <Route path="caretakers" element={<BeCareTakerPage />} />
