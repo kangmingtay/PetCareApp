@@ -83,19 +83,35 @@ async function handleGetRevenue(req, res) {
     const month = req.query.month === '' ? date.getMonth() + 1 : req.query.month;
     const year = req.query.year === '' ? date.getFullYear() : req.query.year;
     const query = await pool.query(`
-      SELECT SUM(COALESCE(salary, 0)) salary, SUM(COALESCE(revenue, 0)) revenue
-      FROM care_takers NATURAL LEFT JOIN (
-          SELECT cname, SUM(payment_amt / (end_date - start_date + 1)) revenue,
-              CASE
-                  WHEN cname IN (SELECT cname FROM part_timer) THEN SUM(payment_amt / (end_date - start_date + 1)) * 0.75
-                  WHEN cname IN (SELECT cname FROM full_timer) AND COUNT(*) <= 60 THEN 3000
-                  WHEN cname IN (SELECT cname FROM full_timer) THEN 3000.0 + 1.0 * (COUNT(*) - 60) / COUNT(*) * SUM(payment_amt / (end_date - start_date + 1)) * 0.8
-              END salary
-          FROM schedule NATURAL LEFT JOIN bids 
-          WHERE date <= end_date AND date >= start_date AND is_selected
-          GROUP BY cname, to_char(date, 'MM-YYYY')
-          HAVING to_char(date, 'MM-YYYY') = '${month}-${year}'
-          ) AS revenue`);
+    SELECT SUM(COALESCE(salary, 0)) salary, SUM(COALESCE(revenue, 0)) revenue
+    FROM
+        (SELECT cname, COALESCE(SUM(payment_amt / (end_date - start_date + 1)), 0) revenue,
+            CASE
+                WHEN cname IN (SELECT cname FROM part_timer) THEN SUM(payment_amt / (end_date - start_date + 1)) * 0.75
+                WHEN cname IN (SELECT cname FROM full_timer) AND COUNT(*) <= 60 THEN 3000
+                WHEN cname IN (SELECT cname FROM full_timer) THEN 3000.0 + 1.0 * (COUNT(*) - 60) / COUNT(*) * SUM(payment_amt / (end_date - start_date + 1)) * 0.8
+            END salary
+        FROM schedule NATURAL JOIN bids 
+        WHERE EXTRACT(MONTH FROM date) = ${month} AND EXTRACT(YEAR FROM date) = ${year}
+            AND date <= end_date AND date >= start_date AND is_selected
+        GROUP BY cname
+    
+        UNION 
+    
+        SELECT cname, 0 AS revenue, 
+            CASE
+                WHEN cname IN (SELECT cname FROM full_timer) THEN 3000
+                ELSE 0
+            END salary
+        FROM
+            (SELECT cname
+            FROM care_takers
+    
+            EXCEPT
+    
+            SELECT cname
+            FROM part_timer NATURAL JOIN schedule 
+            WHERE EXTRACT(MONTH FROM date) = ${month} AND EXTRACT(YEAR FROM date) = ${year}) AS new) AS revenue`);
 
     const resp = { results: query.rows };
     return res.status(200).json(resp);
@@ -148,17 +164,37 @@ async function handleGetCaretakers(req, res) {
       
       NATURAL LEFT JOIN
       
-      (SELECT cname, SUM(payment_amt / (end_date - start_date + 1)) revenue,
+
+
+      (SELECT cname, COALESCE(SUM(payment_amt / (end_date - start_date + 1)), 0) revenue,
           CASE
               WHEN cname IN (SELECT cname FROM part_timer) THEN SUM(payment_amt / (end_date - start_date + 1)) * 0.75
               WHEN cname IN (SELECT cname FROM full_timer) AND COUNT(*) <= 60 THEN 3000
               WHEN cname IN (SELECT cname FROM full_timer) THEN 3000.0 + 1.0 * (COUNT(*) - 60) / COUNT(*) * SUM(payment_amt / (end_date - start_date + 1)) * 0.8
           END salary
-      FROM schedule NATURAL LEFT JOIN bids 
-      WHERE date <= end_date AND date >= start_date AND is_selected
-      GROUP BY cname, to_char(date, 'MM-YYYY')
-      HAVING to_char(date, 'MM-YYYY') = '${month}-${year}'
-      ) AS revenue
+      FROM schedule NATURAL JOIN bids 
+      WHERE EXTRACT(MONTH FROM date) = ${month} AND EXTRACT(YEAR FROM date) = ${year}
+          AND date <= end_date AND date >= start_date AND is_selected
+      GROUP BY cname
+
+      UNION 
+
+      SELECT cname, 0 AS revenue, 
+          CASE
+              WHEN cname IN (SELECT cname FROM full_timer) THEN 3000
+              ELSE 0
+          END salary
+      FROM
+          (SELECT cname
+          FROM care_takers
+
+          EXCEPT
+
+          SELECT cname
+          FROM part_timer NATURAL JOIN schedule 
+          WHERE EXTRACT(MONTH FROM date) = ${month} AND EXTRACT(YEAR FROM date) = ${year}) AS new) AS revenue
+
+
 
       NATURAL LEFT JOIN
       

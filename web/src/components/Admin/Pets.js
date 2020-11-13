@@ -32,10 +32,10 @@ const Pets = ({ month, year }) => {
 
   return (
     <Fragment>
-      <Grid item lg={3} sm={6} xl={3} xs={12}>
+      <Grid item>
         <AdminCard heading="Total Work Days" value={allDays} />
       </Grid>
-      <Grid item lg={3} sm={6} xl={3} xs={12}>
+      <Grid item>
         <AdminCard heading="Number of Pets Cared For" value={pets.length} />
       </Grid>
     </Fragment>

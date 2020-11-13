@@ -27,13 +27,13 @@ const Salary = ({ month, year }) => {
 
   return (
     <Fragment>
-      <Grid item lg={3} sm={6} xl={3} xs={12}>
+      <Grid item>
         <AdminCard heading="Total Caretaker Cost" value={'$' + salary} />
       </Grid>
-      <Grid item lg={3} sm={6} xl={3} xs={12}>
+      <Grid item>
         <AdminCard heading="Total Revenue" value={'$' + revenue} />
       </Grid>
-      <Grid item lg={3} sm={6} xl={3} xs={12}>
+      <Grid item>
         <AdminCard heading="Profit" value={'$' + (revenue - salary)} />
       </Grid>
     </Fragment>

@@ -53,11 +53,17 @@ const Admin = () => {
       />
       <Container maxWidth={false} className={classes.root}>
         <Grid container spacing={3}>
-          <Pets month={month} year={year} />
-          <Salary month={month} year={year} />
+          <Grid item xs={8}>
+            <AdminChart month={month} year={year} monthList={monthList} />
+          </Grid>
+          <Grid item xs={4}>
+            <Grid container spacing={3} direction="column">
+              <Pets month={month} year={year} />
+              <Salary month={month} year={year} />
+            </Grid>
+          </Grid>
         </Grid>
       </Container>
-      <AdminChart month={month} year={year} monthList={monthList} />
       <Typography variant="h4" align="center">
         Caretakers
       </Typography>
