@@ -3,7 +3,7 @@ const pool = require("../db");
 async function handleLogin(req, res) {
     try {
         const { username, password } = req.body;
-        const query = `SELECT password, is_admin FROM accounts where username = '${username}'`;
+        const query = `SELECT password, is_admin FROM accounts where username = '${username.toLowerCase()}'`;
         const singleUser = await pool.query(query);
         console.log(singleUser.rows)
         let resp = {success: false}
