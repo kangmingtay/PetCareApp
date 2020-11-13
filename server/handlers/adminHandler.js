@@ -186,7 +186,7 @@ async function handleGetCaredFor(req, res) {
     const year = req.query.year === '' ? date.getFullYear() : req.query.year;
     const username = req.query.username;
     const query = await pool.query(`
-      SELECT cname, pet_name, pname, COUNT(date)
+      SELECT cname, pet_name, pname, COUNT(date) AS days
       FROM (SELECT DISTINCT cname, pet_name, pname, date
           FROM schedule NATURAL LEFT JOIN bids
           WHERE cname = '${username}'
