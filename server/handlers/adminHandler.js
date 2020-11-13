@@ -83,7 +83,7 @@ async function handleGetRevenue(req, res) {
     const month = req.query.month === '' ? date.getMonth() + 1 : req.query.month;
     const year = req.query.year === '' ? date.getFullYear() : req.query.year;
     const query = await pool.query(`
-      SELECT cname, COALESCE(salary, 0) salary, COALESCE(revenue, 0) revenue
+      SELECT SUM(COALESCE(salary, 0)) salary, SUM(COALESCE(revenue, 0)) revenue
       FROM care_takers NATURAL LEFT JOIN (
           SELECT cname, SUM(payment_amt / (end_date - start_date + 1)) revenue,
               CASE
@@ -131,7 +131,7 @@ async function handleGetCaretakers(req, res) {
     const year = req.query.year === '' ? date.getFullYear() : req.query.year;
 
     const query = `
-      SELECT cname, email, COALESCE(days, 0) AS pet_days, COALESCE(salary, 0) salary, COALESCE(revenue, 0) revenue, rating
+      SELECT cname, email, COALESCE(days, 0) AS pet_days, COALESCE(salary, 0) salary, COALESCE(revenue, 0) revenue, rating, isFullTimer
       FROM
           (SELECT cname, email, rating
           FROM care_takers C LEFT JOIN accounts A ON C.cname = A.username
@@ -158,7 +158,11 @@ async function handleGetCaretakers(req, res) {
       WHERE date <= end_date AND date >= start_date AND is_selected
       GROUP BY cname, to_char(date, 'MM-YYYY')
       HAVING to_char(date, 'MM-YYYY') = '${month}-${year}'
-      ) AS revenue`;
+      ) AS revenue
+
+      NATURAL LEFT JOIN
+      
+      (SELECT cname, 1 AS isFullTimer FROM full_timer) AS fulltime`;
     const allUser = await pool.query(query);
 
     const resp = { results: allUser.rows };
@@ -171,84 +175,6 @@ async function handleGetCaretakers(req, res) {
   }
 }
 
-// // Count pet days within one month
-// async function handleGetBidsInMonth(req, res) {
-//   try {
-//     const { cname } = req.params;
-//     const { start_date } = req.params;
-//     const { end_date } = req.params;
-//     const count = await pool.query(`SELECT * FROM bids WHERE cname = ${cname} AND is_selected = true AND end_date > ${month} AND start_date <= DATE($3) + interval '1 day'`, [
-//       cname,
-//       start_date,
-//       end_date,
-//     ]);
-//     res.json(count.rows);
-//   } catch (err) {
-//     return res.status(400).send({
-//       success: false,
-//       message: err.message,
-//     });
-//   }
-// }
-
-// // Count all bids within one month (including bids that are only partially within the month)
-// async function handleGetBidsInRange(req, res) {
-//   try {
-//     const { start_date } = req.params;
-//     const { end_date } = req.params;
-//     const count = await pool.query("SELECT * FROM bids WHERE is_selected = true AND end_date > $1 AND start_date <= DATE($2) + interval '1 day'", [start_date, end_date]);
-//     res.json(count.rows);
-//   } catch (err) {
-//     return res.status(400).send({
-//       success: false,
-//       message: err.message,
-//     });
-//   }
-// }
-
-// // Count bids for one care taker within one month (including bids that are only partially within the month)
-// async function handleGetBidsForUser(req, res) {
-//   try {
-//     const { cname } = req.params;
-//     const { start_date } = req.params;
-//     const { end_date } = req.params;
-//     const count = await pool.query("SELECT * FROM bids WHERE cname = $1 AND is_selected = true AND end_date > $2 AND start_date <= DATE($3) + interval '1 day'", [cname, start_date, end_date]);
-//     res.json(count.rows);
-//   } catch (err) {
-//     return res.status(400).send({
-//       success: false,
-//       message: err.message,
-//     });
-//   }
-// }
-
-// // Count bids for one care taker within one month (including bids that are only partially within the month)
-// async function handleGetPayment(req, res) {
-//   try {
-//     const { cname } = req.params;
-//     const { start_date } = req.params;
-//     const { end_date } = req.params;
-//     const count = await pool.query(
-//       'SELECT SUM(CASE ' +
-//         'WHEN end_date >= $3 AND start_date <= $2 THEN ($3::date - $2::date + 1) * payment_amt ' +
-//         'WHEN end_date <= $3 AND start_date > $2 THEN (end_date::date - start_date::date + 1) * payment_amt ' +
-//         'WHEN end_date <= $3 AND end_date >= $2 AND start_date <= $2 THEN (end_date::date - $2::date + 1) * payment_amt ' +
-//         'WHEN end_date >= $3 AND start_date <= $3 AND start_date >= $2 THEN ($3::date - start_date::date + 1) * payment_amt ' +
-//         'ELSE 0' +
-//         'END) AS salary ' +
-//         'FROM bids ' +
-//         'WHERE cname = $1 AND is_selected = true',
-//       [cname, start_date, end_date]
-//     );
-//     res.json(count.rows);
-//   } catch (err) {
-//     return res.status(400).send({
-//       success: false,
-//       message: err.message,
-//     });
-//   }
-// }
-
 module.exports = {
   handleGetAllDays,
   handleGetPetDays,
@@ -256,8 +182,4 @@ module.exports = {
   handleGetRevenue,
   handleGetRating,
   handleGetCaretakers,
-  // handleGetBidsInRange,
-  // handleGetBidsInMonth,
-  // handleGetBidsForUser,
-  // handleGetPayment,
 };

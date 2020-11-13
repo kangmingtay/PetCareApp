@@ -18,12 +18,14 @@ const useStyles = makeStyles({
   table: {
     minWidth: 650
   },
-  tableCell: {
-    // '$hover:hover &': {
-    color: 'red'
-    // }
+  hover: {},
+  rowNormal: {
+    color: 'green'
   },
-  hover: {}
+
+  rowHighlight: {
+    color: 'red'
+  }
 });
 
 const CaretakerTable = props => {
@@ -39,7 +41,7 @@ const CaretakerTable = props => {
   });
 
   useEffect(() => {
-    async function fetchData() {
+    const fetchData = async () => {
       const resp = await fetchAllUsersInfo(params);
       setUsers([...resp.data.results]);
       const response = await fetchCaretakers({
@@ -47,7 +49,7 @@ const CaretakerTable = props => {
         year: props.year
       });
       setCaretakers([...response.data.results]);
-    }
+    };
     fetchData();
   }, [props]);
 
@@ -71,7 +73,15 @@ const CaretakerTable = props => {
     <Table className={classes.table} aria-label="simple table">
       <TableHead>
         <TableRow>
-          {['Caretaker', 'Email', 'Salary', 'Pet Days', 'Rating'].map(item => {
+          {[
+            'Caretaker',
+            'Email',
+            'Salary',
+            'Revenue',
+            'Pet Days',
+            'Rating',
+            'Type'
+          ].map(item => {
             return (
               <TableCell key={item} align="right">
                 {item}
@@ -86,11 +96,41 @@ const CaretakerTable = props => {
             <TableCell>{user.cname}</TableCell>
             <TableCell align="right">{user.email}</TableCell>
             <TableCell align="right">
-              {/* <TableCell align="right" className={classes.tableCell}> */}
-              {user.salary}
+              {Math.round(user.salary * 100) / 100}
             </TableCell>
-            <TableCell align="right">{user.pet_days}</TableCell>
-            <TableCell align="right">{user.rating}</TableCell>
+            <TableCell
+              align="right"
+              className={
+                user.revenue < 3000 && user.isfulltimer
+                  ? classes.rowHighlight
+                  : classes.rowNormal
+              }
+            >
+              {Math.round(user.revenue * 100) / 100}
+            </TableCell>
+            <TableCell
+              align="right"
+              className={
+                user.pet_days < 30 && user.isfulltimer
+                  ? classes.rowHighlight
+                  : classes.rowNormal
+              }
+            >
+              {user.pet_days}
+            </TableCell>
+            <TableCell
+              align="right"
+              className={
+                user.rating < 3000 && user.isfulltimer
+                  ? classes.rowHighlight
+                  : classes.rowNormal
+              }
+            >
+              {user.rating}
+            </TableCell>
+            <TableCell align="right">
+              {parseInt(user.isfulltimer) === 1 ? 'Full-Time' : 'Part-Time'}
+            </TableCell>
           </TableRow>
         ))}
       </TableBody>
