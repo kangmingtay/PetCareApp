@@ -1,9 +1,7 @@
-import React, { useState, useContext } from 'react';
-import PropTypes from 'prop-types';
-import { Container, makeStyles, Typography, Box } from '@material-ui/core';
+import React, { useContext } from 'react';
+import { Container, makeStyles, Typography } from '@material-ui/core';
 import Page from 'src/components/Page';
 import { UserContext } from 'src/UserContext';
-// import AdminTable from '../components/Admin/AdminTable';
 import Admin from '../components/Admin/Admin';
 
 const useStyles = makeStyles(theme => ({

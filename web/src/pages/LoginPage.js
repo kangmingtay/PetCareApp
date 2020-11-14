@@ -35,7 +35,6 @@ const LoginPage = () => {
     console.log(values)
     let resp = await fetchLoginInfo(values);
         if (resp.data.success === true) {
-            console.log(resp.data)
             localStorage.setItem('username', values.username);
             localStorage.setItem('isLoggedIn', true);
             localStorage.setItem('isAdmin', resp.data.isAdmin);
