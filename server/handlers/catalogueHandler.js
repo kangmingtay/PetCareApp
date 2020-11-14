@@ -121,10 +121,10 @@ async function handleGetPetsForDateRange(req, res) {
       AND P.pet_name NOT IN (
         SELECT B.pet_name
         FROM bids B
-        WHERE P.pet_name = B.pet_name
-        AND (B.start_date <= TO_DATE('${endDate}', 'DD-MM-YYYY') AND B.end_date >= TO_DATE('${endDate}', 'DD-MM-YYYY')) 
+        WHERE P.pet_name = B.pet_name AND '${pname}' = B.pname
+        AND ( (B.start_date <= TO_DATE('${endDate}', 'DD-MM-YYYY') AND B.end_date >= TO_DATE('${endDate}', 'DD-MM-YYYY')) 
         OR (TO_DATE('${startDate}', 'DD-MM-YYYY') <= B.end_date AND TO_DATE('${startDate}', 'DD-MM-YYYY') >= B.start_date)
-        OR (TO_DATE('${startDate}', 'DD-MM-YYYY') <= B.start_date AND TO_DATE('${endDate}', 'DD-MM-YYYY') >= B.end_date)
+        OR (TO_DATE('${startDate}', 'DD-MM-YYYY') <= B.start_date AND TO_DATE('${endDate}', 'DD-MM-YYYY') >= B.end_date) )
       )
       ;
     `;
