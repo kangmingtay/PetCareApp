@@ -32,8 +32,9 @@ CREATE OR REPLACE FUNCTION specify_leaves(username VARCHAR(256), leaves_ date[])
                 END IF;
                 
                 -- Checks if a pet is under the caretaker's care on that day
-                IF (SELECT AVG(pet_count) FROM Schedule WHERE date = x AND cname = username) > 0 THEN
-                    RAISE EXCEPTION'Cannot apply for leave if there is at least one pet';
+                IF (SELECT COUNT(*) FROM Schedule WHERE date = x AND cname = username) = 1
+                    AND (date_trunc('year', leaves_[1]) + interval '1 year')::date != x THEN
+                    RAISE EXCEPTION'Cannot apply for leave if there is at least one pet ';
                 END IF;
 
                 -- Checks for the 2x150 blocks
