@@ -82,7 +82,7 @@ async function handleGetListOfCTs(req, res) {
     AND PC.category = (
       SELECT P1.category
       FROM pets P1
-      WHERE '${petName}' = P1.pet_name
+      WHERE '${petName}' = P1.pet_name AND '${pName}' = P1.pname
     )
     `;
 

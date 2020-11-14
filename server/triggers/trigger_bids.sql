@@ -3,7 +3,7 @@ CREATE OR REPLACE FUNCTION update_care_taker_rating() RETURNS trigger
     AS $$
 BEGIN
     UPDATE care_takers C
-    SET rating = (SELECT AVG(rating) FROM bids WHERE is_selected = true GROUP BY cname HAVING cname = C.cname)
+    SET rating = (SELECT COALESCE(AVG(rating), 2) FROM bids WHERE is_selected = true AND cname = C.cname)
     WHERE C.cname = NEW.cname;
     RETURN NEW;
 END;
