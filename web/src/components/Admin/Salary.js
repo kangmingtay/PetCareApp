@@ -10,7 +10,7 @@ const Salary = ({ month, year }) => {
   useEffect(() => {
     const getSalary = async () => {
       try {
-        const response = await fetchRevenue({ month: month + 1, year: year });
+        const response = await fetchRevenue({ month: month, year: year });
         var results = [...response.data.results];
         var sumSalary = 0;
         var sumRevenue = 0;
@@ -27,13 +27,13 @@ const Salary = ({ month, year }) => {
 
   return (
     <Fragment>
-      <Grid item lg={3} sm={6} xl={3} xs={12}>
+      <Grid item>
         <AdminCard heading="Total Caretaker Cost" value={'$' + salary} />
       </Grid>
-      <Grid item lg={3} sm={6} xl={3} xs={12}>
+      <Grid item>
         <AdminCard heading="Total Revenue" value={'$' + revenue} />
       </Grid>
-      <Grid item lg={3} sm={6} xl={3} xs={12}>
+      <Grid item>
         <AdminCard heading="Profit" value={'$' + (revenue - salary)} />
       </Grid>
     </Fragment>

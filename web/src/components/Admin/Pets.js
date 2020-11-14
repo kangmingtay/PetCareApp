@@ -10,7 +10,7 @@ const Pets = ({ month, year }) => {
   useEffect(() => {
     const getAllDays = async () => {
       try {
-        const response = await fetchAllDays({ month: month + 1, year: year });
+        const response = await fetchAllDays({ month: month, year: year });
         setAllDays([...response.data.results[0].days]);
       } catch (err) {
         console.error(err.message);
@@ -32,10 +32,10 @@ const Pets = ({ month, year }) => {
 
   return (
     <Fragment>
-      <Grid item lg={3} sm={6} xl={3} xs={12}>
+      <Grid item>
         <AdminCard heading="Total Work Days" value={allDays} />
       </Grid>
-      <Grid item lg={3} sm={6} xl={3} xs={12}>
+      <Grid item>
         <AdminCard heading="Number of Pets Cared For" value={pets.length} />
       </Grid>
     </Fragment>

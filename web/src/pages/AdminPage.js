@@ -1,9 +1,7 @@
-import React, { useState, useContext } from 'react';
-import PropTypes from 'prop-types';
-import { Container, makeStyles, Typography, Box } from '@material-ui/core';
+import React, { useContext } from 'react';
+import { Container, makeStyles, Typography } from '@material-ui/core';
 import Page from 'src/components/Page';
 import { UserContext } from 'src/UserContext';
-// import AdminTable from '../components/Admin/AdminTable';
 import Admin from '../components/Admin/Admin';
 
 const useStyles = makeStyles(theme => ({
@@ -18,48 +16,9 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function TabPanel(props) {
-  const { children, value, index, ...other } = props;
-
-  return (
-    <div
-      role="tabpanel"
-      hidden={value !== index}
-      id={`simple-tabpanel-${index}`}
-      aria-labelledby={`simple-tab-${index}`}
-      {...other}
-    >
-      {value === index && (
-        <Box p={3}>
-          <Typography>{children}</Typography>
-        </Box>
-      )}
-    </div>
-  );
-}
-
-TabPanel.propTypes = {
-  children: PropTypes.node,
-  index: PropTypes.any.isRequired,
-  value: PropTypes.any.isRequired,
-};
-
-function a11yProps(index) {
-  return {
-    id: `simple-tab-${index}`,
-    'aria-controls': `simple-tabpanel-${index}`,
-  };
-}
-
 const AdminPage = () => {
   const classes = useStyles();
-  const [value, setValue] = useState(0);
-  const [selectedDate, handleDateChange] = useState(new Date());
   const { context } = useContext(UserContext);
-
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
-  };
 
   return (
     <Page className={classes.root} title="Administrator">
@@ -69,7 +28,6 @@ const AdminPage = () => {
         </Typography>
       </Container>
       <Admin />
-      {/* <AdminTable /> */}
     </Page>
   );
 };

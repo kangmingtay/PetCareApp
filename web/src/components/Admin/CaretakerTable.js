@@ -6,10 +6,14 @@ import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
+import Typography from '@material-ui/core/Typography';
+import Container from '@material-ui/core/Container';
 import { fetchAllUsersInfo } from 'src/calls/userCalls';
 import { fetchCaretakers } from 'src/calls/adminCalls';
 import theme from 'src/theme';
 import TableUtil from 'src/components/UI/TableUtil';
+import CaretakerPieChart from 'src/components/Admin/CaretakerPieChart';
+import ModalUtil from '../UI/ModalUtil';
 
 const useStyles = makeStyles({
   root: {
@@ -32,6 +36,8 @@ const CaretakerTable = props => {
   const classes = useStyles();
 
   const [users, setUsers] = useState([]);
+  const [cname, setCname] = useState('');
+  const [open, setOpen] = useState(false);
   const [caretakers, setCaretakers] = useState([]);
   const [params, setParams] = useState({
     offset: 0,
@@ -69,6 +75,11 @@ const CaretakerTable = props => {
     setUsers([...resp.data.results]);
   };
 
+  const handleRowClick = (user) => {
+    setCname(user.cname);
+    setOpen(!open);
+  }
+
   const tableContent = (
     <Table className={classes.table} aria-label="simple table">
       <TableHead>
@@ -92,7 +103,7 @@ const CaretakerTable = props => {
       </TableHead>
       <TableBody>
         {caretakers.map((user, i) => (
-          <TableRow key={i} hover>
+          <TableRow key={i} hover onClick={() => handleRowClick(user)}>
             <TableCell>{user.cname}</TableCell>
             <TableCell align="right">{user.email}</TableCell>
             <TableCell align="right">
@@ -126,7 +137,7 @@ const CaretakerTable = props => {
                   : classes.rowNormal
               }
             >
-              {user.rating}
+              {(isNaN(parseInt(user.rating))) ? '-' : parseInt(user.rating)}
             </TableCell>
             <TableCell align="right">
               {parseInt(user.isfulltimer) === 1 ? 'Full-Time' : 'Part-Time'}
@@ -137,15 +148,30 @@ const CaretakerTable = props => {
     </Table>
   );
 
+  const showPie = () => {
+    if (open === true) {
+      return <CaretakerPieChart cname={cname} month={props.month} year={props.year} />
+    } else if (cname !== '') {
+      return (
+        <Typography align="center">{cname} did not take care of any pets this month!</Typography>
+      )
+    }
+  }
+
   return (
-    <TableUtil
-      handleOnNext={handleOnNext}
-      handleOnPrev={handleOnPrev}
-      hasNext={users.length}
-      hasPrev={params.offset}
-    >
-      {tableContent}
-    </TableUtil>
+    <>
+      {/* <ModalUtil open={open} handleClose={() => setOpen(false)}> */}
+      {showPie()}
+      {/* </ModalUtil> */}
+      <TableUtil
+        handleOnNext={handleOnNext}
+        handleOnPrev={handleOnPrev}
+        hasNext={users.length}
+        hasPrev={params.offset}
+      >
+        {tableContent}
+      </TableUtil>
+    </>
   );
 };
 

@@ -73,8 +73,8 @@ const FindCareTakerPage = () => {
   const fetchPets = async () => {
     const resp = await fetchListOfValidPets({ 
       pName: context.username,
-      startDate: new Date(),
-      endDate: new Date(),
+      startDate: mainValues.startDate,
+      endDate: mainValues.endDate,
     });
     setListPets([...resp.data.results])
   }

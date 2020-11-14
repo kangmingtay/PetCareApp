@@ -64,7 +64,7 @@ async function handleGetListOfCTs(req, res) {
         WHEN CT.rating IS NULL
           THEN -1
         ELSE
-          CT.rating
+          ROUND(CT.rating::numeric, 2)
       END AS rating
     , P.category,
       CASE
@@ -79,6 +79,11 @@ async function handleGetListOfCTs(req, res) {
     FROM cte_valid_caretakers CVC, care_takers CT, prefers P, pet_categories PC, accounts A
     WHERE CVC.cname = CT.cname AND CT.cname = P.cname AND P.cname = A.username
     AND P.category = PC.category
+    AND PC.category = (
+      SELECT P1.category
+      FROM pets P1
+      WHERE '${petName}' = P1.pet_name AND '${pName}' = P1.pname
+    )
     `;
 
     const allCareTakers = await pool.query(queryOverall);
@@ -116,10 +121,10 @@ async function handleGetPetsForDateRange(req, res) {
       AND P.pet_name NOT IN (
         SELECT B.pet_name
         FROM bids B
-        WHERE P.pet_name = B.pet_name
-        AND (B.start_date <= TO_DATE('${endDate}', 'DD-MM-YYYY') AND B.end_date >= TO_DATE('${endDate}', 'DD-MM-YYYY')) 
+        WHERE P.pet_name = B.pet_name AND '${pname}' = B.pname
+        AND ( (B.start_date <= TO_DATE('${endDate}', 'DD-MM-YYYY') AND B.end_date >= TO_DATE('${endDate}', 'DD-MM-YYYY')) 
         OR (TO_DATE('${startDate}', 'DD-MM-YYYY') <= B.end_date AND TO_DATE('${startDate}', 'DD-MM-YYYY') >= B.start_date)
-        OR (TO_DATE('${startDate}', 'DD-MM-YYYY') <= B.start_date AND TO_DATE('${endDate}', 'DD-MM-YYYY') >= B.end_date)
+        OR (TO_DATE('${startDate}', 'DD-MM-YYYY') <= B.start_date AND TO_DATE('${endDate}', 'DD-MM-YYYY') >= B.end_date) )
       )
       ;
     `;

@@ -35,7 +35,6 @@ const LoginPage = () => {
     console.log(values)
     let resp = await fetchLoginInfo(values);
         if (resp.data.success === true) {
-            console.log(resp.data)
             localStorage.setItem('username', values.username);
             localStorage.setItem('isLoggedIn', true);
             localStorage.setItem('isAdmin', resp.data.isAdmin);
@@ -48,7 +47,7 @@ const LoginPage = () => {
             if (resp.data.isAdmin) {
               navigate('/app/admin', { replace: true });
             } else {
-              navigate('/app/dashboard', { replace: true });
+              navigate('/app/pets', { replace: true });
             }
             addToast("Login Successful", {
               appearance: 'success',
