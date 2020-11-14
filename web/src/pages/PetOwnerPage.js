@@ -10,16 +10,12 @@ import {
   Button,
   InputLabel,
   MenuItem,
-  FormHelperText,
   FormControl,
   Select,
 } from '@material-ui/core';
-import { Pagination } from '@material-ui/lab';
 import Page from 'src/components/Page';
-import PetOwnerToolbar from '../components/PetOwnerToolbar';
 import PetCard from '../components/PetCard';
-import data from '../utils/PetOwnerData';
-import { fetchPets, updatePet, createPet, deletePet, getPetCategories } from 'src/calls/petCalls';
+import { fetchPets, createPet, getPetCategories } from 'src/calls/petCalls';
 import { UserContext } from 'src/UserContext';
 import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Add';
